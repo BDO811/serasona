@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
+import { DemoModeBanner } from "@/components/DemoModeBanner";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -14,7 +15,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const redirectTo = (location.state as { from?: string } | null)?.from ?? "/dashboard";
+  const redirectTo = (location.state as { from?: string } | null)?.from ?? "/account";
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -32,6 +33,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-6">
       <div className="w-full max-w-sm space-y-8">
+        <DemoModeBanner />
         <div className="text-center space-y-2">
           <h1 className="font-serif text-3xl text-foreground">Welcome back</h1>
           <p className="text-sm text-muted-foreground">Log in to see your trend.</p>

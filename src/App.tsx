@@ -17,7 +17,9 @@ import RecordingNotSupported from "./pages/RecordingNotSupported";
 import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ResetPassword from "./pages/ResetPassword";
 import Account from "./pages/Account";
+import Checkin from "./pages/Checkin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,11 +45,20 @@ const App = () => (
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route
                 path="/account"
                 element={
                   <ProtectedRoute>
                     <Account />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/checkin"
+                element={
+                  <ProtectedRoute>
+                    <Checkin />
                   </ProtectedRoute>
                 }
               />

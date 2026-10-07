@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { startCheckout } from "@/lib/billing-client";
+import { DEMO_MODE, demoAuth } from "@/lib/demo-mode";
+import { DemoModeBanner } from "@/components/DemoModeBanner";
 import { toast } from "sonner";
 import type { PlanId } from "@/context/AuthContext";
 
@@ -71,7 +73,7 @@ const Pricing = () => {
 
   const handleSelect = async (planId: PlanId) => {
     if (planId === "free") {
-      navigate(user ? "/dashboard" : "/signup");
+      navigate(user ? "/account" : "/");
       return;
     }
     if (!user) {
@@ -80,6 +82,11 @@ const Pricing = () => {
     }
     setLoadingPlan(planId);
     try {
+      if (DEMO_MODE) {
+        await demoAuth.mockSubscribe(planId as Exclude<PlanId, "free">);
+        navigate("/account?checkout=success");
+        return;
+      }
       await startCheckout(planId as Exclude<PlanId, "free">);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Couldn't start checkout.");
@@ -90,6 +97,7 @@ const Pricing = () => {
   return (
     <div className="min-h-screen bg-background px-6 py-16 md:py-24">
       <div className="max-w-5xl mx-auto">
+        <DemoModeBanner />
         <div className="text-center space-y-3 mb-12">
           <h1 className="font-serif text-4xl md:text-5xl text-foreground">Choose how you check in</h1>
           <p className="text-muted-foreground max-w-lg mx-auto">

@@ -1,9 +1,62 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { asset } from "@/lib/asset";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface SerasonaHomeProps {
   onComplete: () => void;
 }
+
+const HOW_IT_WORKS = [
+  {
+    step: "01",
+    title: "Speak for twenty seconds",
+    body: "Open the app or pick up when Serasona calls. No forms, no appointment.",
+  },
+  {
+    step: "02",
+    title: "Serasona reads it",
+    body: "Stress, mood, energy, confidence, mental fatigue, alertness, focus — measured from your voice.",
+  },
+  {
+    step: "03",
+    title: "See what moved",
+    body: "Every number is placed against your own last thirty days, never a population average.",
+  },
+];
+
+const FAQ_ITEMS = [
+  {
+    question: "Is Serasona a medical device?",
+    answer:
+      "No. Serasona is a wellness product. It does not diagnose, treat, prevent, or cure any condition. It reports a signal — it does not know why a number moved.",
+  },
+  {
+    question: "What happens to my voice recording?",
+    answer:
+      "It's processed to produce your signals and then discarded. Serasona stores the numbers, not the audio, and never sells personal information.",
+  },
+  {
+    question: "How is this different from a wearable?",
+    answer:
+      "A wearable reads your body. Nothing else reads your voice. Twenty seconds of speech, no device, no skin contact, no charging.",
+  },
+  {
+    question: "What if something looks seriously off?",
+    answer:
+      "Serasona reports a signal, not a diagnosis — a real person is always an option for anything beyond what a daily check-in can tell you. For medical concerns, talk to a licensed clinician.",
+  },
+  {
+    question: "Can I use this without the app?",
+    answer:
+      "Yes, on Plus and above — Serasona calls you on any phone, including a landline, and the result still lands in your account.",
+  },
+];
 
 const STATS = [
   { value: "2.4M", label: "World's Largest Dataset" },
@@ -28,12 +81,20 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
       {/* Top nav, matching tryserasona.com chrome. The logo is the wordmark
           plus the audio bands, one lockup, never the mark alone. */}
       <div className="sticky top-0 z-20 px-5 pt-4 md:px-10">
-        <div className="mx-auto flex max-w-[1100px] items-center px-2 py-3 md:px-4">
+        <div className="mx-auto flex max-w-[1100px] items-center justify-between px-2 py-3 md:px-4">
           <img
             src={asset("brand/serasona-logo-full.svg")}
             alt="Serasona"
             className="h-6 w-auto md:h-8"
           />
+          <nav className="flex items-center gap-6 font-mono text-xs uppercase tracking-[0.15em] text-black/70">
+            <Link to="/pricing" className="transition-colors hover:text-black">
+              Pricing
+            </Link>
+            <Link to="/login" className="transition-colors hover:text-black">
+              Log in
+            </Link>
+          </nav>
         </div>
       </div>
 
@@ -107,6 +168,13 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           Try Serasona
         </motion.button>
 
+        <Link
+          to="/pricing"
+          className="mt-5 font-mono text-xs uppercase tracking-[0.15em] text-black/55 underline underline-offset-4 transition-colors hover:text-black/80"
+        >
+          Or see plans and pricing
+        </Link>
+
         {/* Stats row */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -136,6 +204,108 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           aria-hidden="true"
           className="mt-20 h-16 w-auto max-w-full md:h-20"
         />
+      </div>
+
+      {/* How it works */}
+      <div className="border-t border-black/10 px-6 py-24 md:py-28">
+        <div className="mx-auto max-w-[900px]">
+          <h2 className="text-center font-serif text-3xl text-black md:text-4xl">How it works</h2>
+          <div className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-8">
+            {HOW_IT_WORKS.map((item) => (
+              <div key={item.step}>
+                <div className="font-mono text-xs tracking-[0.2em] text-black/40">{item.step}</div>
+                <h3 className="mt-3 font-serif text-xl text-black">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-black/65">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing teaser */}
+      <div className="border-t border-black/10 px-6 py-24 md:py-28" style={{ backgroundColor: "#f2ebe0" }}>
+        <div className="mx-auto max-w-[700px] text-center">
+          <h2 className="font-serif text-3xl text-black md:text-4xl">Simple pricing</h2>
+          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-black/65">
+            One free check-in to start. Core compares every day to your own baseline. Plus adds a weekly
+            call, no app required.
+          </p>
+          <Link
+            to="/pricing"
+            className="mt-8 inline-block rounded-full bg-black px-8 py-4 font-mono text-xs font-medium uppercase tracking-[0.2em] text-[#fbf7f1] transition-colors hover:bg-black/[0.85]"
+          >
+            See plans and pricing
+          </Link>
+        </div>
+      </div>
+
+      {/* Trust / escalation */}
+      <div className="border-t border-black/10 px-6 py-24 md:py-28">
+        <div className="mx-auto grid max-w-[900px] grid-cols-1 gap-10 md:grid-cols-3">
+          <div>
+            <h3 className="font-serif text-lg text-black">Never a diagnosis</h3>
+            <p className="mt-2 text-sm leading-relaxed text-black/65">
+              Serasona reports a signal. It is a wellness product and does not diagnose, treat, prevent, or
+              cure any condition.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-serif text-lg text-black">Compared to you, only</h3>
+            <p className="mt-2 text-sm leading-relaxed text-black/65">
+              Every number is read against your own thirty-day history, never a population average.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-serif text-lg text-black">A real person is always an option</h3>
+            <p className="mt-2 text-sm leading-relaxed text-black/65">
+              For anything a daily check-in can't answer, talk to a licensed clinician. Serasona is a
+              companion, not a replacement.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div className="border-t border-black/10 px-6 py-24 md:py-28" style={{ backgroundColor: "#f2ebe0" }}>
+        <div className="mx-auto max-w-[700px]">
+          <h2 className="text-center font-serif text-3xl text-black md:text-4xl">Questions</h2>
+          <Accordion type="single" collapsible className="mt-10">
+            {FAQ_ITEMS.map((item) => (
+              <AccordionItem key={item.question} value={item.question}>
+                <AccordionTrigger className="text-left font-serif text-base text-black">
+                  {item.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed text-black/65">
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="border-t border-black/10 px-6 py-16 text-center">
+        <img
+          src={asset("brand/serasona-logo-full.svg")}
+          alt="Serasona"
+          className="mx-auto h-6 w-auto"
+        />
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-mono text-xs uppercase tracking-[0.15em] text-black/55">
+          <Link to="/pricing" className="hover:text-black">
+            Pricing
+          </Link>
+          <Link to="/signup" className="hover:text-black">
+            Create account
+          </Link>
+          <Link to="/login" className="hover:text-black">
+            Log in
+          </Link>
+        </div>
+        <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.15em] text-black/40">
+          Serasona is a wellness product. It is not a medical device and does not diagnose, treat, prevent,
+          or cure any condition.
+        </p>
       </div>
     </div>
   );

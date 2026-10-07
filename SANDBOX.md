@@ -1,44 +1,36 @@
-# Sandbox
+# Serasona_App — the serasona.com product sandbox
 
-A local copy of the app with every feature switched on, including the ones held
-back from try.amplifierhealth.com. Nothing here touches the live site.
+This is the full product app (signup, pricing, payment, account, daily check-in, trend history) —
+separate from `Serasona_Site`, which is the tryserasona.com lead-gen demo and stays untouched.
 
 ## Start it
 
 ```bash
-cd /Users/amitmehta/Claude/ReSkinnable_B2C_Demo_Lovable
-npm run sandbox
+cd /Users/amitmehta/Claude-Outputs/Serasona_App
+npm run dev -- --port 8282
 ```
 
-It prints two addresses:
+Or ask Claude to start the `serasona-app-sandbox` preview, which does the same thing.
 
-- **This machine** — `http://localhost:8080`
-- **Phone or tablet** — `http://<your-mac-lan-ip>:8080`, same wifi
+## Demo mode
 
-The second one matters. The layout bugs that have come up have all been mobile
-ones, and they cannot be reproduced by narrowing a desktop window: a phone has a
-different pixel ratio, a different browser chrome height, and a real on-screen
-keyboard. Open that address on the handset itself.
+`.env` ships with `VITE_DEMO_MODE="true"`. While it's on, sign-up, login, "payment," and check-in
+history all run against `localStorage` instead of real Firebase/Stripe — see `src/lib/demo-mode.ts`.
+This is what lets the full round trip be clicked through with zero live credentials:
 
-Edits reload immediately. Ctrl-C stops it.
+1. `/signup?plan=core` (or any plan) — creates a local mock account and immediately marks that plan
+   active, as if checkout had succeeded.
+2. `/account` — shows the active plan, renewal date, "Check in now" / "See my trend".
+3. `/checkin` — the real capture → analysis → reveal flow (needs real microphone access, which the
+   Claude Browser pane itself cannot grant — test this one in an actual browser tab).
+4. `/history` — seeded with a realistic 26-day sample series the first time it's opened, so the trend
+   view has something to show rather than an empty state. A real check-in from `/checkin` appends onto
+   that same series.
 
-## What is on here and off in production
-
-| Feature | Sandbox | try.amplifierhealth.com |
-|---|---|---|
-| Recommendations button | on | off |
-
-The button works: the Cloud Function answers and returns real suggestions. It is
-held back because latency through the function was 40 to 48 seconds and one call
-exceeded the request timeout. A fix is deployed and unverified. See
-`RECOMMENDATIONS_ENABLED` in `src/components/report/RecommendationsPanel.tsx`.
-
-To force it either way without editing code:
-
-```bash
-VITE_RECOMMENDATIONS=0 npm run sandbox   # off
-VITE_RECOMMENDATIONS=1 npm run build     # on, in a production build
-```
+A demo-mode banner appears on every account-flow screen so it's never ambiguous that nothing here is a
+real charge or a real account. Flip `VITE_DEMO_MODE` to `"false"` and fill in real Firebase/Stripe keys
+(see `docs/SETUP_BILLING.md`) once those are ready — every page already branches on that flag, so no
+further code changes are needed to go live.
 
 ## Screens you cannot otherwise reach
 
@@ -51,16 +43,13 @@ all without a live result. These render them directly:
 | `/panel-preview?dev=true&screen=analysis` | The analysis screen on its own |
 | `/api-debug?dev=true` | The raw API response behind the last result |
 
-The samples in the panel preview are real captured API runs, not invented
-numbers, so the bands they land in are the bands a real recording produces.
-
 ## Before pushing anything live
 
 ```bash
-npx tsc -p tsconfig.app.json --noEmit   # types
-npm test                                # 201 tests
-npm run build                           # production build
+npx tsc --noEmit   # types
+npm test           # 209 tests
+npm run build      # production build
 ```
 
-`main` deploys to try.amplifierhealth.com on push. The `sandbox` branch is local
-only and is not deployed anywhere.
+This project has no remote yet — it's a local-only git repo (`git log` to see what's committed). Nothing
+gets pushed or deployed anywhere until that's explicitly asked for.

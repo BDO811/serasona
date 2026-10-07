@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/context/AuthContext";
 import { startCheckout } from "@/lib/billing-client";
+import { DEMO_MODE, demoAuth } from "@/lib/demo-mode";
+import { DemoModeBanner } from "@/components/DemoModeBanner";
 import { toast } from "sonner";
 import type { PlanId } from "@/context/AuthContext";
 
@@ -33,10 +35,15 @@ const Signup = () => {
     try {
       await signUp(email, password, fullName);
       if (selectedPlan && selectedPlan !== "free") {
+        if (DEMO_MODE) {
+          await demoAuth.mockSubscribe(selectedPlan as Exclude<PlanId, "free">);
+          navigate("/account?checkout=success", { replace: true });
+          return;
+        }
         await startCheckout(selectedPlan);
         return; // startCheckout redirects the browser to Stripe
       }
-      navigate("/dashboard", { replace: true });
+      navigate("/account", { replace: true });
     } catch (error) {
       toast.error("Couldn't create that account. Check your details and try again.");
       setSubmitting(false);
@@ -46,6 +53,7 @@ const Signup = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-6 py-16">
       <div className="w-full max-w-sm space-y-8">
+        <DemoModeBanner />
         <div className="text-center space-y-2">
           <h1 className="font-serif text-3xl text-foreground">Create your account</h1>
           <p className="text-sm text-muted-foreground">
