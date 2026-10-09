@@ -21,12 +21,31 @@ const HOW_IT_WORKS = [
   {
     step: "02",
     title: "Serasona reads it",
-    body: "Stress, mood, energy, confidence, mental fatigue, alertness, focus — measured from your voice.",
+    body: "Ten biomarkers, pulled from how you spoke, not just what you said.",
   },
   {
     step: "03",
     title: "See what moved",
     body: "Every number is placed against your own last thirty days, never a population average.",
+  },
+];
+
+const VOICE_BIOMARKERS = [
+  {
+    title: "Pitch and tone",
+    body: "How high or flat your voice sits, and how much it moves. Stress and low mood tend to narrow it.",
+  },
+  {
+    title: "Pacing and pauses",
+    body: "How fast you speak and where you hesitate. Fatigue and cognitive load both show up here first.",
+  },
+  {
+    title: "Breath support",
+    body: "How steady your airflow is through a sentence. It shifts with physical and emotional strain alike.",
+  },
+  {
+    title: "Articulation",
+    body: "How precisely sounds are formed. Tiredness and dehydration both soften it in measurable ways.",
   },
 ];
 
@@ -206,6 +225,34 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
         />
       </div>
 
+      {/* What's a voice biomarker */}
+      <div className="border-t border-black/10 px-6 py-24 md:py-28">
+        <div className="mx-auto max-w-[900px]">
+          <div className="mx-auto max-w-[640px] text-center">
+            <h2 className="font-serif text-3xl text-black md:text-4xl">What's a voice biomarker?</h2>
+            <p className="mt-5 text-sm leading-relaxed text-black/65 md:text-base">
+              Speech is one of the most demanding things your body does. In the time it takes to say a
+              sentence, your breath, vocal cords, and articulation all have to coordinate in real time,
+              drawing on the same systems that carry stress, fatigue, and mood. A voice biomarker is a
+              measurable feature of that coordination, the kind a person can't hear by listening but a
+              model can measure reliably, twenty seconds at a time.
+            </p>
+          </div>
+          <div className="mt-14 grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-4 md:gap-8">
+            {VOICE_BIOMARKERS.map((item) => (
+              <div key={item.title}>
+                <h3 className="font-serif text-lg text-black">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-black/65">{item.body}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mx-auto mt-14 max-w-[640px] text-center text-sm leading-relaxed text-black/65">
+            None of these features mean anything on their own. What matters is how yours move against your
+            own history, not against anyone else's.
+          </p>
+        </div>
+      </div>
+
       {/* How it works */}
       <div className="border-t border-black/10 px-6 py-24 md:py-28">
         <div className="mx-auto max-w-[900px]">
@@ -227,8 +274,8 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
         <div className="mx-auto max-w-[700px] text-center">
           <h2 className="font-serif text-3xl text-black md:text-4xl">Simple pricing</h2>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-black/65">
-            One free check-in to start. Core compares every day to your own baseline. Plus adds a weekly
-            call, no app required.
+            One free check-in to start. Core tracks ten biomarkers against your own history, every day.
+            Plus adds a daily call, no app required.
           </p>
           <Link
             to="/pricing"
