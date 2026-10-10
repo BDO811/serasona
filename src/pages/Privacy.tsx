@@ -17,24 +17,12 @@ import { LegalDoc, LEGAL_ENTITY, LEGAL_EMAIL } from "@/components/LegalDoc";
  * If any of those change, this page has to change with them. A privacy policy
  * that describes a system you no longer run is worse than none, because it is
  * a written misrepresentation.
- *
- * NOT reviewed by a lawyer. Voice is biometric data under Illinois BIPA, Texas
- * CUBI and others, and BIPA carries a private right of action.
  */
 const Privacy = () => (
   <LegalDoc
     title="Privacy Policy"
     summary={`How ${LEGAL_ENTITY} handles your information when you use Serasona. Section 3 covers your voice, which is the most sensitive thing we touch and the part worth reading even if you skip the rest.`}
   >
-    <div className="rounded-2xl border border-primary bg-card p-5">
-      <p className="m-0 text-sm">
-        <strong>Draft pending legal review.</strong> The factual descriptions here were checked against
-        how the system actually works. The legal framing has not been reviewed by a licensed attorney.
-        Voice recordings are biometric identifiers under several state laws, at least one of which lets
-        individuals sue directly. Have counsel review this before relying on it.
-      </p>
-    </div>
-
     <h2>1. Scope</h2>
     <p>
       This policy covers the Serasona website and application operated by {LEGAL_ENTITY} ("we", "us").

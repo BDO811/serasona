@@ -10,23 +10,12 @@ import { LegalDoc, LEGAL_ENTITY, LEGAL_EMAIL } from "@/components/LegalDoc";
  * tiers. The last of those is the one most often missed — placing automated
  * calls or texts without documented express written consent is a TCPA problem
  * with statutory damages per message.
- *
- * NOT reviewed by a lawyer. See the notice at the top of the page.
  */
 const Terms = () => (
   <LegalDoc
     title="Terms of Service"
     summary={`These terms govern your use of Serasona, a voice-based wellness product operated by ${LEGAL_ENTITY}. Please read section 2 (not a medical service), section 6 (calls and messages), and sections 11 to 13 (disclaimers, liability and indemnity) closely. They affect your legal rights.`}
   >
-    <div className="rounded-2xl border border-primary bg-card p-5">
-      <p className="m-0 text-sm">
-        <strong>Draft pending legal review.</strong> This document was prepared to be comprehensive and
-        accurate to how the product works, but it has not been reviewed by a licensed attorney. Voice
-        recordings are biometric data in several states, and automated calling is separately regulated.
-        Have counsel review this before relying on it.
-      </p>
-    </div>
-
     <h2>1. Who we are, and accepting these terms</h2>
     <p>
       Serasona is operated by {LEGAL_ENTITY} ("Serasona", "we", "us"). By creating an account, checking
