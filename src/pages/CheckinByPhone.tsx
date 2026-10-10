@@ -23,18 +23,22 @@ import {
  * weekly, no app required." Core and Free get the in-app recorder at /checkin,
  * which is the better capture anyway — this one is about reach.
  *
- * Two deliveries behind one page:
- *   "Text me a link"  the browser records at full quality, they just do not
- *                     have to be in the app when we decide to ask
+ * Two ways to check in from here:
+ *   "Check in here"   records in this browser at full quality
  *   "Call me"         an actual phone call, works on a landline, lower audio
  *                     fidelity (see the note on the button)
+ *
+ * There used to be a third, "Text me a link". SMS is switched off until 10DLC
+ * registration clears — unregistered A2P traffic on a long code gets filtered
+ * by carriers, so the message would often not arrive and the number risks being
+ * blocked. The web mode still mints the same link, it just opens it here.
  */
 
 const PHONE_KEY = "serasona.checkinPhone";
 
 const WAITING_COPY: Partial<Record<CheckinStatus, string>> = {
-  sending_link: "Sending the link…",
-  link_sent: "Sent. Tap it on your phone when you are ready.",
+  sending_link: "Preparing your check-in…",
+  link_sent: "Ready. Opening your check-in…",
   capturing: "Listening…",
   dialing: "Connecting…",
   ringing: "Ringing your phone now.",
@@ -227,7 +231,8 @@ const CheckinByPhone = () => {
           <p className="text-xs font-mono uppercase tracking-wider text-primary">Plus</p>
           <h1 className="font-serif text-3xl text-foreground">Check in by phone</h1>
           <p className="text-muted-foreground mt-2 leading-relaxed">
-            No app needed. We reach you, you talk for a few minutes, the reading lands in your account.
+            Check in right here, or have Serasona call you. Either way you talk for a few minutes and
+            the reading lands in your account.
           </p>
         </div>
 
@@ -254,7 +259,7 @@ const CheckinByPhone = () => {
               mode === "web" ? "border-primary bg-card" : "border-border bg-card/50"
             }`}
           >
-            <span className="block text-foreground">Text me a link</span>
+            <span className="block text-foreground">Check in here</span>
             <span className="block text-sm text-muted-foreground mt-1">
               Records in your browser. Best quality.
             </span>
@@ -276,7 +281,7 @@ const CheckinByPhone = () => {
         {error && <p className="text-sm text-destructive">{error}</p>}
 
         <Button className="w-full" onClick={begin} disabled={starting || !phone.trim()}>
-          {starting ? "Starting…" : mode === "phone" ? "Call me now" : "Send the link"}
+          {starting ? "Starting…" : mode === "phone" ? "Call me now" : "Start check-in"}
         </Button>
 
         <p className="text-sm text-muted-foreground leading-relaxed">
