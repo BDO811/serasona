@@ -99,8 +99,16 @@ const Signup = () => {
               onCheckedChange={(checked) => setConsentGiven(checked === true)}
             />
             <Label htmlFor="consent" className="text-xs font-normal text-muted-foreground leading-relaxed">
-              I'm 18+ and agree to the Terms and Privacy Policy. Serasona is a wellness product and does not
-              diagnose, treat, prevent or cure any condition.
+              I'm 18+ and agree to the{" "}
+              <Link to="/terms" target="_blank" className="underline underline-offset-2 text-foreground">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy" target="_blank" className="underline underline-offset-2 text-foreground">
+                Privacy Policy
+              </Link>
+              , including the recording and handling of my voice. Serasona is a wellness product and does
+              not diagnose, treat, prevent or cure any condition.
             </Label>
           </div>
           <Button type="submit" className="w-full" disabled={submitting}>

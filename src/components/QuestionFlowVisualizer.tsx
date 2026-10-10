@@ -370,6 +370,32 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
     const stream = audioStreamRef.current;
     const AudioContextCtor = window.AudioContext || (window as any).webkitAudioContext;
     const audioCtx = new AudioContextCtor();
+
+    // A context created without a qualifying user gesture in THIS document
+    // starts suspended, and a suspended context pulls nothing through the
+    // analyser: every RMS reads zero, so the silence check concludes the
+    // microphone is dead and tells the user to go fix their system settings.
+    //
+    // This never showed up on the old demo because the only way to reach
+    // recording was home -> language -> triage, several clicks deep in the same
+    // document. The signed-in /checkin route opens straight on capture after a
+    // navigation, which resets the gesture, so the context starts suspended.
+    //
+    // Resume immediately, and if the browser refuses, arm a one-shot retry on
+    // the next interaction. The listeners remove themselves either way.
+    const resumeCtx = () => {
+      if (audioCtx.state === "suspended") void audioCtx.resume().catch(() => {});
+    };
+    resumeCtx();
+    const GESTURES = ["pointerdown", "touchstart", "keydown"] as const;
+    const onGesture = () => {
+      resumeCtx();
+      GESTURES.forEach((g) => window.removeEventListener(g, onGesture));
+    };
+    if (audioCtx.state === "suspended") {
+      GESTURES.forEach((g) => window.addEventListener(g, onGesture, { once: true, passive: true }));
+    }
+
     const src = audioCtx.createMediaStreamSource(stream);
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 1024;
@@ -455,6 +481,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
     return () => {
       if (waveformRafRef.current) cancelAnimationFrame(waveformRafRef.current);
       try {
+        GESTURES.forEach((g) => window.removeEventListener(g, onGesture));
         audioCtx.close();
       } catch {
         // ignore
@@ -544,7 +571,13 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
               non-zero sample — either way, asking for another answer cannot fix
               it, so the message names the device instead.
             */
-            const noSignal = micMutedRef.current || peakRmsSeenRef.current === 0;
+            // A suspended context is not a broken microphone. It reads as
+            // silence for the same reason, so it has to be separated out before
+            // blaming the device, or we send people to System Settings to fix
+            // something that is not wrong.
+            const ctxSuspended = audioCtxStateRef.current === "suspended";
+            const noSignal =
+              !ctxSuspended && (micMutedRef.current || peakRmsSeenRef.current === 0);
             console.warn("[QuestionFlowVisualizer] short take, re-asking", {
               speechSeconds: +spokeSeconds.toFixed(2),
               tickFrames: tickCountRef.current,
@@ -559,9 +592,11 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
               return next;
             });
             setInsufficientSpeechWarning(
-              noSignal
-                ? "No sound is reaching this browser from your microphone. Check its microphone access in system settings, close any app that might be using the mic, or try Safari."
-                : `Only ${Math.round(spokeSeconds)}s of speech captured. Let's try a different question.`
+              ctxSuspended
+                ? "Tap anywhere to switch the microphone on, then answer again. Your browser holds audio until you interact with the page."
+                : noSignal
+                  ? "No sound is reaching this browser from your microphone. Check its microphone access in system settings, close any app that might be using the mic, or try Safari."
+                  : `Only ${Math.round(spokeSeconds)}s of speech captured. Let's try a different question.`
             );
             setHasRecordedCurrentQuestion(false);
             return;
