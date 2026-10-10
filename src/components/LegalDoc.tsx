@@ -16,15 +16,15 @@ export const LEGAL_ENTITY = "Amplifier Health, Inc.";
  * The address people are told to write to for privacy requests, consent
  * withdrawal and legal notice.
  *
- * This MUST be a mailbox that actually receives mail. privacy@serasona.com does
- * not yet exist — serasona.com has no MX records at all, so mail to it bounces
- * — and a privacy policy that directs people to a dead address is not a
- * technicality, it is a failure to honour the rights the policy grants.
+ * This MUST be a mailbox that actually receives mail. A privacy policy that
+ * directs people to a dead address is not a technicality — it is a failure to
+ * honour the rights the policy grants.
  *
- * Pointing at the working Amplifier Health mailbox until privacy@serasona.com
- * is created, at which point this is the only line that needs to change.
+ * serasona.com now routes mail through Mailgun (MX mxa/mxb.mailgun.org, with a
+ * matching SPF record), so this points where it should. If mail routing ever
+ * changes, this line changes with it.
  */
-export const LEGAL_EMAIL = "amit@amplifierhealth.com";
+export const LEGAL_EMAIL = "privacy@serasona.com";
 
 interface LegalDocProps {
   title: string;
