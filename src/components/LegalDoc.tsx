@@ -12,7 +12,19 @@ import { SiteHeader } from "@/components/SiteHeader";
 
 export const LEGAL_EFFECTIVE = "9 October 2026";
 export const LEGAL_ENTITY = "Amplifier Health, Inc.";
-export const LEGAL_EMAIL = "privacy@serasona.com";
+/**
+ * The address people are told to write to for privacy requests, consent
+ * withdrawal and legal notice.
+ *
+ * This MUST be a mailbox that actually receives mail. privacy@serasona.com does
+ * not yet exist — serasona.com has no MX records at all, so mail to it bounces
+ * — and a privacy policy that directs people to a dead address is not a
+ * technicality, it is a failure to honour the rights the policy grants.
+ *
+ * Pointing at the working Amplifier Health mailbox until privacy@serasona.com
+ * is created, at which point this is the only line that needs to change.
+ */
+export const LEGAL_EMAIL = "amit@amplifierhealth.com";
 
 interface LegalDocProps {
   title: string;

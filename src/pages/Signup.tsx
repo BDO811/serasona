@@ -9,6 +9,7 @@ import { startCheckout } from "@/lib/billing-client";
 import { toast } from "sonner";
 import type { PlanId } from "@/context/AuthContext";
 import { SiteHeader } from "@/components/SiteHeader";
+import { LEGAL_EFFECTIVE } from "@/components/LegalDoc";
 
 const Signup = () => {
   const { signUp } = useAuth();
@@ -28,6 +29,11 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [consentGiven, setConsentGiven] = useState(false);
+  // Illinois BIPA requires a written release for a biometric identifier that is
+  // SEPARATE from general terms acceptance. Bundling it into the terms checkbox
+  // is the specific mistake BIPA cases are built on, so this is its own box and
+  // its own sentence, unticked by default.
+  const [voiceConsent, setVoiceConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (event: FormEvent) => {
@@ -36,9 +42,20 @@ const Signup = () => {
       toast.error("You'll need to accept the terms to continue.");
       return;
     }
+    if (!voiceConsent) {
+      toast.error("We need your consent to process your voice before we can create an account.");
+      return;
+    }
     setSubmitting(true);
     try {
-      await signUp(email, password, fullName);
+      await signUp(email, password, fullName, {
+        // A written release is only worth having if you can show what was
+        // agreed and when. Stored with the policy version so a later change to
+        // the wording cannot be mistaken for what this person actually saw.
+        termsAcceptedAt: new Date().toISOString(),
+        biometricConsentAt: new Date().toISOString(),
+        consentPolicyVersion: LEGAL_EFFECTIVE,
+      });
       if (selectedPlan && selectedPlan !== "free") {
         await startCheckout(selectedPlan);
         return; // startCheckout redirects the browser to Stripe
@@ -111,6 +128,33 @@ const Signup = () => {
               not diagnose, treat, prevent or cure any condition.
             </Label>
           </div>
+
+          <div className="flex items-start gap-2 rounded-xl border border-border bg-card p-3">
+            <Checkbox
+              id="voice-consent"
+              checked={voiceConsent}
+              onCheckedChange={(checked) => setVoiceConsent(checked === true)}
+            />
+            <Label
+              htmlFor="voice-consent"
+              className="text-xs font-normal text-muted-foreground leading-relaxed"
+            >
+              <strong className="text-foreground">I consent to Serasona recording my voice.</strong> A
+              recording of your voice is a biometric identifier. Serasona collects it only to compute
+              your wellness readings, destroys it as soon as the analysis finishes and within one day at
+              the latest, and never sells, leases or trades it. You can withdraw this consent at any
+              time. See the{" "}
+              <Link
+                to="/privacy#biometric"
+                target="_blank"
+                className="underline underline-offset-2 text-foreground"
+              >
+                biometric notice
+              </Link>
+              .
+            </Label>
+          </div>
+
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting ? "Creating account…" : "Create account"}
           </Button>

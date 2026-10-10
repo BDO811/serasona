@@ -230,13 +230,85 @@ const Privacy = () => (
       you may withdraw consent to its collection and sharing.
     </p>
 
-    <h3>Biometric identifiers</h3>
+    <h3 id="biometric">Biometric identifiers — Illinois, Texas and Washington</h3>
     <p>
-      Where your state treats a voiceprint as a biometric identifier, this policy, together with the
-      consent you give at signup, is our written notice of what we collect, why, how long we keep it and
-      when we destroy it. Our retention schedule is in section 3:{" "}
-      <strong>recordings are destroyed as soon as they have been scored, and within one day at the
-      latest.</strong> We do not sell, lease or trade biometric identifiers.
+      This section is our written notice under the Illinois Biometric Information Privacy Act
+      (740 ILCS 14), the Texas Capture or Use of Biometric Identifier Act, and comparable laws. It is
+      also our publicly available retention and destruction schedule, which those laws require us to
+      publish.
+    </p>
+
+    <h4 className="font-semibold text-foreground mt-6 mb-2">What we collect</h4>
+    <p>
+      A <strong>voiceprint</strong> — a recording of your voice, from which acoustic measurements are
+      derived. A voiceprint is a biometric identifier. We collect it only when you start a check-in.
+    </p>
+
+    <h4 className="font-semibold text-foreground mt-6 mb-2">The specific purpose</h4>
+    <p>
+      To compute your wellness readings, and for nothing else. We do not use it to identify you, to
+      authenticate you, to build a voice clone, or for any security, employment or surveillance purpose.
+    </p>
+
+    <h4 className="font-semibold text-foreground mt-6 mb-2">
+      The term, and when we destroy it
+    </h4>
+    <ul>
+      <li>
+        We keep a recording <strong>only for as long as it takes to score it</strong> — typically well
+        under a minute.
+      </li>
+      <li>
+        It is <strong>permanently destroyed as soon as the analysis finishes</strong>, whether the
+        analysis succeeded, failed, or you abandoned the check-in.
+      </li>
+      <li>
+        An automatic deletion rule destroys anything still present{" "}
+        <strong>within one day</strong>, so nothing survives a fault.
+      </li>
+      <li>
+        In no event do we retain a voiceprint beyond the earlier of the purpose being satisfied or{" "}
+        <strong>three years after your last interaction with us</strong>, the outer limit Illinois law
+        permits.
+      </li>
+      <li>
+        What survives is the derived reading — a set of numbers. It is not a voiceprint and cannot be
+        used to reconstruct your voice.
+      </li>
+    </ul>
+
+    <h4 className="font-semibold text-foreground mt-6 mb-2">What we will never do</h4>
+    <ul>
+      <li>
+        <strong>We do not sell, lease, trade or otherwise profit from your voiceprint.</strong>
+      </li>
+      <li>
+        We do not disclose, redisclose or otherwise disseminate it, except to the processor that
+        performs the analysis (section 5), where you direct us to, or where a warrant or subpoena
+        requires it.
+      </li>
+      <li>We do not use it to identify you to anyone.</li>
+    </ul>
+
+    <h4 className="font-semibold text-foreground mt-6 mb-2">How we protect it</h4>
+    <p>
+      We store and transmit voiceprints using a reasonable standard of care that is at least as
+      protective as the way we handle other confidential and sensitive information: encrypted in
+      transit and at rest, access limited to those who need it, and destroyed on the schedule above.
+    </p>
+
+    <h4 className="font-semibold text-foreground mt-6 mb-2">Your written release</h4>
+    <p>
+      Illinois law requires your <strong>separate, informed written consent</strong> before a voiceprint
+      is collected. That is why signup asks you to agree to voice processing in its own checkbox,
+      distinct from accepting these documents. You can decline it and still read the site; you cannot
+      check in without it, because the check-in is the voice analysis.
+    </p>
+    <p>
+      <strong>You may withdraw that consent at any time</strong> by emailing{" "}
+      <a href={`mailto:${LEGAL_EMAIL}`}>{LEGAL_EMAIL}</a> or deleting your account. Withdrawal stops any
+      further collection. Recordings already analysed have already been destroyed under the schedule
+      above, so there is nothing left to delete.
     </p>
 
     <h2>9. International transfers</h2>

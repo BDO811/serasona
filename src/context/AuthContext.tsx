@@ -14,6 +14,15 @@ import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
 const NOT_CONFIGURED_ERROR = new Error("Accounts aren't set up yet. Check back soon.");
 
 // Plan ids match Stripe Price lookup_keys — see docs/SETUP_BILLING.md.
+/** Proof of what a person agreed to at signup, and when. See Signup.tsx. */
+export interface ConsentRecord {
+  termsAcceptedAt: string;
+  /** Separate written release for voice, required by Illinois BIPA. */
+  biometricConsentAt: string;
+  /** Which published version of the documents they saw. */
+  consentPolicyVersion: string;
+}
+
 export type PlanId = "free" | "core" | "plus" | "executive";
 
 export interface SubscriptionState {
@@ -35,7 +44,7 @@ interface AuthContextType {
   loading: boolean;
   subscription: SubscriptionState;
   isEntitled: (plan: Exclude<PlanId, "free">) => boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  signUp: (email: string, password: string, fullName: string, consent?: ConsentRecord) => Promise<void>;
   logIn: (email: string, password: string) => Promise<void>;
   logOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -90,7 +99,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [subscription]
   );
 
-  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
+  const signUp = useCallback(async (
+    email: string,
+    password: string,
+    fullName: string,
+    consent?: ConsentRecord,
+  ) => {
     if (!auth || !db) throw NOT_CONFIGURED_ERROR;
     const credential = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(credential.user, { displayName: fullName });
@@ -104,10 +118,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     //
     // Its absence already means free/none — the snapshot listener above falls
     // back to DEFAULT_SUBSCRIPTION when the field is missing.
+    // The consent record is written at creation, not later: the Firestore rules
+    // only allow email and fullName to be updated afterwards, so this is the one
+    // chance to record it. That is deliberate — a written release you can edit
+    // after the fact is not evidence of anything.
     await setDoc(doc(db, "users", credential.user.uid), {
       email,
       fullName,
       createdAt: serverTimestamp(),
+      ...(consent ?? {}),
     });
   }, []);
 
