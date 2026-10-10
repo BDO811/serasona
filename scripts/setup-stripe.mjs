@@ -35,11 +35,11 @@ const LIVE = KEY.startsWith("sk_live_");
 // Must match PLAN_PRICE_IDS in gcp-functions/create-checkout-session and the
 // reverse map in stripe-webhook, and the tiers on src/pages/Pricing.tsx.
 const PLANS = [
-  { id: "core", name: "Serasona Core", amount: 2900, env: "STRIPE_PRICE_CORE",
+  { id: "core", name: "Serasona Core", amount: 1450, env: "STRIPE_PRICE_CORE",
     description: "Daily check-ins in the app, compared to your own 30-day baseline." },
-  { id: "plus", name: "Serasona Plus", amount: 4900, env: "STRIPE_PRICE_PLUS",
+  { id: "plus", name: "Serasona Plus", amount: 2450, env: "STRIPE_PRICE_PLUS",
     description: "Everything in Core, plus Serasona calls you, on any phone." },
-  { id: "executive", name: "Serasona Executive", amount: 14900, env: "STRIPE_PRICE_EXECUTIVE",
+  { id: "executive", name: "Serasona Executive", amount: 7450, env: "STRIPE_PRICE_EXECUTIVE",
     description: "Daily phone check-ins for people who want the closest watch." },
 ];
 
@@ -123,6 +123,11 @@ async function findOrCreatePrice(plan, productId) {
       // dashboard readable and gives a stable handle if a price is ever
       // replaced (Stripe prices are immutable; you create a new one).
       lookup_key: `serasona_${plan.id}_monthly`,
+      // Stripe prices are immutable, so changing a price means creating a new
+      // one. Without this the second run fails: the lookup key is still held by
+      // the old price. Transferring it means the key always names the CURRENT
+      // price, which is the whole point of having one.
+      transfer_lookup_key: "true",
     },
   });
   log("price", `created ${created.id} ($${(plan.amount / 100).toFixed(2)}/mo)`);

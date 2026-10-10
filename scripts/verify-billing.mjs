@@ -96,7 +96,9 @@ async function main() {
         { headers: { Authorization: `Bearer ${STRIPE_KEY}` } }
       ).then((r) => r.json()).catch(() => ({}));
       const amount = sess?.line_items?.data?.[0]?.amount_total ?? sess?.amount_total;
-      const expected = { core: 2900, plus: 4900, executive: 14900 }[planId];
+      // Halved for the per-biomarker tier structure. Must track src/pages/Pricing.tsx:
+      // a mismatch here means the page advertises one price and Stripe charges another.
+      const expected = { core: 1450, plus: 2450, executive: 7450 }[planId];
       check(
         `  ${planId} session priced $${(expected / 100).toFixed(2)}`,
         amount === expected,

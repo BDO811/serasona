@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { startCheckout } from "@/lib/billing-client";
+import { DEMO_MODE, demoAuth } from "@/lib/demo-mode";
+import { DemoModeBanner } from "@/components/DemoModeBanner";
 import { toast } from "sonner";
-import type { PlanId } from "@/context/AuthContext";
 import { SiteHeader } from "@/components/SiteHeader";
+import type { PlanId } from "@/context/AuthContext";
 
 interface Tier {
   id: PlanId;
@@ -26,42 +28,45 @@ const TIERS: Tier[] = [
     price: "$0",
     cadence: "one check-in",
     description: "See what your voice says today. No card required.",
-    features: ["One 20-second check-in", "Your seven signals, this time only", "No history or trend yet"],
+    features: ["One 20-second check-in", "No history or trend yet"],
   },
   {
     id: "core",
     name: "Core",
-    price: "$29",
+    price: "$14.50",
     cadence: "/month",
-    description: "Daily check-ins in the app, compared to your own 30-day baseline.",
+    description: "One check-in a day, tracked against your own history across ten biomarkers.",
     features: [
-      "Unlimited daily check-ins",
-      "Your 30-day baseline across all seven signals",
-      "Clear / Watch / Strained trend over time",
-      "Daylight and Dusk themes",
+      "One check-in every day",
+      "Your own longitudinal trend across 10 biomarkers",
+      "Clear / Watch / Strained, with a direction, not just a number",
+      "No wearables, no lab work",
     ],
     highlighted: true,
   },
   {
     id: "plus",
     name: "Plus",
-    price: "$49",
+    price: "$24.50",
     cadence: "/month",
-    description: "Everything in Core, plus Serasona calls you, on any phone.",
+    description: "Everything in Core, plus Serasona calls you once a day.",
     features: [
       "Everything in Core",
-      "Serasona calls you weekly, no app required",
-      "Works on a landline or flip phone",
-      "Priority email delivery of results",
+      "A daily call, any phone, no app required",
+      "Your result still lands in the app either way",
     ],
   },
   {
     id: "executive",
     name: "Executive",
-    price: "$149",
+    price: "$74.50",
     cadence: "/month",
-    description: "Daily phone check-ins for people who want the closest watch.",
-    features: ["Everything in Plus", "Daily call-in option", "Fastest report delivery", "Priority support"],
+    description: "Everything in Plus, plus clinical biomarkers like cognitive decline and anemia risk.",
+    features: [
+      "Everything in Plus",
+      "Clinical-grade biomarkers: cognitive decline, anemia, and more",
+      "Priority support",
+    ],
   },
 ];
 
@@ -72,7 +77,7 @@ const Pricing = () => {
 
   const handleSelect = async (planId: PlanId) => {
     if (planId === "free") {
-      navigate(user ? "/dashboard" : "/signup");
+      navigate(user ? "/account" : "/");
       return;
     }
     if (!user) {
@@ -81,6 +86,11 @@ const Pricing = () => {
     }
     setLoadingPlan(planId);
     try {
+      if (DEMO_MODE) {
+        await demoAuth.mockSubscribe(planId as Exclude<PlanId, "free">);
+        navigate("/account?checkout=success");
+        return;
+      }
       await startCheckout(planId as Exclude<PlanId, "free">);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Couldn't start checkout.");
@@ -89,10 +99,11 @@ const Pricing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background md:py-24">
+    <div className="min-h-screen bg-background">
       <SiteHeader />
-      <div className="px-6 py-16">
+      <div className="px-6 py-16 md:py-24">
       <div className="max-w-5xl mx-auto">
+        <DemoModeBanner />
         <div className="text-center space-y-3 mb-12">
           <h1 className="font-serif text-4xl md:text-5xl text-foreground">Choose how you check in</h1>
           <p className="text-muted-foreground max-w-lg mx-auto">
@@ -102,9 +113,9 @@ const Pricing = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
           {TIERS.map((tier) => {
-            // A signed-out visitor has no plan at all, so the free tier must
-            // read as an invitation rather than "your current plan" — which
-            // also disabled the one button a new visitor is meant to press.
+            // A signed-out visitor has no plan, so the free tier must read as an
+            // invitation rather than "your current plan" — which also disabled
+            // the one button a new visitor is meant to press.
             const isCurrentPlan = Boolean(user) && (
               tier.id === "free"
                 ? subscription.status === "none"
