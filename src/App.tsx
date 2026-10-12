@@ -22,6 +22,7 @@ import Checkin from "./pages/Checkin";
 import ResetPassword from "./pages/ResetPassword";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Science from "./pages/Science";
 import Admin from "./pages/Admin";
 import CheckinByPhone from "./pages/CheckinByPhone";
 import NotFound from "./pages/NotFound";
@@ -61,6 +62,7 @@ const App = () => (
               />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/science" element={<Science />} />
               <Route
                 path="/account"
                 element={

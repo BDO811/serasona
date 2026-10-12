@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { asset } from "@/lib/asset";
 import { SiteHeader } from "@/components/SiteHeader";
+import { VoiceDemo } from "@/components/VoiceDemo";
 import {
   Accordion,
   AccordionContent,
@@ -110,7 +111,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.6 }}
           className="font-mono text-sm tracking-[0.25em] uppercase text-black/90"
         >
-          Twenty Seconds Of Speech
+          Nothing to wear. Nothing to charge.
         </motion.span>
 
         {/* Hero headline */}
@@ -120,9 +121,9 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="mt-6 font-serif text-[13vw] leading-[0.95] tracking-tight text-black sm:text-6xl md:text-7xl"
         >
-          Hear what your voice
+          The only wearable
           <br />
-          <span className="italic">already knows.</span>
+          <span className="italic">you already own.</span>
         </motion.h1>
 
         {/* Waveform accent */}
@@ -155,8 +156,9 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-10 max-w-[560px] text-lg leading-relaxed text-black/70 md:text-xl"
         >
-          Your voice carries a read on how you're doing, alongside the words you
-          say. Try it yourself, in under two minutes.
+          Every other health tracker asks you to buy something and strap it on.
+          Yours came standard. Twenty seconds of speech reads stress, fatigue,
+          mood and four more.
         </motion.p>
 
         {/* CTA */}
@@ -178,6 +180,21 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
         >
           Or see plans and pricing
         </Link>
+
+        {/* A check-in, playing out. Vector and motion rather than a video file:
+            see VoiceDemo for why this is not a person. */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-24 w-full"
+        >
+          <p className="mb-8 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-black/45">
+            What a check-in looks like
+          </p>
+          <VoiceDemo />
+        </motion.div>
 
         {/* Stats row */}
         <motion.div
@@ -332,6 +349,9 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           </Link>
           <Link to="/login" className="hover:text-black">
             Log in
+          </Link>
+          <Link to="/science" className="hover:text-black">
+            Scientific Analysis
           </Link>
         </div>
         <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.15em] text-black/40">

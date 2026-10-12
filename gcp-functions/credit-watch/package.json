@@ -1,0 +1,12 @@
+{
+  "name": "credit-watch",
+  "version": "1.0.0",
+  "description": "Emails when the Serasona LAM account's credit balance runs low.",
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^7.10.0"
+  }
+}
