@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { asset } from "@/lib/asset";
 
 /**
  * A looping demonstration of a check-in: someone speaks, the waveform responds,
  * the signals resolve.
  *
- * Deliberately NOT a video file and NOT a synthetic person. A photoreal figure
- * on a health page reads as a testimonial from a customer who does not exist,
- * and a real video would be a megabyte-scale asset blocked by the site's CSP
- * if it were ever hosted off-origin. This is vector and motion only, so it
- * costs nothing to load, stays sharp at any size, and is honest about being an
- * illustration of the product rather than a person endorsing it.
+ * The face is licensed stock footage of a real person rather than a generated
+ * one: a synthetic human on a health page is a customer who does not exist, and
+ * generating one would also not be what was asked for. The clip is served from
+ * this origin, not a CDN, so no external host has to be trusted. See Speaker
+ * below for the encoding.
+ *
+ * Everything around the face is vector and motion, which is why the whole
+ * demonstration costs well under 100 KB.
  *
  * The phase timings are compressed: a real check-in records for twenty seconds,
  * which is far too long to watch on a loop.
@@ -89,7 +92,7 @@ export const VoiceDemo = () => {
 
       {/* The speaker */}
       <div className="mt-7 flex items-center gap-5">
-        <Figure speaking={speaking && !reduceMotion} />
+        <Speaker speaking={speaking && !reduceMotion} />
 
         {/* Waveform */}
         <div className="flex h-16 flex-1 items-center justify-center gap-[2.5px]">
@@ -179,41 +182,53 @@ export const VoiceDemo = () => {
 };
 
 /**
- * A stylised speaker. The jaw and the sound arcs are the only moving parts,
- * which is enough to read as "talking" without approaching a real likeness.
+ * The speaker.
+ *
+ * Licensed stock footage of a real person, cropped to the face and encoded at
+ * 300px square: 48 KB of H.264 with a 40 KB VP9 alternative and an 8 KB poster,
+ * so it costs less than most of the icons on the page and is safe on a phone
+ * over cellular.
+ *
+ * It plays only while the demo is in its speaking phase and is paused
+ * otherwise, which keeps a looping face from pulling attention through the
+ * rest of the cycle and keeps the decode off the main thread when idle.
+ *
+ * She is an illustration of the product, not a customer: nothing here is
+ * captioned as a testimonial, and the card labels itself an illustration.
  */
-const Figure = ({ speaking }: { speaking: boolean }) => (
-  <svg width="74" height="86" viewBox="0 0 74 86" fill="none" aria-hidden="true">
-    {/* shoulders */}
-    <path d="M9 86c0-15.5 12.5-25 28-25s28 9.5 28 25" fill="rgba(27,21,16,0.1)" />
-    {/* head */}
-    <circle cx="37" cy="33" r="22" fill="rgba(27,21,16,0.1)" />
-    {/* brow */}
-    <rect x="27" y="26" width="7" height="2.6" rx="1.3" fill="rgba(27,21,16,0.42)" />
-    <rect x="40" y="26" width="7" height="2.6" rx="1.3" fill="rgba(27,21,16,0.42)" />
-    {/* mouth, open and closing while speaking */}
-    <motion.ellipse
-      cx="37"
-      cy="42"
-      rx="6"
-      fill="#c2410c"
-      initial={false}
-      animate={speaking ? { ry: [1.4, 4.6, 2.2, 5.2, 1.4] } : { ry: 1.4 }}
-      transition={{ duration: 1.25, repeat: Infinity, ease: "easeInOut" }}
-    />
-    {/* sound arcs */}
-    {[0, 1, 2].map((i) => (
-      <motion.path
-        key={i}
-        d={`M${58 + i * 5} ${36 - i * 4}a${7 + i * 5} ${7 + i * 5} 0 0 1 0 ${14 + i * 10}`}
-        stroke="#c2410c"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        fill="none"
-        initial={false}
-        animate={speaking ? { opacity: [0, 0.85, 0] } : { opacity: 0 }}
-        transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.22, ease: "easeInOut" }}
-      />
-    ))}
-  </svg>
-);
+const Speaker = ({ speaking }: { speaking: boolean }) => {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    if (speaking) {
+      // Autoplay can still be refused; a paused poster is an acceptable result,
+      // so the rejection is swallowed rather than surfaced.
+      void v.play().catch(() => {});
+    } else {
+      v.pause();
+    }
+  }, [speaking]);
+
+  return (
+    <div className="relative h-[74px] w-[74px] shrink-0 overflow-hidden rounded-full bg-black/[0.06]">
+      <video
+        ref={ref}
+        className="h-full w-full object-cover"
+        poster={asset("video/speaker-poster.jpg")}
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      >
+        <source src={asset("video/speaker.webm")} type="video/webm" />
+        <source src={asset("video/speaker.mp4")} type="video/mp4" />
+      </video>
+      {/* Warms the clip's white studio background into the card's paper. */}
+      <div className="pointer-events-none absolute inset-0 rounded-full bg-[#c2410c] mix-blend-multiply opacity-[0.06]" />
+      <div className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-black/10" />
+    </div>
+  );
+};

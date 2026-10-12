@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { asset } from "@/lib/asset";
 import { SiteHeader } from "@/components/SiteHeader";
 import { VoiceDemo } from "@/components/VoiceDemo";
+import { AmbientVideo } from "@/components/AmbientVideo";
 import {
   Accordion,
   AccordionContent,
@@ -103,7 +104,12 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           nav this replaced did not. */}
       <SiteHeader overlay />
 
-      <div className="mx-auto flex max-w-[900px] flex-col items-center px-6 pb-24 pt-16 text-center md:pt-24">
+      {/* The hero sits in its own stacking context so the ambient footage can
+          run full-bleed behind it and fade out before the sections below. */}
+      <div className="relative">
+        <AmbientVideo />
+
+        <div className="relative mx-auto flex max-w-[900px] flex-col items-center px-6 pb-24 pt-16 text-center md:pt-24">
         {/* Eyebrow */}
         <motion.span
           initial={{ opacity: 0, y: 8 }}
@@ -225,6 +231,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           aria-hidden="true"
           className="mt-20 h-16 w-auto max-w-full md:h-20"
         />
+        </div>
       </div>
 
       {/* What's a voice biomarker */}

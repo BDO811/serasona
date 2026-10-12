@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AssessmentProvider } from "@/context/AssessmentContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { PageShell } from "@/components/PageShell";
 import Index from "./pages/Index";
 import DetailedAnalysisView from "./pages/DetailedAnalysisView";
 import LongitudinalView from "./pages/LongitudinalView";
@@ -56,16 +57,19 @@ const App = () => (
                 path="/admin"
                 element={
                   <ProtectedRoute>
-                    <Admin />
+                    <PageShell>
+                      <Admin />
+                    </PageShell>
                   </ProtectedRoute>
                 }
               />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/science" element={<Science />} />
+              <Route path="/terms" element={<PageShell><Terms /></PageShell>} />
+              <Route path="/privacy" element={<PageShell><Privacy /></PageShell>} />
+              <Route path="/science" element={<PageShell><Science /></PageShell>} />
               <Route
                 path="/account"
                 element={
+                  /* Account renders SiteHeader itself; no PageShell, or it doubles. */
                   <ProtectedRoute>
                     <Account />
                   </ProtectedRoute>
@@ -84,7 +88,9 @@ const App = () => (
                 path="/checkin/phone"
                 element={
                   <ProtectedRoute>
-                    <CheckinByPhone />
+                    <PageShell>
+                      <CheckinByPhone />
+                    </PageShell>
                   </ProtectedRoute>
                 }
               />
@@ -96,12 +102,14 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-              <Route path="/history" element={<LongitudinalView />} />
+              <Route path="/history" element={<PageShell><LongitudinalView /></PageShell>} />
               <Route
                 path="/dashboard"
                 element={
                   <ProtectedRoute>
-                    <Dashboard />
+                    <PageShell>
+                      <Dashboard />
+                    </PageShell>
                   </ProtectedRoute>
                 }
               />
@@ -114,7 +122,7 @@ const App = () => (
               <Route path="/analysis-failed" element={<AnalysisFailed onRestart={() => window.location.href = "/"} />} />
               <Route path="/recording-not-supported" element={<RecordingNotSupported onBack={() => window.location.href = "/"} />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<PageShell><NotFound /></PageShell>} />
             </Routes>
           </AssessmentProvider>
         </AuthProvider>
