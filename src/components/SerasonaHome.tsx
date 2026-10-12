@@ -129,9 +129,9 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="mt-6 font-serif text-[13vw] leading-[0.95] tracking-tight text-black sm:text-6xl md:text-7xl"
         >
-          No wearable to buy,
+          <span className="font-semibold text-[#0d6a76]">No ring, no band, no wearable to buy,</span>
           <br />
-          <span className="italic">more signals than one gives you.</span>
+          <span className="italic">get a deeper understanding of your body than any device.</span>
         </motion.h1>
 
         {/* Waveform accent */}
@@ -164,9 +164,9 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-10 max-w-[560px] text-lg leading-relaxed text-black/70 md:text-xl"
         >
-          A ring or a band can run hundreds of dollars and still only read
-          your body. Your voice is free, and it carries seven signals,
-          including stress, mood, and energy, that a wearable can't read.
+          Hundreds of dollars buys a device that only reads your body. Your
+          voice is free, and it already carries seven signals, including
+          stress, mood, and energy, that no device can read.
         </motion.p>
 
         {/* CTA */}

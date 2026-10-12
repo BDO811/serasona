@@ -2,19 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
 
 /**
- * Full-bleed ambient footage behind the hero: people in conversation, already
- * defocused in-camera.
- *
- * The defocus matters. A sharp background behind a headline is a contrast
- * problem you then fight with overlays until the footage is too dark to read as
- * anything; footage shot at a wide aperture reads as warmth and movement while
- * leaving the type alone.
+ * Full-bleed ambient footage behind the hero: two women in conversation,
+ * shot in focus (licensed stock footage, Pexels clip 5252440). Legibility
+ * against the hero copy comes from the wash overlay below, not from defocus,
+ * so the footage itself is left sharp rather than pre-blurred in-camera.
  *
  * Mobile is the constraint this is built around:
  *
- *   - 156 KB of H.264 and 113 KB of VP9 at 960x540, with a 16 KB poster. The
- *     poster paints immediately and the video replaces it when decoded, so the
- *     hero is never blank and never janks.
+ *   - ~210 KB of H.264 and ~190 KB of VP9 at 960x540, with a ~24 KB poster.
+ *     The poster paints immediately and the video replaces it when decoded,
+ *     so the hero is never blank and never janks.
  *   - Nothing loads at all on a narrow screen or a metered connection. A
  *     background flourish is not worth a cellular download, so phones get the
  *     poster image and stop there.
@@ -93,8 +90,8 @@ export const AmbientVideo = () => {
           one: a flat tint to drop its contrast, then a vertical gradient that
           goes nearly opaque at the bottom so the hero copy sits on paper rather
           than on film. */}
-      <div className="absolute inset-0 bg-[#fbf7f1]/50" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#fbf7f1]/35 to-[#fbf7f1]" />
+      <div className="absolute inset-0 bg-[#fbf7f1]/10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#fbf7f1]/10 to-[#fbf7f1]/30" />
     </div>
   );
 };
