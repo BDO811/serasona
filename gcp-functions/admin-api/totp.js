@@ -112,4 +112,7 @@ function otpauthUri({ secret, account, issuer = "Serasona Admin" }) {
   return `otpauth://totp/${label}?${params.toString()}`;
 }
 
-module.exports = { generateSecret, verify, otpauthUri, STEP_SECONDS, DIGITS };
+// codeForCounter is exported only so the verification harness can derive a
+// current code. Nothing in the API calls it directly — verify() is the entry
+// point, and no route ever returns a generated code to a caller.
+module.exports = { generateSecret, verify, otpauthUri, codeForCounter, STEP_SECONDS, DIGITS };
