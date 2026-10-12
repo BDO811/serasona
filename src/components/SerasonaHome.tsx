@@ -119,7 +119,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.6 }}
           className="font-mono text-sm tracking-[0.25em] uppercase text-black/90"
         >
-          Nothing to wear. Nothing to charge.
+          Nothing to buy. Nothing to wear.
         </motion.span>
 
         {/* Hero headline */}
@@ -129,9 +129,9 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="mt-6 font-serif text-[13vw] leading-[0.95] tracking-tight text-black sm:text-6xl md:text-7xl"
         >
-          The only wearable
+          No wearable to buy,
           <br />
-          <span className="italic">you already own.</span>
+          <span className="italic">more signals than one gives you.</span>
         </motion.h1>
 
         {/* Waveform accent */}
@@ -164,9 +164,9 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-10 max-w-[560px] text-lg leading-relaxed text-black/70 md:text-xl"
         >
-          Every other health tracker asks you to buy something and strap it on.
-          Yours came standard. Twenty seconds of speech reads stress, fatigue,
-          mood and four more.
+          A ring or a band can run hundreds of dollars and still only read
+          your body. Your voice is free, and it carries seven signals,
+          including stress, mood, and energy, that a wearable can't read.
         </motion.p>
 
         {/* CTA */}
