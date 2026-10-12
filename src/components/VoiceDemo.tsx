@@ -185,9 +185,8 @@ export const VoiceDemo = () => {
  * The speaker.
  *
  * Licensed stock footage of a real person, cropped to the face and encoded at
- * 300px square: 48 KB of H.264 with a 40 KB VP9 alternative and an 8 KB poster,
- * so it costs less than most of the icons on the page and is safe on a phone
- * over cellular.
+ * 300px square: roughly 120 KB per format with a 7 KB poster, which is still
+ * small enough to be safe on a phone over cellular.
  *
  * It plays only while the demo is in its speaking phase and is paused
  * otherwise, which keeps a looping face from pulling attention through the

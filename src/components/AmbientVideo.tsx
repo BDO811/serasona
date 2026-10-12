@@ -93,8 +93,8 @@ export const AmbientVideo = () => {
           one: a flat tint to drop its contrast, then a vertical gradient that
           goes nearly opaque at the bottom so the hero copy sits on paper rather
           than on film. */}
-      <div className="absolute inset-0 bg-[#fbf7f1]/[0.55]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#fbf7f1]/40 via-[#fbf7f1]/70 to-[#fbf7f1]" />
+      <div className="absolute inset-0 bg-[#fbf7f1]/50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#fbf7f1]/35 to-[#fbf7f1]" />
     </div>
   );
 };

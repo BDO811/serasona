@@ -4,6 +4,7 @@ import { asset } from "@/lib/asset";
 import { SiteHeader } from "@/components/SiteHeader";
 import { VoiceDemo } from "@/components/VoiceDemo";
 import { AmbientVideo } from "@/components/AmbientVideo";
+import { Reveal, CountUp, ParallaxBand, StickyCta } from "@/components/motion-primitives";
 import {
   Accordion,
   AccordionContent,
@@ -103,6 +104,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
       {/* Shared site chrome: adapts to who is signed in, which the inline
           nav this replaced did not. */}
       <SiteHeader overlay />
+      <StickyCta onStart={onComplete} />
 
       {/* The hero sits in its own stacking context so the ambient footage can
           run full-bleed behind it and fade out before the sections below. */}
@@ -204,14 +206,15 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
 
         {/* Stats row */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ duration: 0.6 }}
           className="mt-20 grid w-full grid-cols-2 gap-x-6 gap-y-10 border-t border-black/15 pt-12 md:grid-cols-4"
         >
           {STATS.map((stat) => (
             <div key={stat.label}>
-              <div className="font-serif text-3xl text-black md:text-4xl">{stat.value}</div>
+              <CountUp value={stat.value} className="block font-serif text-3xl text-black md:text-4xl" />
               <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-black/55">
                 {stat.label}
               </div>
@@ -234,11 +237,22 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
         </div>
       </div>
 
+      {/* A full-bleed beat between the hero and the explainer, so the page
+          stops reading as one long column of centred text. */}
+      <ParallaxBand src={asset("video/band-conversation.jpg")}>
+        <Reveal>
+          <p className="mx-auto max-w-[680px] text-center font-serif text-2xl leading-snug text-[#fbf7f1] md:text-4xl">
+            A wearable waits on your wrist. Serasona needs the thing you were
+            going to do anyway.
+          </p>
+        </Reveal>
+      </ParallaxBand>
+
       {/* What's a voice biomarker */}
       <div className="border-t border-black/10 px-6 py-24 md:py-28">
         <div className="mx-auto max-w-[900px]">
           <div className="mx-auto max-w-[640px] text-center">
-            <h2 className="font-serif text-3xl text-black md:text-4xl">What's a voice biomarker?</h2>
+            <Reveal><h2 className="font-serif text-3xl text-black md:text-4xl">What's a voice biomarker?</h2></Reveal>
             <p className="mt-5 text-sm leading-relaxed text-black/65 md:text-base">
               Speech is one of the most demanding things your body does. In the time it takes to say a
               sentence, your breath, vocal cords, and articulation all have to coordinate in real time,
@@ -265,7 +279,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
       {/* How it works */}
       <div className="border-t border-black/10 px-6 py-24 md:py-28">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="text-center font-serif text-3xl text-black md:text-4xl">How it works</h2>
+          <Reveal><h2 className="text-center font-serif text-3xl text-black md:text-4xl">How it works</h2></Reveal>
           <div className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-8">
             {HOW_IT_WORKS.map((item) => (
               <div key={item.step}>
@@ -281,7 +295,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
       {/* Pricing teaser */}
       <div className="border-t border-black/10 px-6 py-24 md:py-28" style={{ backgroundColor: "#f2ebe0" }}>
         <div className="mx-auto max-w-[700px] text-center">
-          <h2 className="font-serif text-3xl text-black md:text-4xl">Simple pricing</h2>
+          <Reveal><h2 className="font-serif text-3xl text-black md:text-4xl">Simple pricing</h2></Reveal>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-black/65">
             One free check-in to start. Core tracks ten biomarkers against your own history, every day.
             Plus adds a daily call, no app required.
@@ -324,7 +338,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
       {/* FAQ */}
       <div className="border-t border-black/10 px-6 py-24 md:py-28" style={{ backgroundColor: "#f2ebe0" }}>
         <div className="mx-auto max-w-[700px]">
-          <h2 className="text-center font-serif text-3xl text-black md:text-4xl">Questions</h2>
+          <Reveal><h2 className="text-center font-serif text-3xl text-black md:text-4xl">Questions</h2></Reveal>
           <Accordion type="single" collapsible className="mt-10">
             {FAQ_ITEMS.map((item) => (
               <AccordionItem key={item.question} value={item.question}>
