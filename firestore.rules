@@ -23,6 +23,20 @@ service cloud.firestore {
       }
     }
 
+    // Admin-only collections. The catch-all below already denies these, but
+    // they are called out explicitly because the cost of someone later adding a
+    // broad rule above the catch-all is a leaked TOTP secret or a forged
+    // elevation grant. Only the Admin SDK touches these, and it bypasses rules.
+    //
+    //   adminTotp      per-admin TOTP secrets
+    //   adminElevation live second-factor grants (hashed)
+    //   adminAudit     append-only record of every admin action
+    //   voiceSessions  every user's check-in history
+    match /adminTotp/{doc}      { allow read, write: if false; }
+    match /adminElevation/{doc} { allow read, write: if false; }
+    match /adminAudit/{doc}     { allow read, write: if false; }
+    match /voiceSessions/{doc}  { allow read, write: if false; }
+
     // Default deny for anything not matched above.
     match /{document=**} {
       allow read, write: if false;

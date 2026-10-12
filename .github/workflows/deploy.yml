@@ -52,6 +52,7 @@ jobs:
           # "Plans aren't open yet" no matter how healthy Stripe is.
           VITE_CREATE_CHECKOUT_SESSION_URL: https://us-central1-amits-playground-po.cloudfunctions.net/createCheckoutSession
           VITE_CREATE_PORTAL_SESSION_URL: https://us-central1-amits-playground-po.cloudfunctions.net/createPortalSession
+          VITE_ADMIN_API_URL: https://us-central1-amits-playground-po.cloudfunctions.net/adminApi
 
       # The app uses BrowserRouter, so /detailed-analysis and friends are
       # client-side routes with no file behind them. GitHub Pages serves

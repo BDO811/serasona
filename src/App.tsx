@@ -22,6 +22,7 @@ import Checkin from "./pages/Checkin";
 import ResetPassword from "./pages/ResetPassword";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Admin from "./pages/Admin";
 import CheckinByPhone from "./pages/CheckinByPhone";
 import NotFound from "./pages/NotFound";
 
@@ -50,6 +51,14 @@ const App = () => (
               <Route path="/signup" element={<Signup />} />
               {/* Login has linked here since it was written; the route never existed. */}
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <Admin />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route
