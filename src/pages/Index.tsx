@@ -12,6 +12,7 @@ import { AnalysisFailed } from "@/pages/AnalysisFailed";
 import { useAssessment, HEALTH_FOCUS_TO_PATHWAY, type AssessmentPathway } from "@/context/AssessmentContext";
 import { useAuth } from "@/context/AuthContext";
 import { isFirebaseConfigured } from "@/lib/firebase";
+import { toast } from "sonner";
 
 type AppState = "home" | "language" | "triage" | "attract" | "capture" | "analysis" | "reveal" | "failed";
 
@@ -74,15 +75,24 @@ const Index = ({ initialState = "home", presetPathway, exitTo }: IndexProps = {}
   // So the marketing home no longer starts a recording. It starts a signup, and
   // the account lands back on /checkin to do the thing they came for.
   //
-  // Unless accounts are impossible. Firebase Auth is not attached to the
-  // project yet (docs/SETUP_BILLING.md — a previous attempt was refused by org
-  // policy), and demanding an account nobody can create would make the site
-  // unusable rather than gated. While that is true the anonymous flow stays,
-  // exactly as it is in production today. The gate turns itself on the moment
-  // real Firebase keys are filled in; nothing here needs changing again.
+  // Firebase Auth is attached and the gate is on in production: the button
+  // goes to /signup, where Terms, the 18+ confirmation and a separate
+  // voice-recording consent are all required before an account exists.
+  //
+  // The anonymous path below is now a development convenience only.
   const handleHomeComplete = useCallback(() => {
     if (!isFirebaseConfigured) {
-      setAppState("language");
+      // Only in development. isFirebaseConfigured is just "are the env vars
+      // present", so in a deployed build this branch would fire on a missing
+      // or rotated secret — and it would send someone straight into recording
+      // their voice with no account, no Terms acceptance and no recording
+      // consent. For a product that processes voice, a config mistake must
+      // fail closed rather than quietly drop the consent gate.
+      if (import.meta.env.DEV) {
+        setAppState("language");
+        return;
+      }
+      toast.error("Accounts are unavailable right now. Please try again shortly.");
       return;
     }
     navigate(user ? "/checkin" : "/signup?next=/checkin");
