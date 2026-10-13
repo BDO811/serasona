@@ -125,29 +125,74 @@ export const MODELS: VoiceModel[] = [
 export const ADDON_MODELS = MODELS.filter((m) => !m.included);
 
 /**
- * What N add-on models cost per month, in cents.
+ * Add-ons are a flat price per model, deliberately.
  *
- * The per-model price falls as you add more, so a second model is never the
- * same price as the first. Index is the number of add-ons; index 0 is free
- * because it is the base subscription on its own.
+ * An earlier version discounted them as you added more, which read as
+ * generous and quietly competed with the plans: buying three models a la
+ * carte came out cheaper than Plus, so the upgrade people should have taken
+ * was the worse deal. A flat price keeps a la carte honest for someone who
+ * genuinely wants one extra model, and lets every plan above Core beat it
+ * outright on anything more.
  */
-const ADDON_LADDER_CENTS = [0, 500, 750, 1000, 1200, 1400, 1600, 1750];
+export const ADDON_PRICE_CENTS = 499;
 
-export const addonPriceCents = (count: number) =>
-  ADDON_LADDER_CENTS[Math.min(Math.max(count, 0), ADDON_LADDER_CENTS.length - 1)];
+export const addonPriceCents = (count: number) => Math.max(count, 0) * ADDON_PRICE_CENTS;
 
-/** What the same models would cost one at a time, for showing the saving. */
-export const addonListPriceCents = (count: number) => count * 500;
+/** Same thing now, but kept so callers reading "list price" still make sense. */
+export const addonListPriceCents = addonPriceCents;
+
+/** What this many models would cost on Core, one at a time. */
+export const alaCarteTotalCents = (count: number, baseCents = 799) =>
+  baseCents + addonPriceCents(count);
 
 export const money = (cents: number) =>
   `$${(cents / 100).toFixed(2).replace(/\.00$/, "")}`;
 
-/** How many add-on models each plan includes before you start paying extra. */
+/**
+ * How many add-on models each plan includes before you start paying extra.
+ *
+ * Plus includes three rather than two so that its window is wide. At two it
+ * was the cheapest option for exactly one basket size, which is not enough
+ * room for a plan to be an obvious choice.
+ */
 export const PLAN_INCLUDED_MODELS: Record<PlanId, number> = {
   free: 0,
   core: 0,
-  plus: 2,
+  plus: 3,
   executive: ADDON_MODELS.length,
 };
+
+/** Monthly plan prices, for showing what a basket would cost each way. */
+export const PLAN_PRICE_CENTS: Record<PlanId, number> = {
+  free: 0,
+  core: 799,
+  plus: 1499,
+  executive: 1999,
+};
+
+/**
+ * The cheapest way to get this many add-on models, and what it saves against
+ * buying them one at a time on Core. This is what the catalogue uses to tell
+ * someone they are about to overpay.
+ */
+export function bestPlanFor(count: number): {
+  plan: PlanId;
+  totalCents: number;
+  alaCarteCents: number;
+  savingCents: number;
+} {
+  const options: PlanId[] = ["core", "plus", "executive"];
+  const cost = (p: PlanId) =>
+    PLAN_PRICE_CENTS[p] + addonPriceCents(Math.max(count - PLAN_INCLUDED_MODELS[p], 0));
+
+  const plan = options.reduce((best, p) => (cost(p) < cost(best) ? p : best), "core" as PlanId);
+  const alaCarteCents = cost("core");
+  return {
+    plan,
+    totalCents: cost(plan),
+    alaCarteCents,
+    savingCents: alaCarteCents - cost(plan),
+  };
+}
 
 export const planIncludes = (plan: PlanId) => PLAN_INCLUDED_MODELS[plan] ?? 0;

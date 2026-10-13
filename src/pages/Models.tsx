@@ -4,10 +4,10 @@ import { asset } from "@/lib/asset";
 import { useAuth } from "@/context/AuthContext";
 
 import {
-  ADDON_MODELS,
+  ADDON_PRICE_CENTS,
   MODELS,
-  addonListPriceCents,
   addonPriceCents,
+  bestPlanFor,
   money,
   planIncludes,
   type VoiceModel,
@@ -41,14 +41,22 @@ const Models = () => {
   const toggle = (id: string) =>
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
-  const { chargeable, price, list, saving } = useMemo(() => {
+  const { chargeable, price, best } = useMemo(() => {
     // The plan's own allowance is consumed first, so the price only starts
     // climbing once you pass what you are already paying for.
     const chargeable = Math.max(selected.length - included, 0);
-    const price = addonPriceCents(chargeable);
-    const list = addonListPriceCents(chargeable);
-    return { chargeable, price, list, saving: list - price };
+    return {
+      chargeable,
+      price: addonPriceCents(chargeable),
+      // What this basket would cost on the cheapest plan that carries it.
+      best: bestPlanFor(selected.length),
+    };
   }, [selected, included]);
+
+  // Only worth saying if the better plan is one they are not already on and
+  // the saving is real.
+  const upgrade =
+    best.plan !== plan && best.savingCents > 0 && best.plan !== "free" ? best : null;
 
   return (
     <main className="min-h-screen bg-[#fbf7f1] text-black">
@@ -69,34 +77,63 @@ const Models = () => {
         </p>
       </section>
 
-      {/* The price ladder */}
+      {/* What a basket costs each way. Three columns rather than a price
+          ladder: the point is not that add-ons are cheap, it is that past the
+          first one a plan is always the better buy. */}
       <section className="mx-auto max-w-[1040px] px-6 pb-16">
-        <div className="rounded-3xl bg-black/[0.035] px-6 py-8 md:px-10">
-          <p className="text-center font-mono text-[11px] uppercase tracking-[0.2em] text-black/55">
-            Add-ons get cheaper as you add them
-          </p>
-          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-            {[1, 2, 3, 4, 5, 6, 7].map((n) => {
-              const each = addonPriceCents(n) / n;
-              return (
-                <div
-                  key={n}
-                  className="rounded-2xl bg-[#fbf7f1] px-3 py-4 text-center"
-                >
-                  <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-black/45">
-                    {n} model{n === 1 ? "" : "s"}
-                  </div>
-                  <div className="mt-2 font-serif text-xl">{money(addonPriceCents(n))}</div>
-                  <div className="mt-1 text-[11px] text-black/45">
-                    {money(Math.round(each))} each
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <p className="mt-6 text-center text-sm leading-relaxed text-black/60">
-            Plus includes two models. Executive includes all seven.
-          </p>
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            {
+              name: "Core",
+              price: 799,
+              models: "Pulse only",
+              extra: `Add any model for ${money(ADDON_PRICE_CENTS)} a month`,
+              highlight: false,
+            },
+            {
+              name: "Plus",
+              price: 1499,
+              models: "Pulse + any three",
+              extra: `${money(ADDON_PRICE_CENTS * 3)} of models, included`,
+              highlight: true,
+            },
+            {
+              name: "Executive",
+              price: 1999,
+              models: "Pulse + all seven",
+              extra: `${money(ADDON_PRICE_CENTS * 7)} of models, included`,
+              highlight: false,
+            },
+          ].map((t) => (
+            <div
+              key={t.name}
+              className="rounded-3xl px-6 py-7"
+              style={{
+                background: t.highlight ? "#1b1510" : "rgba(27,21,16,0.035)",
+                color: t.highlight ? "#fbf7f1" : undefined,
+              }}
+            >
+              <div
+                className="font-mono text-[10px] uppercase tracking-[0.18em]"
+                style={{ color: t.highlight ? "#fbf7f1aa" : "rgba(27,21,16,0.45)" }}
+              >
+                {t.name}
+              </div>
+              <div className="mt-2 font-serif text-3xl">{money(t.price)}</div>
+              <div
+                className="mt-3 text-[14px]"
+                style={{ color: t.highlight ? "#fbf7f1cc" : "rgba(27,21,16,0.7)" }}
+              >
+                {t.models}
+              </div>
+              <div
+                className="mt-1.5 text-[13px]"
+                style={{ color: t.highlight ? "#c2410c" : "rgba(27,21,16,0.45)" }}
+              >
+                {t.extra}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -129,23 +166,25 @@ const Models = () => {
                 {selected.length} selected
                 {included > 0 ? ` · ${Math.min(selected.length, included)} included with your plan` : ""}
               </div>
-              <div className="mt-1 flex items-baseline gap-3">
+              <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span className="font-serif text-2xl">
-                  {chargeable === 0 ? "No extra charge" : `${money(price)}/mo`}
+                  {chargeable === 0 ? "No extra charge" : `+${money(price)}/mo`}
                 </span>
-                {saving > 0 ? (
-                  <span className="text-sm text-black/45">
-                    <span className="line-through">{money(list)}</span>{" "}
-                    <span className="text-[#c2410c]">save {money(saving)}</span>
+                {upgrade ? (
+                  <span className="text-sm text-black/55">
+                    or{" "}
+                    <span className="capitalize text-[#c2410c]">{upgrade.plan}</span> at{" "}
+                    {money(upgrade.totalCents)} and save {money(upgrade.savingCents)}
                   </span>
                 ) : null}
               </div>
             </div>
             <Link
               to="/pricing"
-              className="rounded-full bg-black px-7 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-[#fbf7f1] transition-transform hover:scale-[1.02]"
+              className="rounded-full px-7 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-[#fbf7f1] transition-transform hover:scale-[1.02]"
+              style={{ background: upgrade ? "#c2410c" : "#000" }}
             >
-              Continue
+              {upgrade ? `Switch to ${upgrade.plan}` : "Continue"}
             </Link>
           </div>
         </div>
