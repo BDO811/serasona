@@ -34,12 +34,24 @@ export const Reveal = ({
   // past. margin pulls the trigger up so it fires just before the edge.
   const inView = useInView(ref, { once: true, margin: "-12% 0px -12% 0px" });
 
+  // The safety net. useInView is an IntersectionObserver, and an observer
+  // against a viewport with no measurable size never reports anything as
+  // visible — a hidden tab, a prerender, an embedder that lays out at zero.
+  // Without this the content stays at opacity 0 forever, which is the one
+  // outcome this file exists to prevent. If the observer has not fired
+  // shortly after mount, show the content regardless and let the animation go.
+  const [escaped, setEscaped] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setEscaped(true), 1200);
+    return () => window.clearTimeout(t);
+  }, []);
+
   return (
     <motion.div
       ref={ref}
       className={className}
       initial={reduce ? false : { opacity: 0, y }}
-      animate={reduce || inView ? { opacity: 1, y: 0 } : undefined}
+      animate={reduce || inView || escaped ? { opacity: 1, y: 0 } : undefined}
       transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}

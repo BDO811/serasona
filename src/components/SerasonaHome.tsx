@@ -370,6 +370,9 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           <Link to="/login" className="hover:text-black">
             Log in
           </Link>
+          <Link to="/models" className="hover:text-black">
+            Models
+          </Link>
           <Link to="/science" className="hover:text-black">
             Scientific Analysis
           </Link>

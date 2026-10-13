@@ -24,6 +24,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Science from "./pages/Science";
+import Models from "./pages/Models";
 import Admin from "./pages/Admin";
 import CheckinByPhone from "./pages/CheckinByPhone";
 import NotFound from "./pages/NotFound";
@@ -66,6 +67,7 @@ const App = () => (
               <Route path="/terms" element={<PageShell><Terms /></PageShell>} />
               <Route path="/privacy" element={<PageShell><Privacy /></PageShell>} />
               <Route path="/science" element={<PageShell><Science /></PageShell>} />
+              <Route path="/models" element={<PageShell><Models /></PageShell>} />
               <Route
                 path="/account"
                 element={
