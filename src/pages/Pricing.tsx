@@ -33,7 +33,7 @@ const TIERS: Tier[] = [
   {
     id: "core",
     name: "Core",
-    price: "$14.50",
+    price: "$7.99",
     cadence: "/month",
     description: "One check-in a day on the Pulse model, tracked against your own history.",
     features: [
@@ -47,12 +47,12 @@ const TIERS: Tier[] = [
   {
     id: "plus",
     name: "Plus",
-    price: "$24.50",
+    price: "$14.99",
     cadence: "/month",
     description: "Everything in Core, plus two models of your choice and a daily call.",
     features: [
       "Everything in Core",
-      "Any two models included, worth $10 on their own",
+      "Any two models included, worth $7.50 on their own",
       "A daily call, any phone, no app required",
       "Your result still lands in the app either way",
     ],
@@ -60,12 +60,12 @@ const TIERS: Tier[] = [
   {
     id: "executive",
     name: "Executive",
-    price: "$74.50",
+    price: "$19.99",
     cadence: "/month",
     description: "Every model Serasona has, read from the same twenty seconds.",
     features: [
       "Everything in Plus",
-      "All seven models included, worth $35 on their own",
+      "All seven models included, worth $17.50 on their own",
       "A report you can hand to a clinician",
       "Priority support",
     ],
