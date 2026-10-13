@@ -63,6 +63,11 @@ export const AmbientVideo = () => {
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      {/* 80% transparent. Set as opacity on the footage itself rather than by
+          stacking an opaque wash over it: a wash flattens the image toward one
+          flat colour and kills the contrast inside it, where opacity keeps the
+          picture intact and simply lets the paper through. */}
+      <div className="absolute inset-0 opacity-20">
       {playable ? (
         <video
           ref={ref}
@@ -85,13 +90,12 @@ export const AmbientVideo = () => {
           decoding="async"
         />
       )}
+      </div>
 
-      {/* Wash the footage back into the brand's paper. Two layers rather than
-          one: a flat tint to drop its contrast, then a vertical gradient that
-          goes nearly opaque at the bottom so the hero copy sits on paper rather
-          than on film. */}
-      <div className="absolute inset-0 bg-[#fbf7f1]/10" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#fbf7f1]/10 to-[#fbf7f1]/30" />
+      {/* Only a bottom fade now. At 20% the footage is already quiet enough to
+          sit under the headline, so the one job left is to land its bottom edge
+          on paper rather than cutting the picture off mid-frame. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#fbf7f1]" />
     </div>
   );
 };

@@ -164,9 +164,8 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-10 max-w-[560px] text-lg leading-relaxed text-black/70 md:text-xl"
         >
-          Hundreds of dollars buys a device that only reads your body. Your
-          voice is free, and it already carries seven signals, including
-          stress, mood, and energy, that no device can read.
+          You carry an incredible number of measurable signals in your voice
+          that no wearable can read.
         </motion.p>
 
         {/* CTA */}
@@ -242,7 +241,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
       <ParallaxBand src={asset("video/band-conversation.jpg")}>
         <Reveal>
           <p className="mx-auto max-w-[680px] text-center font-serif text-2xl leading-snug text-[#fbf7f1] md:text-4xl">
-            A wearable waits on your wrist. Serasona needs the thing you were
+            A wearable waits on your wrist. Serasona uses the thing you were
             going to do anyway.
           </p>
         </Reveal>
