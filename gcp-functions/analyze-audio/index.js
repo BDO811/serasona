@@ -116,6 +116,64 @@ async function pollJobUntilDone(apiUrl, jobId, headers) {
   return { status: 504, data: { job_id: jobId, status: "timeout" } };
 }
 
+/* ------------------------------------------------- identity & entitlement */
+
+const admin = require("firebase-admin");
+if (!admin.apps.length) admin.initializeApp();
+
+/** Pulse is in every plan. The rest are what the plan's allowance covers. */
+const ADDON_ORDER = ["haven", "apex", "tide", "aria", "breath", "clarity", "harbor"];
+const PLAN_ALLOWANCE = { free: 0, core: 0, plus: 3, executive: ADDON_ORDER.length };
+
+const httpError = (status, message, clientMessage) =>
+  Object.assign(new Error(message), { status, clientMessage });
+
+/**
+ * Verifies the bearer token and loads the caller's plan.
+ *
+ * checkRevoked is on: a disabled account or a revoked session must stop
+ * spending credits immediately rather than at the next token expiry.
+ */
+async function authenticateCaller(req) {
+  const header = req.headers.authorization || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+  if (!token) throw httpError(401, "no bearer token", "Sign in to run a check-in.");
+
+  let decoded;
+  try {
+    decoded = await admin.auth().verifyIdToken(token, true);
+  } catch (err) {
+    throw httpError(401, `token rejected: ${err.message}`, "Your session has expired. Sign in again.");
+  }
+
+  // The plan lives in Firestore, written by the Stripe webhook. Its absence
+  // means free, which is the safe default: fewer models, not more.
+  let planId = "free";
+  try {
+    const snap = await admin.firestore().collection("users").doc(decoded.uid).get();
+    planId = snap.exists ? snap.data()?.subscription?.planId || "free" : "free";
+  } catch (err) {
+    console.error("[analyze-audio] could not read plan, defaulting to free:", err.message);
+  }
+
+  return { uid: decoded.uid, planId };
+}
+
+/**
+ * Which models this plan may run.
+ *
+ * Entitlement is decided here rather than trusted from the request, because
+ * the model name arrives in a query string the caller controls. Anything
+ * outside the plan's allowance falls back to pulse rather than erroring: the
+ * check-in still works, it is just read by the model they actually pay for.
+ */
+function entitledModel(requested, planId) {
+  const allowance = PLAN_ALLOWANCE[planId] ?? 0;
+  const allowed = new Set(["pulse", ...ADDON_ORDER.slice(0, allowance)]);
+  if (!requested || allowed.has(requested)) return { model: requested || "pulse", downgraded: false };
+  return { model: "pulse", downgraded: true };
+}
+
 exports.analyzeAudio = async (req, res) => {
   setCorsHeaders(req, res);
 
@@ -125,6 +183,24 @@ exports.analyzeAudio = async (req, res) => {
   }
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed." });
+    return;
+  }
+
+  // Who is this?
+  //
+  // Every call here spends real LAM credits, and the model is taken from a
+  // query parameter. While this was unauthenticated, anyone on the internet
+  // could run any model for free and drain the account. Identity has to come
+  // from a token the server verifies, never from anything the client asserts
+  // about itself.
+  let caller;
+  try {
+    caller = await authenticateCaller(req);
+  } catch (err) {
+    console.warn("[analyze-audio] rejected:", err.message);
+    res
+      .status(err.status || 401)
+      .json({ error: err.clientMessage || "Sign in to run a check-in." });
     return;
   }
 
@@ -180,11 +256,21 @@ exports.analyzeAudio = async (req, res) => {
     upstreamForm.append("audio", new Blob([audio.buffer], { type: mime }), audio.filename);
 
     // Query string wins; the form field is the fallback for clients that cannot
-    // set one. Both go through the allowlist.
-    const modelName = resolveModelName(
+    // set one. Both go through the allowlist, and then through entitlement:
+    // the allowlist decides the name is a real model, entitlement decides
+    // whether this plan may run it. The second gate cannot be influenced by
+    // the caller, because the plan is read from Firestore against a verified
+    // uid rather than taken from the request.
+    const requested = resolveModelName(
       (req.query && req.query.model) || audio.model || DEFAULT_MODEL_NAME
     );
-    console.log(`[analyze-audio] Using model: ${modelName}`);
+    const { model: modelName, downgraded } = entitledModel(requested, caller.planId);
+    if (downgraded) {
+      console.log(
+        `[analyze-audio] ${caller.uid} on "${caller.planId}" asked for "${requested}" without entitlement; using pulse`
+      );
+    }
+    console.log(`[analyze-audio] Using model: ${modelName} (plan: ${caller.planId})`);
 
     const submitStart = Date.now();
     const submitResponse = await fetch(`${API_URL}/v2/models/${modelName}/analyze`, {
