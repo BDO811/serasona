@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "sandbox": "node scripts/sandbox.mjs"
+    "sandbox": "node scripts/sandbox.mjs",
+    "verify:build": "node scripts/verify-build.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -54,6 +54,18 @@ jobs:
           VITE_CREATE_PORTAL_SESSION_URL: https://us-central1-amits-playground-po.cloudfunctions.net/createPortalSession
           VITE_ADMIN_API_URL: https://us-central1-amits-playground-po.cloudfunctions.net/adminApi
 
+      # Inspects the artifact rather than the environment that produced it.
+      # The build itself refuses to run without Firebase configured, but a
+      # variable can also be present and empty, or a bundle can be produced
+      # by a mode that skips that guard. Serasona records voice, and the
+      # account is where Terms acceptance and recording consent are captured,
+      # so a build that cannot authenticate must never reach the CDN.
+      - name: Verify the consent gate survived the build
+        run: node scripts/verify-build.mjs
+        env:
+          VITE_FIREBASE_AUTH_DOMAIN: amits-playground-po.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: amits-playground-po
+
       # The app uses BrowserRouter, so /detailed-analysis and friends are
       # client-side routes with no file behind them. GitHub Pages serves
       # 404.html for unknown paths; making it a copy of index.html lets the
