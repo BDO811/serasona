@@ -129,9 +129,20 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="mt-6 font-serif text-[13vw] leading-[0.95] tracking-tight text-black sm:text-6xl md:text-7xl"
         >
-          <span className="font-semibold text-[#0d6a76]">No ring, no band, no wearable to buy,</span>
-          <br />
-          <span className="italic">get a deeper understanding of your body than any device.</span>
+          {/* Full line, tablet and up: the long form reads fine once there's
+              width for it to wrap at most twice. */}
+          <span className="hidden md:inline">
+            <span className="font-semibold text-[#0d6a76]">No ring, no band, no wearable to buy,</span>
+            <br />
+            <span className="italic">get a deeper understanding of your body than any device.</span>
+          </span>
+          {/* Phone-width variant: same claim, fewer words, so it doesn't run
+              seven lines deep before the CTA ever comes into view. */}
+          <span className="md:hidden">
+            <span className="font-semibold text-[#0d6a76]">No wearable to buy or wear,</span>
+            <br />
+            <span className="italic">just a deeper read than any device.</span>
+          </span>
         </motion.h1>
 
         {/* Waveform accent */}
