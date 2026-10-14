@@ -8,7 +8,6 @@ interface AnalysisFailedProps {
 
 export const AnalysisFailed = ({ onRestart }: AnalysisFailedProps) => {
   const { pathwayDisplayTitle, visualizedResult } = useAssessment();
-  const assessmentTitle = pathwayDisplayTitle || "Assessment";
 
   const isInconclusive = visualizedResult?.likelihoodTier === "INCONCLUSIVE";
   const signalQuality = visualizedResult?.signalQuality;
@@ -71,9 +70,9 @@ export const AnalysisFailed = ({ onRestart }: AnalysisFailedProps) => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          {isInconclusive 
+          {isInconclusive
             ? "We were unable to complete a full analysis of your voice sample."
-            : `We encountered an issue while processing your ${assessmentTitle.toLowerCase()} assessment.`
+            : `We encountered an issue while processing your ${pathwayDisplayTitle ? pathwayDisplayTitle.toLowerCase() + " " : ""}assessment.`
           }
         </motion.p>
 
@@ -85,7 +84,7 @@ export const AnalysisFailed = ({ onRestart }: AnalysisFailedProps) => {
         >
           {isInconclusive
             ? "Audio quality metrics are available below. Please try recording again with better audio conditions."
-            : "This may be due to audio quality, network connectivity, or a temporary service issue."
+            : "This may be due to inadequate audio or network connectivity."
           }
         </motion.p>
 
