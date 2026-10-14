@@ -1,3 +1,4 @@
+import { auth } from "@/lib/firebase";
 /**
  * API Client for LeadGen API
  * Routes audio analysis through a Google Cloud Function proxy (analyzeAudio) for
@@ -122,8 +123,18 @@ async function analyzeWellnessAudio(
     headers.set('x-apikey', apiKey);
   } else {
     url = getGcpFunctionUrl();
+
+    // Identify the caller. The proxy spends real LAM credits per analysis and
+    // gates which models a plan may request, and it can do neither without
+    // knowing who this is. Sent as a bearer token so the function can verify
+    // it with the Admin SDK rather than trusting anything the client claims
+    // about itself.
+    const idToken = await auth?.currentUser?.getIdToken().catch(() => null);
+    if (idToken) headers.set("Authorization", `Bearer ${idToken}`);
+
     // The proxy reads the model from ?model= (and from a `model` form field);
-    // it validates against its own allowlist and falls back to pulse.
+    // it validates against its own allowlist, and separately against what the
+    // caller's plan actually entitles them to.
     if (request.model) {
       url += `${url.includes('?') ? '&' : '?'}model=${encodeURIComponent(request.model)}`;
       formData.append('model', request.model);
