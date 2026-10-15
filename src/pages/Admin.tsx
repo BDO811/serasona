@@ -1,3 +1,5 @@
+import QRCode from "qrcode";
+import { auth } from "@/lib/firebase";
 import { useCallback, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -71,12 +73,23 @@ const Admin = () => {
 const Enroll = ({ onDone }: { onDone: () => void }) => {
   const [secret, setSecret] = useState<string | null>(null);
   const [uri, setUri] = useState<string | null>(null);
+  const [qr, setQr] = useState<string | null>(null);
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
+  const email = auth?.currentUser?.email ?? null;
 
   useEffect(() => {
     totpEnroll()
-      .then((r) => { setSecret(r.secret); setUri(r.otpauth); })
+      .then(async (r) => {
+        setSecret(r.secret);
+        setUri(r.otpauth);
+        // Rendered in the browser from the otpauth URI rather than fetched as
+        // an image: the secret is in that URI, and sending it to a QR service
+        // would hand the second factor to a third party.
+        setQr(
+          await QRCode.toDataURL(r.otpauth, { width: 400, margin: 1 }).catch(() => null)
+        );
+      })
       .catch((e: AdminError) => toast.error(e.message));
   }, []);
 
@@ -98,14 +111,45 @@ const Enroll = ({ onDone }: { onDone: () => void }) => {
         recoverable — if you lose it, the secret has to be reset from the server.
       </p>
       {secret && (
-        <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
-          <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Secret</p>
-          <p className="font-mono text-sm break-all text-foreground">{secret}</p>
-          {uri && (
-            <a href={uri} className="text-sm text-primary underline underline-offset-2">
-              Open in your authenticator app
-            </a>
-          )}
+        <div className="rounded-2xl border border-border bg-card p-4 space-y-4">
+          {/* The QR is the primary path. Typing a 32-character base32 string
+              by hand is the most likely way this goes wrong, and a single
+              mistyped character produces an enrolment that confirms against
+              nothing and locks the account out. */}
+          {qr ? (
+            <div className="flex flex-col items-center gap-3">
+              <img
+                src={qr}
+                alt="QR code for your authenticator app"
+                width={200}
+                height={200}
+                className="rounded-lg bg-white p-2"
+              />
+              <p className="text-xs text-muted-foreground">
+                Scan with Google Authenticator, 1Password, Authy or similar.
+              </p>
+            </div>
+          ) : null}
+
+          <details className="border-t border-border pt-3">
+            <summary className="cursor-pointer text-xs text-muted-foreground">
+              Can't scan it? Enter the key by hand
+            </summary>
+            <p className="mt-2 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+              Secret
+            </p>
+            <p className="font-mono text-sm break-all text-foreground">{secret}</p>
+            {uri && (
+              <a href={uri} className="mt-2 inline-block text-sm text-primary underline underline-offset-2">
+                Open in your authenticator app
+              </a>
+            )}
+          </details>
+
+          <p className="text-xs text-muted-foreground">
+            Enrolling as <span className="font-medium text-foreground">{email ?? "this account"}</span>.
+            Each admin account has its own authenticator entry.
+          </p>
         </div>
       )}
       <Input

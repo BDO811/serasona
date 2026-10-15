@@ -27,6 +27,7 @@ import Science from "./pages/Science";
 import Models from "./pages/Models";
 import Admin from "./pages/Admin";
 import CheckinByPhone from "./pages/CheckinByPhone";
+import SmoothHeroDemo from "./pages/SmoothHeroDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -119,6 +120,7 @@ const App = () => (
                 <>
                   <Route path="/api-debug" element={<ApiDebugView />} />
                   <Route path="/panel-preview" element={<PanelPreview />} />
+                  <Route path="/smooth-hero-demo" element={<SmoothHeroDemo />} />
                 </>
               )}
               <Route path="/analysis-failed" element={<AnalysisFailed onRestart={() => window.location.href = "/"} />} />

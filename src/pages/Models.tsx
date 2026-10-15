@@ -4,6 +4,7 @@ import { asset } from "@/lib/asset";
 import { useAuth } from "@/context/AuthContext";
 
 import {
+  ADDON_MODELS,
   ADDON_PRICE_CENTS,
   MODELS,
   addonPriceCents,
@@ -79,7 +80,10 @@ const Models = () => {
 
       {/* What a basket costs each way. Three columns rather than a price
           ladder: the point is not that add-ons are cheap, it is that past the
-          first one a plan is always the better buy. */}
+          first one a plan is always the better buy. Plus and Executive spell
+          out which models are in the basket and what each one costs on its
+          own, so the included total reads as arithmetic you can check rather
+          than a marketing claim. */}
       <section className="mx-auto max-w-[1040px] px-6 pb-16">
         <div className="grid gap-4 md:grid-cols-3">
           {[
@@ -87,21 +91,26 @@ const Models = () => {
               name: "Core",
               price: 799,
               models: "Pulse only",
+              lines: [] as VoiceModel[],
               extra: `Add any model for ${money(ADDON_PRICE_CENTS)} a month`,
               highlight: false,
             },
             {
               name: "Plus",
               price: 1499,
-              models: "Pulse + any three",
-              extra: `${money(ADDON_PRICE_CENTS * 3)} of models, included`,
+              // "Any three" is still the user's actual choice — these three are
+              // the illustrative example, not a fixed basket.
+              models: `Pulse + ${ADDON_MODELS.slice(0, 3).map((m) => m.name).join(", ")}`,
+              lines: ADDON_MODELS.slice(0, 3),
+              extra: `= ${money(ADDON_PRICE_CENTS * 3)} of models, included — or any 3 of ${ADDON_MODELS.length}`,
               highlight: true,
             },
             {
               name: "Executive",
               price: 1999,
-              models: "Pulse + all seven",
-              extra: `${money(ADDON_PRICE_CENTS * 7)} of models, included`,
+              models: `Pulse + ${ADDON_MODELS.map((m) => m.name).join(", ")}`,
+              lines: ADDON_MODELS,
+              extra: `= ${money(ADDON_PRICE_CENTS * ADDON_MODELS.length)} of models, included`,
               highlight: false,
             },
           ].map((t) => (
@@ -126,6 +135,25 @@ const Models = () => {
               >
                 {t.models}
               </div>
+
+              {t.lines.length > 0 ? (
+                <div
+                  className="mt-3 space-y-1 border-t pt-3"
+                  style={{ borderColor: t.highlight ? "rgba(251,247,241,0.2)" : "rgba(27,21,16,0.1)" }}
+                >
+                  {t.lines.map((m) => (
+                    <div
+                      key={m.id}
+                      className="flex items-center justify-between text-[12px]"
+                      style={{ color: t.highlight ? "rgba(251,247,241,0.75)" : "rgba(27,21,16,0.55)" }}
+                    >
+                      <span>{m.name}</span>
+                      <span>{money(ADDON_PRICE_CENTS)}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+
               <div
                 className="mt-1.5 text-[13px]"
                 style={{ color: t.highlight ? "#c2410c" : "rgba(27,21,16,0.45)" }}
