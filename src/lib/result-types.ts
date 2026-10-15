@@ -28,6 +28,8 @@ export interface BiomarkerDefinition {
   clinicalContext?: string;
   /** Raw v2 level, so a screen can band it without matching back by name. */
   level?: string;
+  /** Raw v2 score (0-1), needed by per-sign band overrides that read score directly (e.g. cardiovascular-strain). */
+  score?: number;
 }
 
 /** v2 `extended_metrics[]` entry — a bipolar sub-dimension score. */

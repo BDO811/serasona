@@ -89,7 +89,7 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
     : formatLikelihoodTierForDisplay(likelihoodTier);
   const actionableSigns = (visualizedResult.signals ?? [])
     .map((sig) => {
-      const band = bandForSignal(sig.name, sig.level);
+      const band = bandForSignal(sig.name, sig.level, sig.score);
       return { label: signLabel(sig.name, sig.label), band, word: bandLabelForSignal(sig.name, band) };
     })
     .filter((s) => isFlaggedBand(s.band))

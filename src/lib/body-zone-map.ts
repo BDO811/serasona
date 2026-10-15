@@ -4,20 +4,22 @@
  *
  * Every signal name across every v2 model is listed explicitly (see the model
  * registry comment in pathway-model-map.ts) rather than left to a fallback, so
- * a signal never lands in a zone nobody chose. Sub-dimensions are not listed
- * per-id: all ten (`sub-dimensions.ts`) are mental/emotional readings, so every
- * one goes to BRAIN. Lab metrics are vocal/acoustic by construction; the two
- * breath-specific ones go to LUNGS, the rest to MOUTH.
+ * a signal never lands in a zone nobody chose. Sub-dimensions are split
+ * between BRAIN (the cognitive/attentional ones) and CORE (the five that read
+ * as a body-wide energy state rather than a head-specific one - see
+ * CORE_SUBDIMENSION_IDS below). Lab metrics are vocal/acoustic by
+ * construction; the two breath-specific ones go to LUNGS, the rest to MOUTH.
  */
 
-export type BodyZone = "brain" | "mouth" | "heart" | "lungs" | "blood";
+export type BodyZone = "brain" | "mouth" | "heart" | "core" | "lungs" | "blood";
 
-export const BODY_ZONES: BodyZone[] = ["brain", "mouth", "heart", "lungs", "blood"];
+export const BODY_ZONES: BodyZone[] = ["brain", "mouth", "heart", "core", "lungs", "blood"];
 
 export const BODY_ZONE_LABEL: Record<BodyZone, string> = {
   brain: "Brain",
   mouth: "Mouth",
   heart: "Heart",
+  core: "Core",
   lungs: "Lungs",
   blood: "Blood",
 };
@@ -44,8 +46,8 @@ const SIGNAL_ZONE: Record<string, BodyZone> = {
   "cardiovascular-strain": "heart",
   // Mouth
   "dry-mouth": "mouth",
+  dehydration: "mouth",
   // Blood / metabolic / hormonal
-  dehydration: "blood",
   "iron-deficiency": "blood",
   "elevated-androgens": "blood",
   "metabolic-load": "blood",
@@ -62,9 +64,22 @@ export function zoneForSignal(name: string | null | undefined): BodyZone {
   return SIGNAL_ZONE[key] ?? "brain";
 }
 
-/** Every sub-dimension in sub-dimensions.ts is a mental/emotional reading. */
-export function zoneForSubDimension(): BodyZone {
-  return "brain";
+/**
+ * The five sub-dimensions (see sub-dimensions.ts) that read as a body-wide
+ * energy state - recovery, energy, vitality, freshness, composure - land on
+ * the core marker instead of the head. The rest (happiness/anhedonia, focus,
+ * drive) are specifically cognitive/attentional and stay on brain.
+ */
+const CORE_SUBDIMENSION_IDS = new Set([
+  "sleep-disturbance",
+  "fatigue",
+  "energy-level",
+  "burnout",
+  "psychomotor-state",
+]);
+
+export function zoneForSubDimension(metricId: string): BodyZone {
+  return CORE_SUBDIMENSION_IDS.has(metricId) ? "core" : "brain";
 }
 
 /** LabMetric.label strings that read as breath rather than vocal cord/articulation. */

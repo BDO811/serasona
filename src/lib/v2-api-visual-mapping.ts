@@ -364,7 +364,7 @@ export function mapSignalsToBiomarkers(
 ): BiomarkerDefinition[] {
   return signals.map((s, i) => {
     const copy = SIGN_COPY[s.name] || DEFAULT_SIGN_COPY;
-    const band = bands[i] ?? bandForSignal(s.name, s.level);
+    const band = bands[i] ?? bandForSignal(s.name, s.level, s.score);
     const pct = Number.isFinite(s.score) ? Math.round(s.score * 100) : 0;
 
     /*
@@ -392,6 +392,7 @@ export function mapSignalsToBiomarkers(
       definition: copy.definition,
       clinicalContext,
       level: s.level,
+      score: s.score,
     };
   });
 }
@@ -461,7 +462,7 @@ export function transformV2ResultToVisualization(
     per-sign override cannot leave a row reading NORMAL while the header counts
     it as a flag. head-impact is the sign that override applies to.
   */
-  const displayBands = shownSignals.map((sig) => bandForSignal(sig.name, sig.level));
+  const displayBands = shownSignals.map((sig) => bandForSignal(sig.name, sig.level, sig.score));
   const flaggedCount = displayBands.filter(isFlaggedBand).length;
   const biomarkers = mapSignalsToBiomarkers(orderedSignals, displayBands);
   // Graded from the displayed bands for the same reason the count is.

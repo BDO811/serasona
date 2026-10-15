@@ -22,6 +22,7 @@ import bodyFull from "@/assets/bodymap/body-full.png";
 import iconBrain from "@/assets/bodymap/icon-brain.png";
 import iconMouth from "@/assets/bodymap/icon-mouth.png";
 import iconHeart from "@/assets/bodymap/icon-heart.png";
+import iconCore from "@/assets/bodymap/icon-core.png";
 import iconLungs from "@/assets/bodymap/icon-lungs.png";
 import iconBlood from "@/assets/bodymap/icon-blood.png";
 
@@ -38,18 +39,51 @@ const ZONE_ICON: Record<BodyZone, string> = {
   brain: iconBrain,
   mouth: iconMouth,
   heart: iconHeart,
+  core: iconCore,
   lungs: iconLungs,
   blood: iconBlood,
 };
 
-/** Position of each zone's marker on body-full.png, as a fraction of its box. */
+/**
+ * Position of each zone's marker on body-full.png, as a fraction of its box.
+ * Heart sits on the body's actual left side (the viewer's left, since the
+ * figure faces forward) rather than dead-center, since it is standing in for
+ * the heart specifically. Core sits at the solar plexus, between heart and
+ * blood, for the "body chakra" read.
+ */
 const ZONE_MARKER_POSITION: Record<BodyZone, { left: string; top: string }> = {
   brain: { left: "50%", top: "9.5%" },
   mouth: { left: "50%", top: "19.5%" },
-  heart: { left: "42%", top: "28.6%" },
+  heart: { left: "36%", top: "26%" },
+  core: { left: "50%", top: "33%" },
   lungs: { left: "58%", top: "28.6%" },
   blood: { left: "50%", top: "40.5%" },
 };
+
+/**
+ * Each zone gets its own identity color, drawn from tokens already used
+ * elsewhere in Serasona's own palette (ember, tide, and the design system's
+ * metric-fatigue/metric-stress/metric-hydration set), so the marker on the
+ * figure and the zone-header dot are recognizably the same zone from across
+ * the screen - not just "pink means bad" everywhere. None of this touches the
+ * severity scale colors in signal-band.ts, which stay as they are.
+ */
+const ZONE_COLOR: Record<BodyZone, string> = {
+  brain: "#c2410c", // ember - primary accent, cognitive zone
+  mouth: "#1d5fa8", // metric-hydration - mouth/dehydration
+  heart: "#7b2d5e", // metric-stress - cardiovascular
+  core: "#0d6a76", // tide - body-wide energy/chakra center
+  lungs: "#a94e08", // metric-fatigue - breath
+  blood: "#d9b35c", // existing LOW-band gold - blood/metabolic
+};
+
+function hexToRgba(hex: string, alpha: number): string {
+  const n = parseInt(hex.slice(1), 16);
+  const r = (n >> 16) & 255;
+  const g = (n >> 8) & 255;
+  const b = n & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 /**
  * Mirrors SubDimensionPanel's DIRECTION_COLORS (unfavourable, middle,
@@ -144,14 +178,23 @@ function buildZoneGroups(
   }
 
   for (const row of readableSubDimensions(extendedMetrics)) {
-    const zone = zoneForSubDimension();
+    const zone = zoneForSubDimension(row.id);
     const isAbnormal = !row.neutral && row.bandIndex === 2;
+    /*
+      row.levels is always [favourable, "NORMAL", unfavourable] (see
+      sub-dimensions.ts), but SUBDIM_SCALE_COLOR is indexed the other way
+      round - [unfavourable, middle, favourable] - matching
+      SubDimensionPanel's own DIRECTION_COLORS. Indexing it with the same `i`
+      used to walk row.levels paired favourable with the unfavourable colour
+      and vice versa; `2 - i` maps each label to its actual semantic colour
+      before the array is reversed for favourable-left display.
+    */
     const scale: ScaleOption[] = row.levels
       .map((label, i) => ({
         key: String(i),
         label,
-        color: SUBDIM_SCALE_COLOR[i].dark,
-        colorLight: SUBDIM_SCALE_COLOR[i].light,
+        color: SUBDIM_SCALE_COLOR[2 - i].dark,
+        colorLight: SUBDIM_SCALE_COLOR[2 - i].light,
       }))
       .reverse();
     groups[zone].subDimRows.push({
@@ -168,7 +211,15 @@ function buildZoneGroups(
     if (isAbnormal) groups[zone].hasAbnormal = true;
   }
 
-  for (const metric of labMetrics) {
+  /*
+    Raw acoustic lab metrics (pitch, loudness, jitter, shimmer, HNR, pause,
+    breathiness...) are intentionally not shown here - they read as a wall of
+    unexplained numbers to a non-clinical visitor, where the signal and
+    sub-dimension rows above already carry the same information in words. The
+    loop stays rather than being deleted so turning them back on is a one-line
+    change, not a rebuild of labMetrics plumbing through every call site.
+  */
+  for (const metric of [] as typeof labMetrics) {
     const zone = zoneForLabMetric(metric.label);
     const isAbnormal = metric.status !== "normal";
     groups[zone].labRows.push({
@@ -231,20 +282,21 @@ export const BodyMapPanel = ({
         {zonesWithData.map((zone) => {
           const g = groups[zone];
           const pos = ZONE_MARKER_POSITION[zone];
+          const color = ZONE_COLOR[zone];
           return (
             <span
               key={zone}
-              className={`absolute rounded-full ${g.hasAbnormal ? "animate-gentle-blink" : ""}`}
+              className={`absolute rounded-full ${g.hasAbnormal ? "animate-bodymap-marker-flash" : ""}`}
               style={{
                 left: pos.left,
                 top: pos.top,
-                width: 9,
-                height: 9,
+                width: 4.5,
+                height: 4.5,
                 transform: "translate(-50%, -50%)",
-                background: g.hasAbnormal ? "#c2608a" : "rgba(200,230,230,0.9)",
+                background: color,
                 boxShadow: g.hasAbnormal
-                  ? "0 0 10px 3px rgba(194,96,138,0.6)"
-                  : "0 0 8px 3px rgba(200,230,230,0.4)",
+                  ? `0 0 10px 4px ${hexToRgba(color, 0.75)}`
+                  : `0 0 5px 1.5px ${hexToRgba(color, 0.45)}`,
               }}
             />
           );
@@ -268,11 +320,10 @@ export const BodyMapPanel = ({
                 <span className={`font-mono uppercase tracking-widest ${zoneNameSize} text-[#1b1510]`}>
                   {BODY_ZONE_LABEL[zone]}
                 </span>
+                {/* Static, not blinking: the marker on the body graphic
+                    above is the only thing on this screen that glows. */}
                 {g.hasAbnormal && (
-                  <span
-                    className="w-1.5 h-1.5 rounded-full animate-gentle-blink"
-                    style={{ background: "#c2608a" }}
-                  />
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: ZONE_COLOR[zone] }} />
                 )}
               </div>
 

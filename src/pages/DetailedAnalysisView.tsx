@@ -585,7 +585,7 @@ const DetailedAnalysisView = () => {
                         className="font-mono text-base font-semibold"
                         style={{
                           color: biomarker.level
-                            ? bandColor(bandForSignal(biomarker.technicalName, biomarker.level), "dark")
+                            ? bandColor(bandForSignal(biomarker.technicalName, biomarker.level, biomarker.score), "dark")
                             : BRAND_COLOR,
                         }}
                       >
@@ -609,13 +609,13 @@ const DetailedAnalysisView = () => {
                           label: bandLabelForSignal(biomarker.technicalName, o.key),
                         }))}
                         activeKey={
-                          bandForSignal(biomarker.technicalName, biomarker.level) === "INCONCLUSIVE"
+                          bandForSignal(biomarker.technicalName, biomarker.level, biomarker.score) === "INCONCLUSIVE"
                             ? null
-                            : bandForSignal(biomarker.technicalName, biomarker.level)
+                            : bandForSignal(biomarker.technicalName, biomarker.level, biomarker.score)
                         }
                         ariaLabel={`${biomarker.title}: ${bandLabelForSignal(
                           biomarker.technicalName,
-                          bandForSignal(biomarker.technicalName, biomarker.level)
+                          bandForSignal(biomarker.technicalName, biomarker.level, biomarker.score)
                         )}`}
                       />
                     </div>

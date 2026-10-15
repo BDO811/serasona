@@ -43,7 +43,7 @@ export const SignalPanel = ({
   return (
     <div className="flex flex-col gap-px bg-[#1b1510]/15 rounded-lg overflow-hidden">
       {signals.map((signal, index) => {
-        const band = bandForSignal(signal.name, signal.level);
+        const band = bandForSignal(signal.name, signal.level, signal.score);
         // head-impact reads NONE rather than NORMAL; the band itself is
         // unchanged so counts and the grade are unaffected.
         const bandWord = bandLabelForSignal(signal.name, band);

@@ -218,6 +218,30 @@ const BAND_COLOR: Record<DisplayBand, { dark: string; light: string }> = {
 const FLAG_ONLY_WHEN_ELEVATED = new Set(["head-impact", "elevated-blood-pressure"]);
 
 /**
+ * cardiovascular-strain and cognitive-load are bucketed from their raw score
+ * rather than the API's level, by Amit's explicit instruction (2026-10-15):
+ * most people should read NORMAL, only the worst 10% of scores should read
+ * MODERATE, and only the worst 5% should read ELEVATED. This is the one
+ * deliberate exception to "band comes from level, never score" above - the
+ * API's level/score calibration is a general-purpose one, not built to this
+ * specific split, so for these signs the raw score is treated as its own
+ * percentile.
+ *
+ * There is no LOW bucket here: the two given cutoffs only carve out the top
+ * 10%, so everything below is NORMAL rather than splitting that 90% further
+ * on an unspecified boundary.
+ */
+const PERCENTILE_BUCKETED_SIGNALS = new Set(["cardiovascular-strain", "cognitive-load"]);
+const PERCENTILE_ELEVATED_AT = 0.95;
+const PERCENTILE_MODERATE_AT = 0.9;
+
+function bandForPercentileBucketedSignal(score: number): DisplayBand {
+  if (score >= PERCENTILE_ELEVATED_AT) return "ELEVATED";
+  if (score >= PERCENTILE_MODERATE_AT) return "MODERATE";
+  return "NORMAL";
+}
+
+/**
  * The band to display for a given sign, applying any per-sign override.
  *
  * Use this rather than bandOfLevel anywhere a band reaches a screen, a count or
@@ -226,11 +250,16 @@ const FLAG_ONLY_WHEN_ELEVATED = new Set(["head-impact", "elevated-blood-pressure
  */
 export function bandForSignal(
   name: string | null | undefined,
-  level: string | null | undefined
+  level: string | null | undefined,
+  score?: number | null
 ): DisplayBand {
   const band = bandOfLevel(level);
   if (band === "INCONCLUSIVE") return band;
-  if (FLAG_ONLY_WHEN_ELEVATED.has((name || "").toLowerCase())) {
+  const key = (name || "").toLowerCase();
+  if (PERCENTILE_BUCKETED_SIGNALS.has(key) && typeof score === "number" && Number.isFinite(score)) {
+    return bandForPercentileBucketedSignal(score);
+  }
+  if (FLAG_ONLY_WHEN_ELEVATED.has(key)) {
     return band === "ELEVATED" ? "ELEVATED" : "NORMAL";
   }
   return band;
@@ -352,7 +381,7 @@ export function bandScaleOptions(name?: string | null): Array<{
 }> {
   return bandDisplayOrderFor(name).map((band) => ({
     key: band,
-    label: band,
+    label: bandLabelForSignal(name, band),
     color: bandColorForSignal(name, band, "dark"),
     colorLight: bandColorForSignal(name, band, "light"),
   }));
