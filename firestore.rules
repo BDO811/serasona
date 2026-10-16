@@ -11,14 +11,17 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow create: if request.auth != null && request.auth.uid == userId
                     && !("subscription" in request.resource.data);
-      // biologicalSex is here so the check-in screen can remember which figure
-      // to show. It is still an allowlist, and subscription is still absent
-      // from it: the client must never be able to grant itself a plan.
+      // biologicalSex and ageRange are here so the check-in screen can show
+      // what the person told us and record it against each reading. Still an
+      // allowlist, each value still constrained, and subscription is still
+      // absent: the client must never be able to grant itself a plan.
       allow update: if request.auth != null && request.auth.uid == userId
                     && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(["email", "fullName", "biologicalSex"])
+                         .hasOnly(["email", "fullName", "biologicalSex", "ageRange"])
                     && (!("biologicalSex" in request.resource.data)
-                        || request.resource.data.biologicalSex in ["male", "female"]);
+                        || request.resource.data.biologicalSex in ["male", "female"])
+                    && (!("ageRange" in request.resource.data)
+                        || request.resource.data.ageRange in ["under30", "30-45", "46-60", "60+"]);
       allow delete: if false;
 
       // Daily check-in history, owned entirely by the user it belongs to.

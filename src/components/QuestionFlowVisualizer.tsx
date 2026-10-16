@@ -8,7 +8,7 @@ import { isAssessmentPathwayEnabled } from "@/lib/utils";
 import { isV2Result, transformV2ResultToVisualization, V2JobDetail } from "@/lib/v2-api-visual-mapping";
 import { getModelForPathway } from "@/lib/pathway-model-map";
 import { t, getQuestionPool } from "@/lib/i18n";
-import { SpeakerFigure, type BiologicalSex } from "@/components/SpeakerFigure";
+import { SpeakerFigure, type BiologicalSex, type AgeBand } from "@/components/SpeakerFigure";
 import { useAuth } from "@/context/AuthContext";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -158,6 +158,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
   */
   const { user } = useAuth();
   const [figureSex, setFigureSexState] = useState<BiologicalSex>("female");
+  const [ageBand, setAgeBandState] = useState<AgeBand | undefined>(undefined);
 
   useEffect(() => {
     // Triage sets this when it runs; /checkin skips triage, so the account
@@ -173,24 +174,39 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
     let cancelled = false;
     void getDoc(doc(db, "users", uid))
       .then((snap) => {
-        const stored = snap.data()?.biologicalSex;
-        if (!cancelled && (stored === "male" || stored === "female")) setFigureSexState(stored);
+        if (cancelled) return;
+        const d = snap.data() || {};
+        if (d.biologicalSex === "male" || d.biologicalSex === "female") setFigureSexState(d.biologicalSex);
+        if (["under30", "30-45", "46-60", "60+"].includes(d.ageRange)) setAgeBandState(d.ageRange);
       })
       .catch(() => {});
     return () => { cancelled = true; };
   }, [userProfile?.biologicalSex, user]);
 
+  // Best effort, both fields. A profile write failing must never interrupt a
+  // recording, so these are deliberately not awaited and not surfaced.
+  const persistProfile = useCallback(
+    (patch: Record<string, string>) => {
+      const uid = user?.uid ?? auth?.currentUser?.uid;
+      if (uid && db) void setDoc(doc(db, "users", uid), patch, { merge: true }).catch(() => {});
+    },
+    [user]
+  );
+
   const setFigureSex = useCallback(
     (next: BiologicalSex) => {
       setFigureSexState(next);
-      // Best effort. A profile write failing must never interrupt a recording,
-      // so this is deliberately not awaited and not surfaced.
-      const uid = user?.uid ?? auth?.currentUser?.uid;
-      if (uid && db) {
-        void setDoc(doc(db, "users", uid), { biologicalSex: next }, { merge: true }).catch(() => {});
-      }
+      persistProfile({ biologicalSex: next });
     },
-    [user]
+    [persistProfile]
+  );
+
+  const setAgeBand = useCallback(
+    (next: AgeBand) => {
+      setAgeBandState(next);
+      persistProfile({ ageRange: next });
+    },
+    [persistProfile]
   );
   const [hasRecordedCurrentQuestion, setHasRecordedCurrentQuestion] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -778,7 +794,13 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
         figure stacked above it would push the question off the fold.
       */}
       <div className="pointer-events-auto absolute left-10 top-1/2 hidden -translate-y-1/2 lg:block">
-        <SpeakerFigure sex={figureSex} onChange={setFigureSex} speaking={isRecording} />
+        <SpeakerFigure
+          sex={figureSex}
+          onChange={setFigureSex}
+          age={ageBand ?? "30-45"}
+          onAgeChange={setAgeBand}
+          speaking={isRecording}
+        />
       </div>
 
       {/* Status Indicators */}

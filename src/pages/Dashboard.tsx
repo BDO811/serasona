@@ -1,8 +1,10 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useVoiceHistory } from "@/hooks/use-voice-history";
 import { MODELS, planIncludes } from "@/lib/models";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { computeSerasonaScore, type ScoreGroup } from "@/lib/serasona-score";
 import { bandForSignal, bandColorForSignal } from "@/lib/signal-band";
 import { ScoreDial } from "@/components/report/ScoreDial";
@@ -46,6 +48,40 @@ const tint = (hex: string, alpha: "0a" | "14" | "1a" | "26" = "1a") => `${hex}${
  */
 
 const Dashboard = () => {
+  /*
+    What this person told us about themselves, shown as context on the reading.
+
+    Serasona holds these; the model is not given them. The Amplifier v2 API
+    accepts no demographic parameters and returns none — confirmed against its
+    schemas and against docs.amplifierhealth.com. It compares a recording to
+    that subject's OWN history rather than to a population band, which is why
+    it does not ask. Wording this as "you told us" rather than implying the
+    analysis used it is the difference between context and a claim the API
+    cannot support.
+  */
+  const [demographics, setDemographics] = useState<{ sex?: string; age?: string }>({});
+  useEffect(() => {
+    const uid = auth?.currentUser?.uid;
+    if (!uid || !db) return;
+    let cancelled = false;
+    void getDoc(doc(db, "users", uid))
+      .then((snap) => {
+        if (cancelled) return;
+        const d = snap.data() || {};
+        setDemographics({ sex: d.biologicalSex, age: d.ageRange });
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  const AGE_LABEL: Record<string, string> = {
+    under30: "Under 30", "30-45": "30 to 45", "46-60": "46 to 60", "60+": "60 and over",
+  };
+  const demoLine = [
+    demographics.sex ? demographics.sex[0].toUpperCase() + demographics.sex.slice(1) : null,
+    demographics.age ? AGE_LABEL[demographics.age] : null,
+  ].filter(Boolean).join(" · ");
+
   const { user, subscription } = useAuth();
   const { loading, sessions } = useVoiceHistory();
 
@@ -217,6 +253,12 @@ const Dashboard = () => {
                   <div className="mt-2 font-serif text-3xl capitalize">
                     {latest.summary?.overallLevel ?? "Recorded"}
                   </div>
+                  {demoLine ? (
+                    <p className="mt-2 text-[13px] text-black/45">
+                      {demoLine} · as you told us. Readings are compared against
+                      your own history, not a population average.
+                    </p>
+                  ) : null}
                   {latest.summary?.flaggedCount != null && latest.summary?.totalSignals != null ? (
                     <p className="mt-2 text-[14px] text-black/55">
                       {latest.summary.flaggedCount} of {latest.summary.totalSignals} signals flagged

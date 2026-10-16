@@ -15,6 +15,14 @@ import { motion, useReducedMotion } from "framer-motion";
  */
 
 export type BiologicalSex = "male" | "female";
+export type AgeBand = "under30" | "30-45" | "46-60" | "60+";
+
+const AGE_RANGES: Array<{ id: AgeBand; label: string }> = [
+  { id: "under30", label: "<30" },
+  { id: "30-45", label: "30-45" },
+  { id: "46-60", label: "46-60" },
+  { id: "60+", label: "60+" },
+];
 
 const Figure = ({ sex, tone }: { sex: BiologicalSex; tone: string }) => (
   <svg viewBox="0 0 120 260" width="100%" height="100%" aria-hidden="true">
@@ -69,11 +77,16 @@ const Figure = ({ sex, tone }: { sex: BiologicalSex; tone: string }) => (
 export const SpeakerFigure = ({
   sex,
   onChange,
+  age,
+  onAgeChange,
   speaking = false,
   tone = "#c2410c",
 }: {
   sex: BiologicalSex;
   onChange: (next: BiologicalSex) => void;
+  /** Omit both to hide the age band entirely. */
+  age?: AgeBand;
+  onAgeChange?: (next: AgeBand) => void;
   /** Breathes gently while the microphone is open. */
   speaking?: boolean;
   tone?: string;
@@ -127,6 +140,30 @@ export const SpeakerFigure = ({
       <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-black/40">
         {sex}
       </span>
+
+      {/* Age band, when the caller wants it collected here too. Bands rather
+          than a birth date: the reading does not need a number, and a band is
+          far less identifying to hold against a voice recording. */}
+      {age !== undefined && onAgeChange ? (
+        <div className="mt-1 flex flex-wrap items-center justify-center gap-1">
+          {AGE_RANGES.map((a) => (
+            <button
+              key={a.id}
+              type="button"
+              onClick={() => onAgeChange(a.id)}
+              aria-pressed={age === a.id}
+              className="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] transition-colors"
+              style={
+                age === a.id
+                  ? { background: tone, color: "#fbf7f1" }
+                  : { color: "rgba(27,21,16,0.45)", boxShadow: "inset 0 0 0 1px rgba(27,21,16,0.15)" }
+              }
+            >
+              {a.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };
