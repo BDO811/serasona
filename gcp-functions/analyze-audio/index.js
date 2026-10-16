@@ -61,7 +61,11 @@ function getCorsOrigin(requestOrigin) {
 function setCorsHeaders(req, res) {
   res.set("Access-Control-Allow-Origin", getCorsOrigin(req.headers.origin));
   res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type");
+  // Authorization is required, not optional: every call carries a Firebase
+  // bearer token. Leaving it out of the preflight makes the browser refuse to
+  // send the POST at all, which looks like "analysis is failing" with no
+  // server-side error to find, because the request never arrives.
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 
 function parseMultipartAudio(req) {

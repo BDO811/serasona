@@ -12,7 +12,20 @@ import { asset } from "@/lib/asset";
 
 const RECORDING_MIME_TYPE = "audio/webm;codecs=opus";
 const RECORDING_SAMPLE_RATE = 48000;
-const RECORDING_DURATION_SECONDS = 15;
+/**
+ * Twenty, not fifteen.
+ *
+ * The upstream model refuses anything under 15 seconds with AUDIO_TOO_SHORT.
+ * This used to record exactly 15, which left no margin at all: Opus frame
+ * boundaries, a stop that lands a few milliseconds early, or any trailing
+ * silence trimmed upstream puts the clip under the floor and the whole
+ * analysis fails. A recording that is only just long enough is a recording
+ * that fails intermittently for reasons the user cannot see.
+ *
+ * Twenty gives five seconds of headroom and matches what the rest of the site
+ * has always promised, which was never true of the recorder until now.
+ */
+const RECORDING_DURATION_SECONDS = 20;
 // How many questions the user is asked. Everything downstream — the initial
 // draw from the pool, the re-ask cursor, the per-question audio buffers and the
 // "N of M" label — derives from this, so changing it here changes all of them.
