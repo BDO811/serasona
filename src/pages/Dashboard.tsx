@@ -3,6 +3,21 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useVoiceHistory } from "@/hooks/use-voice-history";
 import { MODELS, planIncludes } from "@/lib/models";
+import { computeSerasonaScore, type ScoreGroup } from "@/lib/serasona-score";
+import { ScoreDial } from "@/components/report/ScoreDial";
+
+const SCORE_BAND_COLOR = { clear: "#0d6a76", watch: "#9c5600", strained: "#a32020" } as const;
+const SCORE_BAND_SOFT = { clear: "#e0f0f3", watch: "#f8ead2", strained: "#f9e2e0" } as const;
+const GROUP_COLOR: Record<ScoreGroup, string> = {
+  stress: "#7b2d5e",
+  wellness: "#8a6a12",
+  clarity: "#1d5fa8",
+};
+const GROUP_DESCRIPTION: Record<ScoreGroup, string> = {
+  stress: "Tension read from pitch, pause length and vocal strain.",
+  wellness: "Fatigue, cardiovascular and general-health signs, read together.",
+  clarity: "Cognitive signs: attention, mental load and head impact.",
+};
 
 /**
  * Where everyone lands after signing in.
@@ -35,6 +50,12 @@ const Dashboard = () => {
   }, [plan]);
 
   const firstName = (user?.displayName || user?.email || "").split(/[@ ]/)[0];
+
+  // The Serasona Score: one composite across whatever signs the plan's
+  // models actually returned on the most recent check-in. See
+  // src/lib/serasona-score.ts for the weighting and why it reads band, not
+  // raw score.
+  const today = latest ? computeSerasonaScore(latest.signals) : null;
 
   return (
     <main className="min-h-screen bg-[#fbf7f1] text-black">
@@ -126,19 +147,54 @@ const Dashboard = () => {
             </div>
           ) : (
             <>
-              <div className="mt-6 rounded-3xl bg-black/[0.035] px-7 py-7">
-                <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-black/45">
-                  Most recent · {new Date(latest.capturedAt).toLocaleDateString()}
+              <div className="mt-6 flex flex-col items-center gap-5 rounded-3xl bg-black/[0.035] px-7 py-8 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-black/45">
+                    Most recent · {new Date(latest.capturedAt).toLocaleDateString()}
+                  </div>
+                  <div className="mt-2 font-serif text-3xl capitalize">
+                    {latest.summary?.overallLevel ?? "Recorded"}
+                  </div>
+                  {latest.summary?.flaggedCount != null && latest.summary?.totalSignals != null ? (
+                    <p className="mt-2 text-[14px] text-black/55">
+                      {latest.summary.flaggedCount} of {latest.summary.totalSignals} signals flagged
+                    </p>
+                  ) : null}
                 </div>
-                <div className="mt-2 font-serif text-3xl capitalize">
-                  {latest.summary?.overallLevel ?? "Recorded"}
-                </div>
-                {latest.summary?.flaggedCount != null && latest.summary?.totalSignals != null ? (
-                  <p className="mt-2 text-[14px] text-black/55">
-                    {latest.summary.flaggedCount} of {latest.summary.totalSignals} signals flagged
-                  </p>
-                ) : null}
+
+                {today?.score !== null && today?.score !== undefined && (
+                  <ScoreDial value={today.score} color={SCORE_BAND_COLOR[today.band!]} size={132} strokeWidth={10}>
+                    <div className="font-serif text-[34px] font-bold leading-none text-black">{today.score}</div>
+                    <span
+                      className="mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
+                      style={{ color: SCORE_BAND_COLOR[today.band!], backgroundColor: SCORE_BAND_SOFT[today.band!] }}
+                    >
+                      {today.bandLabel}
+                    </span>
+                  </ScoreDial>
+                )}
               </div>
+
+              {today && today.groups.length > 0 && (
+                <div
+                  className="mt-5 grid gap-3"
+                  style={{ gridTemplateColumns: `repeat(${today.groups.length}, minmax(0, 1fr))` }}
+                >
+                  {today.groups.map((group) => (
+                    <div key={group.group} className="rounded-2xl border border-black/10 px-5 py-4">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-black/45">
+                        {group.label}
+                      </div>
+                      <div className="mt-1 font-serif text-2xl" style={{ color: GROUP_COLOR[group.group] }}>
+                        {group.index ?? "—"}
+                      </div>
+                      <p className="mt-1 text-[12px] leading-snug text-black/55">
+                        {GROUP_DESCRIPTION[group.group]}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {latest.signals.map((s) => (
