@@ -8,6 +8,10 @@ import { isAssessmentPathwayEnabled } from "@/lib/utils";
 import { isV2Result, transformV2ResultToVisualization, V2JobDetail } from "@/lib/v2-api-visual-mapping";
 import { getModelForPathway } from "@/lib/pathway-model-map";
 import { t, getQuestionPool } from "@/lib/i18n";
+import { SpeakerFigure, type BiologicalSex } from "@/components/SpeakerFigure";
+import { useAuth } from "@/context/AuthContext";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { asset } from "@/lib/asset";
 
 const RECORDING_MIME_TYPE = "audio/webm;codecs=opus";
@@ -140,6 +144,54 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
   const [currentQuestion, setCurrentQuestion] = useState(0); // 0-indexed
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSecondsLeft, setRecordingSecondsLeft] = useState(RECORDING_DURATION_SECONDS);
+
+  /*
+    Which figure to draw beside the question.
+
+    Seeded from the account rather than asked for: /checkin deliberately skips
+    triage, so nothing on this screen has ever collected it. The value is only
+    a guess until someone uses the arrows, and it is stored back on their own
+    profile so the next check-in opens on the right one.
+
+    It is cosmetic. The model is not given sex as an input here, so switching
+    it changes the drawing and nothing about the reading.
+  */
+  const { user } = useAuth();
+  const [figureSex, setFigureSexState] = useState<BiologicalSex>("female");
+
+  useEffect(() => {
+    // Triage sets this when it runs; /checkin skips triage, so the account
+    // document is the only place it can come from there. Prefer whichever
+    // exists, and stay on the default if neither does.
+    const fromTriage = userProfile?.biologicalSex;
+    if (fromTriage === "male" || fromTriage === "female") {
+      setFigureSexState(fromTriage);
+      return;
+    }
+    const uid = user?.uid ?? auth?.currentUser?.uid;
+    if (!uid || !db) return;
+    let cancelled = false;
+    void getDoc(doc(db, "users", uid))
+      .then((snap) => {
+        const stored = snap.data()?.biologicalSex;
+        if (!cancelled && (stored === "male" || stored === "female")) setFigureSexState(stored);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [userProfile?.biologicalSex, user]);
+
+  const setFigureSex = useCallback(
+    (next: BiologicalSex) => {
+      setFigureSexState(next);
+      // Best effort. A profile write failing must never interrupt a recording,
+      // so this is deliberately not awaited and not surfaced.
+      const uid = user?.uid ?? auth?.currentUser?.uid;
+      if (uid && db) {
+        void setDoc(doc(db, "users", uid), { biologicalSex: next }, { merge: true }).catch(() => {});
+      }
+    },
+    [user]
+  );
   const [hasRecordedCurrentQuestion, setHasRecordedCurrentQuestion] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [showContent, setShowContent] = useState(false);
@@ -687,21 +739,26 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
       exit={{ opacity: 0 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Background photo, distinct per question — full-bleed, offset to one side so it doesn't sit dead-center behind the text */}
-      <AnimatePresence mode="sync">
-        <motion.div
-          key={currentQuestion}
-          className="absolute inset-0 bg-cover pointer-events-none"
-          style={{
-            backgroundImage: `url(${QUESTION_BACKGROUNDS[currentQuestion % QUESTION_BACKGROUNDS.length]})`,
-            backgroundPosition: "85% center",
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.3 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6 }}
-        />
-      </AnimatePresence>
+      {/*
+        One background, held still.
+
+        This used to swap a different full-bleed photo on every question, with
+        AnimatePresence in "sync" mode so the outgoing and incoming images were
+        both mounted and cross-fading at once. Mid-recording that reads as the
+        screen flashing, which is the last thing to do to someone who has been
+        asked to sit still and talk to a microphone.
+
+        The image is now mounted once and never keyed on the question, so
+        nothing re-enters and nothing fades. Lower opacity too: it is texture
+        behind the question, not a slideshow.
+      */}
+      <div
+        className="absolute inset-0 bg-cover pointer-events-none opacity-[0.18]"
+        style={{
+          backgroundImage: `url(${QUESTION_BACKGROUNDS[0]})`,
+          backgroundPosition: "85% center",
+        }}
+      />
 
       {/* Foreground UI — explicitly layered above the background photo */}
       <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
@@ -714,6 +771,15 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
       <CornerBracket position="top-right" />
       <CornerBracket position="bottom-left" />
       <CornerBracket position="bottom-right" />
+
+      {/*
+        The speaker, on the left, out of the way of the question.
+        Hidden below lg: on a phone there is no room beside the text, and a
+        figure stacked above it would push the question off the fold.
+      */}
+      <div className="pointer-events-auto absolute left-10 top-1/2 hidden -translate-y-1/2 lg:block">
+        <SpeakerFigure sex={figureSex} onChange={setFigureSex} speaking={isRecording} />
+      </div>
 
       {/* Status Indicators */}
       <div className="absolute top-8 left-8 flex flex-col gap-1">
