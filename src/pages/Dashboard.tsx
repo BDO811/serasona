@@ -4,10 +4,12 @@ import { useAuth } from "@/context/AuthContext";
 import { useVoiceHistory } from "@/hooks/use-voice-history";
 import { MODELS, planIncludes } from "@/lib/models";
 import { computeSerasonaScore, type ScoreGroup } from "@/lib/serasona-score";
+import { bandForSignal, bandColorForSignal } from "@/lib/signal-band";
 import { ScoreDial } from "@/components/report/ScoreDial";
+import { Sparkline } from "@/components/dashboard-sparkline";
+import { MicIcon, PhoneIcon, StressIcon, WellnessIcon, ClarityIcon } from "@/components/dashboard-icons";
 
 const SCORE_BAND_COLOR = { clear: "#0d6a76", watch: "#9c5600", strained: "#a32020" } as const;
-const SCORE_BAND_SOFT = { clear: "#e0f0f3", watch: "#f8ead2", strained: "#f9e2e0" } as const;
 const GROUP_COLOR: Record<ScoreGroup, string> = {
   stress: "#7b2d5e",
   wellness: "#8a6a12",
@@ -18,6 +20,17 @@ const GROUP_DESCRIPTION: Record<ScoreGroup, string> = {
   wellness: "Fatigue, cardiovascular and general-health signs, read together.",
   clarity: "Cognitive signs: attention, mental load and head impact.",
 };
+const GROUP_ICON: Record<ScoreGroup, (props: { className?: string; color?: string }) => JSX.Element> = {
+  stress: StressIcon,
+  wellness: WellnessIcon,
+  clarity: ClarityIcon,
+};
+
+/** Hex + alpha suffix, the same tint technique "Models on your plan" already
+ * uses (`${m.tone}1a`) — kept as one helper so every new tinted surface below
+ * uses the identical formula rather than a parallel set of "soft" hex
+ * constants. */
+const tint = (hex: string, alpha: "0a" | "14" | "1a" | "26" = "1a") => `${hex}${alpha}`;
 
 /**
  * Where everyone lands after signing in.
@@ -57,6 +70,25 @@ const Dashboard = () => {
   // raw score.
   const today = latest ? computeSerasonaScore(latest.signals) : null;
 
+  // The same composite computed per past session, oldest first, so the hero
+  // and each group tile can draw a real trend rather than a static number.
+  // Capped at the last 10 so a long history doesn't flatten the line.
+  const scoreHistory = useMemo(() => {
+    const chronological = [...sessions].reverse().slice(-10);
+    return chronological
+      .map((s) => computeSerasonaScore(s.signals))
+      .filter((r): r is NonNullable<typeof r> => r !== null);
+  }, [sessions]);
+
+  const overallSparkline = scoreHistory
+    .map((r) => r.score)
+    .filter((s): s is number => s !== null);
+
+  const groupSparkline = (group: ScoreGroup) =>
+    scoreHistory
+      .map((r) => r.groups.find((g) => g.group === group)?.index)
+      .filter((v): v is number => v != null);
+
   return (
     <main className="min-h-screen bg-[#fbf7f1] text-black">
       <div className="mx-auto max-w-[940px] px-6 pb-24 pt-12">
@@ -78,13 +110,23 @@ const Dashboard = () => {
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <Link
               to="/checkin"
-              className="rounded-3xl bg-[#1b1510] px-7 py-8 text-[#fbf7f1] transition-transform hover:scale-[1.01]"
+              className="group relative overflow-hidden rounded-3xl bg-[#1b1510] px-7 py-8 text-[#fbf7f1] transition-transform hover:scale-[1.01]"
             >
-              <div className="font-serif text-2xl">Speak now</div>
-              <p className="mt-2 text-[14px] leading-relaxed text-[#fbf7f1]/70">
+              <div
+                className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full blur-2xl"
+                style={{ background: "radial-gradient(circle, #c2410c66, transparent 70%)" }}
+              />
+              <span
+                className="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl"
+                style={{ background: tint("#c2410c", "26") }}
+              >
+                <MicIcon color="#c2410c" />
+              </span>
+              <div className="relative mt-4 font-serif text-2xl">Speak now</div>
+              <p className="relative mt-2 text-[14px] leading-relaxed text-[#fbf7f1]/70">
                 Twenty seconds in your browser. Results in about a minute.
               </p>
-              <span className="mt-6 inline-block font-mono text-[10px] uppercase tracking-[0.18em] text-[#c2410c]">
+              <span className="relative mt-6 inline-block font-mono text-[10px] uppercase tracking-[0.18em] text-[#c2410c]">
                 Start →
               </span>
             </Link>
@@ -92,13 +134,20 @@ const Dashboard = () => {
             {canCall ? (
               <Link
                 to="/checkin/phone"
-                className="rounded-3xl border border-black/12 px-7 py-8 transition-colors hover:border-black/30"
+                className="relative overflow-hidden rounded-3xl border px-7 py-8 transition-colors"
+                style={{ borderColor: tint("#0d6a76", "26"), background: tint("#0d6a76", "0a") }}
               >
-                <div className="font-serif text-2xl">Check in by phone</div>
+                <span
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-2xl"
+                  style={{ background: tint("#0d6a76", "1a") }}
+                >
+                  <PhoneIcon color="#0d6a76" />
+                </span>
+                <div className="mt-4 font-serif text-2xl">Check in by phone</div>
                 <p className="mt-2 text-[14px] leading-relaxed text-black/60">
                   Any phone, including a landline. No app needed.
                 </p>
-                <span className="mt-6 inline-block font-mono text-[10px] uppercase tracking-[0.18em] text-black/45">
+                <span className="mt-6 inline-block font-mono text-[10px] uppercase tracking-[0.18em]" style={{ color: "#0d6a76" }}>
                   Set it up →
                 </span>
               </Link>
@@ -107,7 +156,13 @@ const Dashboard = () => {
                 to="/pricing"
                 className="rounded-3xl border border-dashed border-black/20 px-7 py-8 transition-colors hover:border-black/40"
               >
-                <div className="font-serif text-2xl text-black/70">Check in by phone</div>
+                <span
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-2xl"
+                  style={{ background: "#0000000a" }}
+                >
+                  <PhoneIcon color="rgba(0,0,0,0.4)" />
+                </span>
+                <div className="mt-4 font-serif text-2xl text-black/70">Check in by phone</div>
                 <p className="mt-2 text-[14px] leading-relaxed text-black/50">
                   Serasona calls you instead. Included from Plus.
                 </p>
@@ -147,8 +202,15 @@ const Dashboard = () => {
             </div>
           ) : (
             <>
-              <div className="mt-6 flex flex-col items-center gap-5 rounded-3xl bg-black/[0.035] px-7 py-8 sm:flex-row sm:items-center sm:justify-between">
-                <div>
+              <div
+                className="mt-6 flex flex-col items-center gap-6 rounded-3xl px-7 py-8 sm:flex-row sm:items-center sm:justify-between"
+                style={{
+                  background: today?.band
+                    ? `linear-gradient(135deg, ${tint(SCORE_BAND_COLOR[today.band], "14")}, ${tint(SCORE_BAND_COLOR[today.band], "0a")})`
+                    : "rgba(0,0,0,0.035)",
+                }}
+              >
+                <div className="flex-1">
                   <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-black/45">
                     Most recent · {new Date(latest.capturedAt).toLocaleDateString()}
                   </div>
@@ -160,14 +222,23 @@ const Dashboard = () => {
                       {latest.summary.flaggedCount} of {latest.summary.totalSignals} signals flagged
                     </p>
                   ) : null}
+
+                  {overallSparkline.length > 1 && today?.band && (
+                    <div className="mt-4 max-w-[220px]">
+                      <Sparkline values={overallSparkline} color={SCORE_BAND_COLOR[today.band]} />
+                      <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-black/35">
+                        Last {overallSparkline.length} check-ins
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {today?.score !== null && today?.score !== undefined && (
-                  <ScoreDial value={today.score} color={SCORE_BAND_COLOR[today.band!]} size={132} strokeWidth={10}>
-                    <div className="font-serif text-[34px] font-bold leading-none text-black">{today.score}</div>
+                  <ScoreDial value={today.score} color={SCORE_BAND_COLOR[today.band!]} size={140} strokeWidth={11}>
+                    <div className="font-serif text-[36px] font-bold leading-none text-black">{today.score}</div>
                     <span
                       className="mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
-                      style={{ color: SCORE_BAND_COLOR[today.band!], backgroundColor: SCORE_BAND_SOFT[today.band!] }}
+                      style={{ color: SCORE_BAND_COLOR[today.band!], backgroundColor: tint(SCORE_BAND_COLOR[today.band!], "1a") }}
                     >
                       {today.bandLabel}
                     </span>
@@ -180,31 +251,68 @@ const Dashboard = () => {
                   className="mt-5 grid gap-3"
                   style={{ gridTemplateColumns: `repeat(${today.groups.length}, minmax(0, 1fr))` }}
                 >
-                  {today.groups.map((group) => (
-                    <div key={group.group} className="rounded-2xl border border-black/10 px-5 py-4">
-                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-black/45">
-                        {group.label}
+                  {today.groups.map((group) => {
+                    const color = GROUP_COLOR[group.group];
+                    const Icon = GROUP_ICON[group.group];
+                    const trend = groupSparkline(group.group);
+                    return (
+                      <div
+                        key={group.group}
+                        className="flex flex-col rounded-2xl px-5 py-4"
+                        style={{ background: tint(color, "0a"), border: `1px solid ${tint(color, "1a")}` }}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-xl"
+                            style={{ background: tint(color, "1a") }}
+                          >
+                            <Icon color={color} className="h-[18px] w-[18px]" />
+                          </span>
+                          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-black/50">
+                            {group.label}
+                          </span>
+                        </div>
+                        <div className="mt-2 font-serif text-2xl" style={{ color }}>
+                          {group.index ?? "—"}
+                        </div>
+                        <p className="mt-1 text-[12px] leading-snug text-black/55">
+                          {GROUP_DESCRIPTION[group.group]}
+                        </p>
+                        {trend.length > 1 && (
+                          <div className="mt-3">
+                            <Sparkline values={trend} color={color} height={22} />
+                          </div>
+                        )}
                       </div>
-                      <div className="mt-1 font-serif text-2xl" style={{ color: GROUP_COLOR[group.group] }}>
-                        {group.index ?? "—"}
-                      </div>
-                      <p className="mt-1 text-[12px] leading-snug text-black/55">
-                        {GROUP_DESCRIPTION[group.group]}
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 
               <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {latest.signals.map((s) => (
-                  <div key={s.name} className="rounded-2xl border border-black/10 px-5 py-4">
-                    <div className="text-[12px] capitalize text-black/50">
-                      {String(s.name).replace(/[-_]/g, " ")}
+                {latest.signals.map((s) => {
+                  const band = bandForSignal(s.name, s.level, s.score);
+                  const color = bandColorForSignal(s.name, band, "light");
+                  return (
+                    <div
+                      key={s.name}
+                      className="flex items-center gap-3 rounded-2xl border border-black/10 px-5 py-4"
+                    >
+                      <span
+                        className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                        style={{ backgroundColor: color }}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-[12px] capitalize text-black/50">
+                          {String(s.name).replace(/[-_]/g, " ")}
+                        </div>
+                        <div className="mt-0.5 text-[16px] capitalize" style={{ color }}>
+                          {s.level ?? "—"}
+                        </div>
+                      </div>
                     </div>
-                    <div className="mt-1 text-[16px] capitalize">{s.level ?? "—"}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </>
           )}
@@ -215,20 +323,31 @@ const Dashboard = () => {
           <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-black/55">
             Models on your plan
           </h2>
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {activeModels.map((m) => (
-              <span
+              <div
                 key={m.id}
-                className="rounded-full px-4 py-2 text-[13px]"
-                style={{ background: `${m.tone}1a`, color: m.tone }}
+                className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+                style={{ background: tint(m.tone, "0a"), border: `1px solid ${tint(m.tone, "1a")}` }}
               >
-                {m.name}
-              </span>
+                <span
+                  className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl font-serif text-sm font-bold"
+                  style={{ background: tint(m.tone, "1a"), color: m.tone }}
+                >
+                  {m.name.slice(0, 1)}
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[13px] font-medium" style={{ color: m.tone }}>
+                    {m.name}
+                  </div>
+                  <div className="truncate text-[11px] text-black/50">{m.tagline}</div>
+                </div>
+              </div>
             ))}
             {activeModels.length < MODELS.length ? (
               <Link
                 to="/models"
-                className="rounded-full border border-dashed border-black/25 px-4 py-2 text-[13px] text-black/55 transition-colors hover:border-black/45 hover:text-black/80"
+                className="flex items-center justify-center rounded-2xl border border-dashed border-black/25 px-4 py-3.5 text-[13px] text-black/55 transition-colors hover:border-black/45 hover:text-black/80"
               >
                 + {MODELS.length - activeModels.length} more available
               </Link>
