@@ -151,6 +151,10 @@ export async function startVoiceCheckin(
       // haven is the behavioural pipeline. pulse adds dehydration and blood
       // pressure, which are not Serasona's story and would need suppressing.
       model: opts.model ?? "haven",
+      // The harness also serves try.amplifierhealth.com and picks the phone
+      // script by this field (falls back to Origin if omitted) — explicit
+      // here so a proxy or redirect that drops Origin can't mis-brand the call.
+      brand: "serasona",
     }),
   });
 
