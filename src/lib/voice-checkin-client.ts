@@ -15,6 +15,9 @@
  * Spec:    Claude-Outputs/Amplifier_VoiceAgent_Harness_20261004/
  */
 
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+
 const HARNESS =
   import.meta.env.VITE_VOICE_HARNESS_URL ??
   "https://voice-call-harness-551580534721.us-central1.run.app";
@@ -135,12 +138,34 @@ export interface StartedCheckin {
   checkinUrl: string | null;
 }
 
+/**
+ * The signed-in user's own cloned calling voice, if they've recorded one and
+ * it finished processing. Read directly rather than through voice-clone-
+ * client.ts's subscription helper — this is a single one-off lookup at call
+ * time, not something the phone check-in page needs to keep live. Returns
+ * null for every other case (not signed in, no clone, still pending, or
+ * failed), which the harness takes to mean "use the brand default voice."
+ */
+async function resolveVoiceId(): Promise<string | null> {
+  const uid = auth?.currentUser?.uid;
+  if (!uid || !db) return null;
+  const snap = await getDoc(doc(db, "voiceClones", uid));
+  if (!snap.exists()) return null;
+  const clone = snap.data() as { status?: string; providerVoiceId?: string | null };
+  return clone.status === "ready" ? clone.providerVoiceId ?? null : null;
+}
+
 export async function startVoiceCheckin(
   phone: string,
   opts: { mode?: CheckinMode; model?: string } = {}
 ): Promise<StartedCheckin> {
   const to = normalisePhone(phone);
   if (!to) throw new VoiceCheckinError("That does not look like a phone number.");
+
+  // Only the phone path plays anything through the harness's TeXML <Say> —
+  // "web" mode records in-browser and never touches a cloned calling voice,
+  // so skip the Firestore read entirely for that case.
+  const voiceId = opts.mode === "phone" ? await resolveVoiceId() : null;
 
   const res = await fetch(`${HARNESS}/voiceCall/start`, {
     method: "POST",
@@ -155,6 +180,9 @@ export async function startVoiceCheckin(
       // script by this field (falls back to Origin if omitted) — explicit
       // here so a proxy or redirect that drops Origin can't mis-brand the call.
       brand: "serasona",
+      // Non-null only once /voice has produced a ready clone. The harness
+      // falls back to its own default voice when this is absent.
+      ...(voiceId ? { voiceId } : {}),
     }),
   });
 

@@ -314,6 +314,18 @@ export async function convertToWav(
 }
 
 /**
+ * Base64-encode a blob's raw bytes, no `data:...;base64,` prefix — the shape
+ * gcp-functions/clone-voice (and the LAM upload path) expect on the wire.
+ */
+export async function blobToBase64(blob: Blob): Promise<string> {
+  const buffer = await blob.arrayBuffer();
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+/**
  * Convert audio blob to MP3 format (re-encodes at RECORDING_SAMPLE_RATE when decoding from WebM/Opus).
  */
 export async function convertToMp3(

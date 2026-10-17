@@ -53,6 +53,9 @@ jobs:
           VITE_CREATE_CHECKOUT_SESSION_URL: https://us-central1-amits-playground-po.cloudfunctions.net/createCheckoutSession
           VITE_CREATE_PORTAL_SESSION_URL: https://us-central1-amits-playground-po.cloudfunctions.net/createPortalSession
           VITE_ADMIN_API_URL: https://us-central1-amits-playground-po.cloudfunctions.net/adminApi
+          # Without this, /voice reports "isn't open yet" and the phone
+          # check-in silently falls back to the default voice.
+          VITE_CLONE_VOICE_URL: https://us-central1-amits-playground-po.cloudfunctions.net/cloneVoice
 
       # Inspects the artifact rather than the environment that produced it.
       # The build itself refuses to run without Firebase configured, but a

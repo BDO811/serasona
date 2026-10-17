@@ -31,6 +31,15 @@ service cloud.firestore {
       }
     }
 
+    // Written only by the clone-voice Cloud Function (Admin SDK, bypasses
+    // these rules) the same way `subscription` above is only ever written by
+    // the Stripe webhook — the client reads its own clone's status to show
+    // "ready"/"pending"/"failed" on the voice page, never writes it directly.
+    match /voiceClones/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+
     // Admin-only collections. The catch-all below already denies these, but
     // they are called out explicitly because the cost of someone later adding a
     // broad rule above the catch-all is a leaked TOTP secret or a forged

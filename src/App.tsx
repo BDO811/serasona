@@ -27,6 +27,7 @@ import Science from "./pages/Science";
 import Models from "./pages/Models";
 import Admin from "./pages/Admin";
 import CheckinByPhone from "./pages/CheckinByPhone";
+import VoiceClone from "./pages/VoiceClone";
 import SmoothHeroDemo from "./pages/SmoothHeroDemo";
 import NotFound from "./pages/NotFound";
 
@@ -93,6 +94,17 @@ const App = () => (
                   <ProtectedRoute>
                     <PageShell>
                       <CheckinByPhone />
+                    </PageShell>
+                  </ProtectedRoute>
+                }
+              />
+              {/* Plus and above, same gate as /checkin/phone — this is what voice it uses. */}
+              <Route
+                path="/voice"
+                element={
+                  <ProtectedRoute>
+                    <PageShell>
+                      <VoiceClone />
                     </PageShell>
                   </ProtectedRoute>
                 }

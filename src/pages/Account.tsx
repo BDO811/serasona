@@ -59,9 +59,14 @@ const Account = () => {
             {/* Plus is the tier that buys the phone check-in. Below it this
                 would just be a link to a redirect, so it is not shown at all. */}
             {isEntitled("plus") && (
-              <Button asChild variant="ghost" className="w-full">
-                <Link to="/checkin/phone">Not at a screen? Check in by phone</Link>
-              </Button>
+              <>
+                <Button asChild variant="ghost" className="w-full">
+                  <Link to="/checkin/phone">Not at a screen? Check in by phone</Link>
+                </Button>
+                <Button asChild variant="ghost" className="w-full">
+                  <Link to="/voice">Choose your calling voice</Link>
+                </Button>
+              </>
             )}
           </div>
         )}
