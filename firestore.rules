@@ -17,7 +17,10 @@ service cloud.firestore {
       // absent: the client must never be able to grant itself a plan.
       allow update: if request.auth != null && request.auth.uid == userId
                     && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(["email", "fullName", "biologicalSex", "ageRange"])
+                         .hasOnly(["email", "fullName", "biologicalSex", "ageRange", "phoneNumber"])
+                    && (!("phoneNumber" in request.resource.data)
+                        || (request.resource.data.phoneNumber is string
+                            && request.resource.data.phoneNumber.matches('^[+][1-9][0-9]{7,14}$')))
                     && (!("biologicalSex" in request.resource.data)
                         || request.resource.data.biologicalSex in ["male", "female"])
                     && (!("ageRange" in request.resource.data)

@@ -7,10 +7,10 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+  const { user, loading, subscriptionLoading } = useAuth();
   const location = useLocation();
 
-  if (loading) return null;
+  if (loading || subscriptionLoading) return <div className="min-h-screen bg-[#F0EAE0] p-10 text-center font-serif" role="status">Loading your account…</div>;
   if (!user) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }

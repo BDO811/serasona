@@ -19,6 +19,8 @@ export interface SignalHistory {
 
 export interface VoiceHistoryState {
   loading: boolean;
+  error: string | null;
+  refresh: () => void;
   /** Every stored session for this user, oldest first. */
   sessions: StoredSession[];
   /** One positioned read per signal, most-recent-deviation first. */
@@ -29,6 +31,8 @@ export interface VoiceHistoryState {
 
 const EMPTY: VoiceHistoryState = {
   loading: false,
+  error: null,
+  refresh: () => {},
   sessions: [],
   signals: [],
   isReturning: false,
@@ -47,15 +51,25 @@ const EMPTY: VoiceHistoryState = {
  * (anonymous demo, unchanged from before accounts existed). A signed-in user
  * is never identified by email here — see gcp-functions/voice-history for why.
  */
-export function useVoiceHistory({ save = false }: { save?: boolean } = {}): VoiceHistoryState {
+export function useVoiceHistory({ save = false, refreshInterval = 0 }: { save?: boolean; refreshInterval?: number } = {}): VoiceHistoryState {
   const { userProfile, visualizedResult, pathway } = useAssessment();
   const { user } = useAuth();
   const email = userProfile.email?.trim() || "";
   const jobId = visualizedResult?.jobId || "";
   const identityKey = user?.uid || email;
 
-  const [state, setState] = useState<VoiceHistoryState>(EMPTY);
+  const [revision, setRevision] = useState(0);
+  const refresh = () => setRevision((n) => n + 1);
+  const [state, setState] = useState<VoiceHistoryState>({ ...EMPTY, loading: Boolean(identityKey) });
+  useEffect(() => {
+    if (!refreshInterval) return;
+    const interval = window.setInterval(() => { if (!document.hidden) setRevision((n) => n + 1); }, refreshInterval);
+    const onFocus = () => setRevision((n) => n + 1);
+    window.addEventListener("focus", onFocus);
+    return () => { window.clearInterval(interval); window.removeEventListener("focus", onFocus); };
+  }, [refreshInterval]);
   const savedJobIds = useRef<Set<string>>(new Set());
+  const loadedIdentity = useRef(identityKey);
 
   useEffect(() => {
     if (!identityKey) {
@@ -64,7 +78,9 @@ export function useVoiceHistory({ save = false }: { save?: boolean } = {}): Voic
     }
 
     let cancelled = false;
-    setState((prev) => ({ ...prev, loading: true }));
+    const changedIdentity = loadedIdentity.current !== identityKey;
+    loadedIdentity.current = identityKey;
+    setState((prev) => ({ ...(changedIdentity ? EMPTY : prev), loading: true, error: null }));
 
     const run = async () => {
       const idToken = user ? await user.getIdToken() : null;
@@ -77,12 +93,13 @@ export function useVoiceHistory({ save = false }: { save?: boolean } = {}): Voic
         save && jobId && visualizedResult?.signals?.length && !savedJobIds.current.has(jobId);
 
       if (shouldSave) {
-        savedJobIds.current.add(jobId);
         const existing = await fetchHistory(email, idToken);
         priorSessionCount = existing.length;
-        await saveSession(
+        const saved = await saveSession(
           {
             email,
+            jobId,
+            source: "browser",
             model: visualizedResult.modelName ?? null,
             pathway: pathway ?? null,
             signals: visualizedResult.signals!,
@@ -95,9 +112,11 @@ export function useVoiceHistory({ save = false }: { save?: boolean } = {}): Voic
           },
           idToken
         );
+        if (!saved) throw new Error("Your result could not be saved. Please retry before leaving this page.");
+        savedJobIds.current.add(jobId);
       }
 
-      const sessions = await fetchHistory(email, idToken);
+      const sessions = await fetchHistory(email, idToken, { strict: true });
       if (cancelled) return;
 
       const signals: SignalHistory[] = toSignalSeries(sessions)
@@ -118,6 +137,8 @@ export function useVoiceHistory({ save = false }: { save?: boolean } = {}): Voic
 
       setState({
         loading: false,
+        error: null,
+        refresh,
         sessions,
         signals,
         isReturning: shouldSave ? priorSessionCount > 0 : sessions.length > 1,
@@ -126,7 +147,7 @@ export function useVoiceHistory({ save = false }: { save?: boolean } = {}): Voic
 
     run().catch((error) => {
       console.warn("[useVoiceHistory] Failed:", error);
-      if (!cancelled) setState({ ...EMPTY, loading: false });
+      if (!cancelled) setState({ ...EMPTY, loading: false, error: error instanceof Error ? error.message : "Your readings could not be loaded." });
     });
 
     return () => {
@@ -135,7 +156,7 @@ export function useVoiceHistory({ save = false }: { save?: boolean } = {}): Voic
     // visualizedResult is intentionally not a dependency: it is a new object on
     // every render, and jobId already identifies the result that matters here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [identityKey, email, jobId, save, pathway]);
+  }, [identityKey, email, jobId, save, pathway, revision]);
 
-  return state;
+  return loadedIdentity.current !== identityKey ? { ...EMPTY, loading: Boolean(identityKey), refresh } : { ...state, refresh };
 }

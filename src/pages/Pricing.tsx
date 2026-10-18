@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
-import { startCheckout } from "@/lib/billing-client";
+import { startCheckout, openBillingPortal } from "@/lib/billing-client";
 import { DEMO_MODE, demoAuth } from "@/lib/demo-mode";
 import { DemoModeBanner } from "@/components/DemoModeBanner";
 import { toast } from "sonner";
@@ -93,7 +93,13 @@ const Pricing = () => {
         navigate("/account?checkout=success");
         return;
       }
-      await startCheckout(planId as Exclude<PlanId, "free">);
+      if (subscription.stripeCustomerId) {
+        await openBillingPortal();
+      } else if (subscription.planId !== "free" && ["active", "trialing", "past_due"].includes(subscription.status)) {
+        throw new Error("Use your original billing provider to change this subscription.");
+      } else {
+        await startCheckout(planId as Exclude<PlanId, "free">);
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Couldn't start checkout.");
       setLoadingPlan(null);

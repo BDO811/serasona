@@ -23,6 +23,11 @@ export interface StoredSignal {
 export interface StoredSession {
   sessionId: string;
   capturedAt: number;
+  source?: "browser" | "phone" | null;
+  status?: string | null;
+  speechSeconds?: number | null;
+  captureSampleRate?: number | null;
+  quality?: { usable?: boolean; reason?: string | null } | null;
   model: string | null;
   pathway: string | null;
   signals: StoredSignal[];
@@ -37,6 +42,8 @@ export interface StoredSession {
 export interface SessionToSave {
   /** Ignored by the server when idToken is supplied; required otherwise. */
   email: string;
+  jobId?: string;
+  source?: "browser";
   model?: string | null;
   pathway?: string | null;
   capturedAt?: number;
@@ -98,7 +105,7 @@ export async function saveSession(session: SessionToSave, idToken?: string | nul
  * Pass idToken for a signed-in account; otherwise falls back to the email,
  * exactly as before.
  */
-export async function fetchHistory(email: string, idToken?: string | null): Promise<StoredSession[]> {
+export async function fetchHistory(email: string, idToken?: string | null, options: { strict?: boolean } = {}): Promise<StoredSession[]> {
   if (!idToken && !email) return [];
 
   try {
@@ -107,13 +114,14 @@ export async function fetchHistory(email: string, idToken?: string | null): Prom
       headers: idToken ? { Authorization: `Bearer ${idToken}` } : {},
     });
     if (!response.ok) {
-      console.warn(`[voice-history] Fetch failed with status ${response.status}`);
-      return [];
+      throw new Error("Your readings could not be loaded. Please try again.");
     }
     const data = await response.json();
-    return Array.isArray(data.sessions) ? data.sessions : [];
+    if (!Array.isArray(data.sessions)) throw new Error("The history response was incomplete. Please try again.");
+    return data.sessions;
   } catch (error) {
     console.warn("[voice-history] Fetch failed:", error);
+    if (options.strict) throw error;
     return [];
   }
 }
@@ -151,4 +159,18 @@ export function toSignalSeries(
   }
 
   return [...byName.values()];
+}
+
+/** Register the call with the authenticated history service before leaving the page.
+ * Subsequent history reads recover terminal results on the server, even if this tab closes. */
+export async function trackPhoneSession(sessionId: string): Promise<void> {
+  const { auth } = await import("@/lib/firebase");
+  if (!auth?.currentUser) throw new Error("Sign in to save your phone check-in.");
+  const token = await auth.currentUser.getIdToken();
+  const response = await fetch(VOICE_HISTORY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ action: "trackPhone", phoneSessionId: sessionId }),
+  });
+  if (!response.ok) throw new Error("The call started, but could not be linked to your account. Keep this page open and retry saving when it finishes.");
 }

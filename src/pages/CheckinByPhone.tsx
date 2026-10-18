@@ -1,300 +1,72 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useEffect, useRef, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { Phone, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import {
-  startVoiceCheckin,
-  pollVoiceCheckin,
-  normalisePhone,
-  failureCopy,
-  isTelephonyGrade,
-  toSevenMetrics,
-  VoiceCheckinError,
-  type CheckinMode,
-  type CheckinStatus,
-  type VoiceCheckinSession,
-} from "@/lib/voice-checkin-client";
+import { db } from "@/lib/firebase";
+import { MemberShell } from "@/components/member/MemberShell";
+import { VoiceWave } from "@/components/member/VoiceSculpture";
+import { startVoiceCheckin, pollVoiceCheckin, normalisePhone, failureCopy, VoiceCheckinError, type VoiceCheckinSession } from "@/lib/voice-checkin-client";
+import { trackPhoneSession } from "@/lib/voice-history-client";
+import { computeSerasonaScore } from "@/lib/serasona-score";
 
-/**
- * The phone check-in. Serasona reaches out instead of waiting to be opened.
- *
- * Gated on Plus, because that is what Plus is sold as: "Serasona calls you
- * weekly, no app required." Core and Free get the in-app recorder at /checkin,
- * which is the better capture anyway — this one is about reach.
- *
- * Two ways to check in from here:
- *   "Check in here"   records in this browser at full quality
- *   "Call me"         an actual phone call, works on a landline, lower audio
- *                     fidelity (see the note on the button)
- *
- * There used to be a third, "Text me a link". SMS is switched off until 10DLC
- * registration clears — unregistered A2P traffic on a long code gets filtered
- * by carriers, so the message would often not arrive and the number risks being
- * blocked. The web mode still mints the same link, it just opens it here.
- */
-
-const PHONE_KEY = "serasona.checkinPhone";
-
-const WAITING_COPY: Partial<Record<CheckinStatus, string>> = {
-  sending_link: "Preparing your check-in…",
-  link_sent: "Ready. Opening your check-in…",
-  capturing: "Listening…",
-  dialing: "Connecting…",
-  ringing: "Ringing your phone now.",
-  in_call: "On the call.",
-  analyzing: "Reading your voice…",
-};
-
-const CheckinByPhone = () => {
-  const { isEntitled } = useAuth();
-  const navigate = useNavigate();
-
-  const [phone, setPhone] = useState(() => localStorage.getItem(PHONE_KEY) ?? "");
-  const [mode, setMode] = useState<CheckinMode>("web");
+const WAITING: Record<string, string> = { dialing: "Connecting your call…", ringing: "Your phone is ringing.", in_call: "Your check-in is in progress.", analyzing: "Reading your voice…", capturing: "Capturing your voice…", sending_link: "Preparing your check-in…", link_sent: "Your check-in is ready." };
+export default function CheckinByPhone() {
+  const { user, isEntitled } = useAuth();
+  const [phone, setPhone] = useState("");
+  const [consent, setConsent] = useState(false);
   const [session, setSession] = useState<VoiceCheckinSession | null>(null);
   const [starting, setStarting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const [saving, setSaving] = useState(false);
   const abort = useRef<AbortController | null>(null);
-
-  // Plus is the phone tier. Everyone below it has the in-app recorder.
-  const entitled = isEntitled("plus");
-
-  useEffect(() => () => abort.current?.abort(), []);
-
-  const begin = useCallback(async () => {
-    const e164 = normalisePhone(phone);
-    if (!e164) {
-      setError("That does not look like a phone number.");
-      return;
-    }
-    setError(null);
-    setStarting(true);
-    abort.current?.abort();
-    const controller = new AbortController();
-    abort.current = controller;
-
+  const uid = user?.uid;
+  useEffect(() => {
+    let canceled = false;
+    if (uid && db) getDoc(doc(db, "users", uid)).then((snap) => { if (!canceled) setPhone(snap.data()?.phoneNumber || ""); }).catch(() => {});
+    return () => { canceled = true; abort.current?.abort(); };
+  }, [uid]);
+  if (!isEntitled("plus")) return <Navigate to="/account#subscription" replace />;
+  const saveFinal = async (id: string) => {
+    setSaving(true); setSaveError("");
+    try { await trackPhoneSession(id); }
+    catch (err) { setSaveError(err instanceof Error ? err.message : "History sync is unavailable. Please retry."); }
+    finally { setSaving(false); }
+  };
+  const begin = async () => {
+    const number = normalisePhone(phone);
+    if (!number) { setError("Enter a valid phone number, including the country code outside the US."); return; }
+    if (!consent) { setError("Confirm the call and recording consent first."); return; }
+    setError(""); setSaveError(""); setStarting(true);
+    abort.current?.abort(); const controller = new AbortController(); abort.current = controller;
     try {
-      const started = await startVoiceCheckin(e164, { mode });
-      localStorage.setItem(PHONE_KEY, phone);
-
-      // Signed in and on this device: skip the SMS entirely and go straight to
-      // the capture page. Cheaper, instant, and it sidesteps carrier filtering.
-      if (mode === "web" && started.checkinUrl) {
-        window.location.href = started.checkinUrl;
-        return;
-      }
-
-      setSession({
-        sessionId: started.sessionId,
-        status: started.status,
-        provider: started.provider,
-        model: "haven",
-        speechSeconds: null,
-        captureSampleRate: null,
-        smsStatus: null,
-        error: null,
-        quality: null,
-        result: null,
-      });
-
-      const final = await pollVoiceCheckin(started.sessionId, {
-        signal: controller.signal,
-        onTick: setSession,
-      });
-      setSession(final);
-    } catch (err) {
+      // The authenticated service checks the plan and links this call to the account before returning.
+      const started = await startVoiceCheckin(number, { mode: "phone", consent: true });
       if (controller.signal.aborted) return;
-      setError(
-        err instanceof VoiceCheckinError
-          ? [err.message, err.hint].filter(Boolean).join(" ")
-          : "Could not start the check-in."
-      );
-    } finally {
-      setStarting(false);
-    }
-  }, [phone, mode]);
-
-  if (!entitled) return <Navigate to="/pricing" replace />;
-
-  // ---- result -------------------------------------------------------------
-  if (session?.status === "complete") {
-    const metrics = toSevenMetrics(session);
-    const telephony = isTelephonyGrade(session);
-
-    return (
-      <div className="min-h-screen bg-background px-6 py-16">
-        <div className="max-w-md mx-auto space-y-8">
-          <div>
-            <p className="text-xs font-mono uppercase tracking-wider text-primary">Done</p>
-            <h1 className="font-serif text-3xl text-foreground">Your check-in</h1>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card divide-y divide-border">
-            {metrics.map((m) => (
-              <div key={m.key} className="flex items-baseline justify-between px-6 py-4">
-                <span className="text-foreground">{m.label}</span>
-                {m.score === null ? (
-                  <span className="text-sm text-muted-foreground">not read</span>
-                ) : (
-                  <span className="flex items-baseline gap-3">
-                    {/* The word, always. Colour never carries a result alone. */}
-                    <span className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
-                      {m.band}
-                    </span>
-                    <span className="font-serif text-2xl text-foreground tabular-nums">{m.score}</span>
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {telephony && (
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              This one came over a phone line, which carries less of your voice than the app does.
-              Read it alongside other calls rather than against your in-app check-ins.
-            </p>
-          )}
-
-          <div className="flex gap-3">
-            <Button asChild className="flex-1">
-              <Link to="/history">See my trend</Link>
-            </Button>
-            <Button variant="outline" className="flex-1" onClick={() => setSession(null)}>
-              Again
-            </Button>
-          </div>
-          <Button variant="ghost" className="w-full" onClick={() => navigate("/account")}>
-            Back to account
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // ---- terminal failure ---------------------------------------------------
-  if (session && session.status !== "analyzing" && !WAITING_COPY[session.status]) {
-    const copy = failureCopy(session);
-    return (
-      <div className="min-h-screen bg-background px-6 py-16">
-        <div className="max-w-md mx-auto space-y-6">
-          <h1 className="font-serif text-3xl text-foreground">{copy.title}</h1>
-          <p className="text-muted-foreground leading-relaxed">{copy.body}</p>
-          <Button className="w-full" onClick={() => setSession(null)}>
-            Try again
-          </Button>
-          <Button variant="ghost" className="w-full" onClick={() => navigate("/account")}>
-            Back to account
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // ---- waiting ------------------------------------------------------------
-  if (session) {
-    return (
-      <div className="min-h-screen bg-background px-6 py-16">
-        <div className="max-w-md mx-auto space-y-6">
-          <p className="text-xs font-mono uppercase tracking-wider text-primary">In progress</p>
-          <h1 className="font-serif text-3xl text-foreground">
-            {WAITING_COPY[session.status] ?? "Working…"}
-          </h1>
-          {session.speechSeconds !== null && (
-            <p className="text-sm text-muted-foreground">
-              {Math.round(session.speechSeconds)} seconds of speech captured.
-            </p>
-          )}
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            You can close this page. The results will be in your account either way.
-          </p>
-          <Button
-            variant="ghost"
-            className="w-full"
-            onClick={() => {
-              abort.current?.abort();
-              navigate("/account");
-            }}
-          >
-            Back to account
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // ---- start --------------------------------------------------------------
-  return (
-    <div className="min-h-screen bg-background px-6 py-16">
-      <div className="max-w-md mx-auto space-y-8">
-        <div>
-          <p className="text-xs font-mono uppercase tracking-wider text-primary">Plus</p>
-          <h1 className="font-serif text-3xl text-foreground">Check in by phone</h1>
-          <p className="text-muted-foreground mt-2 leading-relaxed">
-            Check in right here, or have Serasona call you. Either way you talk for a few minutes and
-            the reading lands in your account.
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground" htmlFor="phone">
-            Your number
-          </label>
-          <Input
-            id="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            placeholder="(617) 555-0123"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => setMode("web")}
-            className={`rounded-2xl border p-4 text-left transition ${
-              mode === "web" ? "border-primary bg-card" : "border-border bg-card/50"
-            }`}
-          >
-            <span className="block text-foreground">Check in here</span>
-            <span className="block text-sm text-muted-foreground mt-1">
-              Records in your browser. Best quality.
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("phone")}
-            className={`rounded-2xl border p-4 text-left transition ${
-              mode === "phone" ? "border-primary bg-card" : "border-border bg-card/50"
-            }`}
-          >
-            <span className="block text-foreground">Call me</span>
-            <span className="block text-sm text-muted-foreground mt-1">
-              Works on any phone. Carries less of your voice.
-            </span>
-          </button>
-        </div>
-
-        {error && <p className="text-sm text-destructive">{error}</p>}
-
-        <Button className="w-full" onClick={begin} disabled={starting || !phone.trim()}>
-          {starting ? "Starting…" : mode === "phone" ? "Call me now" : "Start check-in"}
-        </Button>
-
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          Your voice is analysed and then deleted. Nothing you say is read for its content. What is
-          measured is the sound of your voice.
-        </p>
-
-        <Button variant="ghost" className="w-full" onClick={() => navigate("/account")}>
-          Back to account
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-export default CheckinByPhone;
+      setSession({ sessionId: started.sessionId, status: started.status, provider: started.provider, model: "haven", speechSeconds: null, captureSampleRate: null, smsStatus: null, error: null, quality: null, result: null });
+      const final = await pollVoiceCheckin(started.sessionId, { signal: controller.signal, onTick: setSession });
+      if (controller.signal.aborted) return;
+      setSession(final); await saveFinal(final.sessionId);
+    } catch (err) {
+      if (!controller.signal.aborted) setError(err instanceof VoiceCheckinError ? [err.message, err.hint].filter(Boolean).join(" ") : "Could not complete the check-in. Your dashboard can recover a call that already started.");
+    } finally { if (!controller.signal.aborted) setStarting(false); }
+  };
+  const complete = session?.status === "complete";
+  const failure = session && !WAITING[session.status] && !complete ? failureCopy(session) : null;
+  const signals = session?.quality?.usable === false ? [] : computeSerasonaScore(session?.result?.result?.signals)?.signals ?? [];
+  return <MemberShell><main className="member-phone-page">
+    <Link to="/dashboard" className="member-text-button">Back to dashboard</Link>
+    <span className="member-pill">Plus & Executive · Phone check-in</span>
+    <h1>{complete ? "Your check-in is ready." : failure ? failure.title : session ? WAITING[session.status] ?? "Your check-in is in progress." : "Your voice. Any phone."}</h1>
+    <VoiceWave />
+    {error && <p className="member-message member-error" role="alert">{error}</p>}
+    {!session ? <><p>Serasona calls your number. Speak naturally in full sentences, then review the real results in your dashboard.</p><label htmlFor="phone" className="member-field-label">Your phone number<input id="phone" type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={starting} /></label><label className="member-check"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} disabled={starting} /><span>I want Serasona to call this number and record and analyze my voice for this check-in.</span></label><button className="member-primary" onClick={begin} disabled={starting || !phone.trim() || !consent}><Phone size={16} />{starting ? "Starting your call…" : "Call me now"}</button><p className="member-note">Phone audio has lower fidelity than browser audio. Calls are compared with other compatible calls.</p><Link to="/checkin" className="member-button">Record in the browser instead <ArrowUpRight size={16} /></Link></> : <>
+      {session.speechSeconds != null && <p>{Math.round(session.speechSeconds)} seconds of speech captured.</p>}
+      {complete ? <><p>These are the signs returned by this call’s model. Missing and inconclusive readings are not treated as normal.</p><div className="member-result-signals">{signals.map((sign) => <div key={sign.name}><span>{sign.label}</span><strong>{sign.displayBand.toLowerCase()}</strong></div>)}</div>{!signals.length && <p>No readable signs were returned. No wellness index is calculated for this recording.</p>}</> : failure ? <p>{failure.body}</p> : <p role="status">This call is linked to your account. Your dashboard retrieves the result when you return, even if you close this page.</p>}
+      {saveError && <div className="member-message" role="alert"><p>{saveError}</p><button onClick={() => saveFinal(session.sessionId)} disabled={saving}>{saving ? "Saving…" : "Retry history sync"}</button></div>}
+      <Link to="/dashboard" className="member-button member-primary">{saving ? "Syncing history…" : "View my dashboard"}<ArrowUpRight size={16} /></Link>
+      {(complete || failure) && <button disabled={saving} onClick={() => { setSession(null); setError(""); setSaveError(""); setConsent(false); }}>Start another check-in</button>}
+    </>}
+  </main></MemberShell>;
+}

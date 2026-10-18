@@ -43,6 +43,8 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   subscription: SubscriptionState;
+  subscriptionLoading: boolean;
+  subscriptionError: string | null;
   isEntitled: (plan: Exclude<PlanId, "free">) => boolean;
   signUp: (email: string, password: string, fullName: string, consent?: ConsentRecord) => Promise<void>;
   logIn: (email: string, password: string) => Promise<void>;
@@ -59,14 +61,20 @@ const PLAN_RANK: Record<PlanId, number> = { free: 0, core: 1, plus: 2, executive
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
+  const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
   const [subscription, setSubscription] = useState<SubscriptionState>(DEFAULT_SUBSCRIPTION);
 
   useEffect(() => {
     if (!isFirebaseConfigured || !auth) {
       setLoading(false);
+      setSubscriptionLoading(false);
       return;
     }
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
+      setSubscription(DEFAULT_SUBSCRIPTION);
+      setSubscriptionLoading(Boolean(firebaseUser));
+      setSubscriptionError(null);
       setUser(firebaseUser);
       setLoading(false);
     });
@@ -76,17 +84,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!user || !db) {
       setSubscription(DEFAULT_SUBSCRIPTION);
+      setSubscriptionLoading(false);
       return;
     }
     // The Stripe webhook (gcp-functions/stripe-webhook) is the only writer to
     // this field; the client only ever reads it.
+    setSubscriptionLoading(true);
     const unsubscribeDoc = onSnapshot(doc(db, "users", user.uid), (snap) => {
       const data = snap.data();
+      setSubscriptionLoading(false);
+      setSubscriptionError(null);
       if (!data?.subscription) {
         setSubscription(DEFAULT_SUBSCRIPTION);
         return;
       }
       setSubscription({ ...DEFAULT_SUBSCRIPTION, ...data.subscription });
+    }, () => {
+      setSubscription(DEFAULT_SUBSCRIPTION);
+      setSubscriptionLoading(false);
+      setSubscriptionError("Your subscription could not be loaded. Refresh before starting a paid check-in or changing plans.");
     });
     return unsubscribeDoc;
   }, [user]);
@@ -146,7 +162,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, subscription, isEntitled, signUp, logIn, logOut, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, subscription, subscriptionLoading, subscriptionError, isEntitled, signUp, logIn, logOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

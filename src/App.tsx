@@ -2,14 +2,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AssessmentProvider } from "@/context/AssessmentContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { PageShell } from "@/components/PageShell";
 import Index from "./pages/Index";
 import DetailedAnalysisView from "./pages/DetailedAnalysisView";
-import LongitudinalView from "./pages/LongitudinalView";
 import Dashboard from "./pages/Dashboard";
 import ApiDebugView from "./pages/ApiDebugView";
 import PanelPreview from "./pages/PanelPreview";
@@ -92,9 +91,7 @@ const App = () => (
                 path="/checkin/phone"
                 element={
                   <ProtectedRoute>
-                    <PageShell>
-                      <CheckinByPhone />
-                    </PageShell>
+                    <CheckinByPhone />
                   </ProtectedRoute>
                 }
               />
@@ -117,14 +114,12 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-              <Route path="/history" element={<PageShell><LongitudinalView /></PageShell>} />
+              <Route path="/history" element={<ProtectedRoute><Navigate to="/dashboard" replace /></ProtectedRoute>} />
               <Route
                 path="/dashboard"
                 element={
                   <ProtectedRoute>
-                    <PageShell>
-                      <Dashboard />
-                    </PageShell>
+                    <Dashboard />
                   </ProtectedRoute>
                 }
               />

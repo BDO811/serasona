@@ -67,9 +67,10 @@ export const SiteHeader = ({ overlay = false }: SiteHeaderProps) => {
           )}
 
           {user ? (
-            <Link to="/account" className={`${link} text-foreground hover:text-primary`}>
-              Account
-            </Link>
+            <>
+              <Link to="/dashboard" className={`${link} text-foreground hover:text-primary`}>Dashboard</Link>
+              <Link to="/account" className={`${link} text-foreground hover:text-primary`}>Account</Link>
+            </>
           ) : onAuthPage ? null : (
             <>
               <Link to="/login" className={`${link} text-muted-foreground hover:text-foreground`}>

@@ -15,14 +15,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Two ways to arrive with a destination: bounced here by ProtectedRoute
-  // (which puts it in location state), or sent from signup, which carries it as
-  // ?next so an existing user who clicked "Start" still lands on the check-in.
-  // Same-site paths only — an absolute URL would make this an open redirect.
+  // Successful login always opens the member dashboard. Preserve the same-site
+  // signup destination only for the create-account link below.
   const nextParam = new URLSearchParams(location.search).get("next");
   const safeNext = nextParam && /^\/[^/]/.test(nextParam) ? nextParam : null;
-  const redirectTo =
-    (location.state as { from?: string } | null)?.from ?? safeNext ?? "/dashboard";
+  const redirectTo = "/dashboard";
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();

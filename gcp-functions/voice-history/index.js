@@ -210,6 +210,103 @@ function resolveCapturedAt(value) {
   return capturedAt;
 }
 
+const PHONE_REQUESTS = "serasonaPhoneRequests";
+const HARNESS = "https://voice-call-harness-551580534721.us-central1.run.app";
+const TERMINAL = new Set(["complete", "failed", "low_quality", "insufficient_audio"]);
+
+function sessionDocumentId(userKey, jobId) {
+  return crypto.createHash("sha256").update(`${userKey}:${jobId}`).digest("hex");
+}
+
+async function recoverPhoneRequest(request) {
+  const data = request.data();
+  const response = await fetch(`${HARNESS}/voiceCall/status?session=${encodeURIComponent(data.phoneSessionId)}`, {
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!response.ok) throw new Error("Phone status unavailable");
+  const call = await response.json();
+  if (!TERMINAL.has(call.status)) return;
+  const job = call.result || {};
+  const result = job.result || {};
+  const usable = call.status === "complete" && call.quality?.usable !== false;
+  const signals = usable ? cleanSignals(result.signals) : [];
+  const entry = {
+    userKey: data.userKey,
+    model: cleanString(call.model, 32),
+    pathway: null,
+    source: "phone",
+    status: usable && signals.length ? "complete" : (call.status === "complete" ? "low_quality" : call.status),
+    capturedAt: data.capturedAt,
+    speechSeconds: Number.isFinite(call.speechSeconds) ? call.speechSeconds : null,
+    captureSampleRate: Number.isFinite(call.captureSampleRate) ? call.captureSampleRate : (job.audio_sample_rate || null),
+    quality: { usable: Boolean(usable && signals.length), reason: cleanString(call.quality?.reason || call.error, 500) },
+    signals,
+    summary: cleanSummary({ overallLevel: result.summary?.overall_level, recommendedAction: result.summary?.recommended_action }),
+    createdAt: FieldValue.serverTimestamp(),
+  };
+  const ref = firestore.collection(COLLECTION).doc(sessionDocumentId(data.userKey, `phone:${data.phoneSessionId}`));
+  try { await ref.create(entry); } catch (error) { if (error.code !== 6) throw error; }
+  await request.ref.update({ status: "saved" });
+}
+
+async function startPhone(req, res) {
+  const identity = await resolveIdentity(req, null);
+  if (!identity || identity.mode !== "account") return res.status(401).json({ error: "Sign in first." });
+  const uid = identity.userKey.slice(4);
+  const profile = await firestore.collection("users").doc(uid).get();
+  const subscription = profile.data()?.subscription;
+  if (!ACTIVE_STATUSES.has(subscription?.status) || (PLAN_RANK[subscription?.planId] || 0) < PLAN_RANK.plus) {
+    return res.status(403).json({ error: "Phone check-ins require an active Plus or Executive plan." });
+  }
+  if (req.body.consent !== true) return res.status(400).json({ error: "Confirm you want us to call and analyze this recording." });
+  const phone = req.body.phone;
+  if (typeof phone !== "string" || !/^[+][1-9][0-9]{7,14}$/.test(phone)) return res.status(400).json({ error: "Enter a valid phone number." });
+  const clone = await firestore.collection("voiceClones").doc(uid).get();
+  const voiceId = clone.data()?.status === "ready" ? clone.data()?.providerVoiceId : null;
+  const response = await fetch(`${HARNESS}/voiceCall/start`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phone, mode: "phone", model: "haven", brand: "serasona", ...(voiceId ? { voiceId } : {}) }),
+    signal: AbortSignal.timeout(25000),
+  });
+  const call = await response.json().catch(() => ({}));
+  if (!response.ok || !call.sessionId) return res.status(502).json({ error: call.message || "The phone service could not start the call." });
+  const ref = firestore.collection(PHONE_REQUESTS).doc(sessionDocumentId("phone", call.sessionId));
+  await ref.create({ userKey: identity.userKey, phoneSessionId: call.sessionId, capturedAt: Date.now(), status: "pending" });
+  return res.status(200).json({ sessionId: call.sessionId, status: call.status, provider: call.provider, checkinUrl: null });
+}
+
+async function trackPhone(req, res) {
+  const identity = await resolveIdentity(req, null);
+  if (!identity || identity.mode !== "account") return res.status(401).json({ error: "Sign in first." });
+  const uid = identity.userKey.slice(4);
+  const profile = await firestore.collection("users").doc(uid).get();
+  const subscription = profile.data()?.subscription;
+  if (!ACTIVE_STATUSES.has(subscription?.status) || (PLAN_RANK[subscription?.planId] || 0) < PLAN_RANK.plus) {
+    return res.status(403).json({ error: "Phone check-ins require an active Plus or Executive plan." });
+  }
+  const id = req.body.phoneSessionId;
+  if (typeof id !== "string" || !/^[a-zA-Z0-9_-]{8,160}$/.test(id)) return res.status(400).json({ error: "Invalid phone session." });
+  // Bind each capability to one account. Never allow another caller to claim it.
+  const ref = firestore.collection(PHONE_REQUESTS).doc(sessionDocumentId("phone", id));
+  try {
+    await ref.create({ userKey: identity.userKey, phoneSessionId: id, capturedAt: Date.now(), status: "pending" });
+  } catch (error) {
+    if (error.code !== 6) throw error;
+  }
+  const request = await ref.get();
+  if (request.data().userKey !== identity.userKey) return res.status(403).json({ error: "This session belongs to a different account." });
+  if (request.data().status === "pending") {
+    try { await recoverPhoneRequest(request); } catch { /* A later history read retries recovery. */ }
+  }
+  return res.status(200).json({ linked: true });
+}
+
+async function recoverPendingPhones(userKey) {
+  const requests = await firestore.collection(PHONE_REQUESTS).where("userKey", "==", userKey).get();
+  const pending = requests.docs.filter((doc) => doc.data().status === "pending").slice(-6);
+  await Promise.allSettled(pending.map(recoverPhoneRequest));
+}
+
 async function handleSave(req, res) {
   const body = req.body;
   if (!body || typeof body !== "object") {
@@ -228,11 +325,19 @@ async function handleSave(req, res) {
     return;
   }
 
+  if (body.action === "startPhone") return startPhone(req, res);
+  if (body.action === "trackPhone") return trackPhone(req, res);
   const signals = cleanSignals(body.signals);
   if (signals.length === 0) {
     res.status(400).json({ error: "At least one signal is required." });
     return;
   }
+
+  const jobId = cleanString(body.jobId, 160);
+  const sessionRef = jobId && identity.mode === "account"
+    ? firestore.collection(COLLECTION).doc(sessionDocumentId(identity.userKey, jobId))
+    : firestore.collection(COLLECTION).doc();
+  if ((await sessionRef.get()).exists) return res.status(200).json({ sessionId: sessionRef.id, alreadySaved: true });
 
   // The free tier's one check-in, enforced here rather than only in the UI.
   //
@@ -263,13 +368,16 @@ async function handleSave(req, res) {
     userKey: identity.userKey,
     model: cleanString(body.model, 32),
     pathway: cleanString(body.pathway, 32),
+    source: body.source === "browser" ? "browser" : null,
+    status: "complete",
     capturedAt: resolveCapturedAt(body.capturedAt),
     signals,
     summary: cleanSummary(body.summary),
     createdAt: FieldValue.serverTimestamp(),
   };
 
-  const written = await firestore.collection(COLLECTION).add(session);
+  try { await sessionRef.create(session); } catch (error) { if (error.code !== 6) throw error; }
+  const written = sessionRef;
   console.log(`[voice-history] Saved session ${written.id} (${signals.length} signals)`);
 
   res.status(200).json({ sessionId: written.id, capturedAt: session.capturedAt });
@@ -281,6 +389,8 @@ async function handleFetch(req, res) {
     res.status(401).json({ error: "Sign in, or provide a valid email." });
     return;
   }
+
+  if (identity.mode === "account") await recoverPendingPhones(identity.userKey);
 
   // Equality filter only, then sort in memory. Adding orderBy(capturedAt) here
   // would need a composite index provisioned before the endpoint works at all.
@@ -297,6 +407,11 @@ async function handleFetch(req, res) {
         sessionId: doc.id,
         capturedAt: data.capturedAt,
         model: data.model,
+        source: data.source || null,
+        status: data.status || "complete",
+        speechSeconds: data.speechSeconds ?? null,
+        captureSampleRate: data.captureSampleRate ?? null,
+        quality: data.quality || null,
         pathway: data.pathway,
         signals: Array.isArray(data.signals) ? data.signals : [],
         summary: data.summary || null,

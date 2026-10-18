@@ -6,7 +6,7 @@ import Index from "@/pages/Index";
 /**
  * The signed-in entry point: skips the marketing home, language picker, and
  * triage (an account already carries consent and an identity) and opens
- * straight on recording. Finishing or starting over returns to /account.
+ * straight on recording. Finishing or starting over returns to /dashboard.
  *
  * Entitlement, which is subtler than it looks:
  *
@@ -27,13 +27,15 @@ import Index from "@/pages/Index";
  */
 const Checkin = () => {
   const { user, isEntitled } = useAuth();
-  const { loading, sessions } = useVoiceHistory();
+  const { loading, sessions, error, refresh } = useVoiceHistory();
 
   const unlimited = isEntitled("core");
 
   // Don't decide anything while history is still loading, or a paid-looking
   // free user gets bounced on a race.
   if (!unlimited && loading) return null;
+
+  if (!unlimited && error) return <main className="p-8"><p role="alert">{error}</p><button onClick={refresh}>Retry loading history</button></main>;
 
   if (!unlimited && sessions.length > 0) {
     return <Navigate to="/pricing" replace />;
@@ -43,7 +45,7 @@ const Checkin = () => {
   // has no idea the route requires anyone to be signed in.
   if (!user) return <Navigate to="/login" replace />;
 
-  return <Index initialState="capture" presetPathway="WELLNESS" exitTo="/account" />;
+  return <Index initialState="capture" presetPathway="WELLNESS" exitTo="/dashboard" />;
 };
 
 export default Checkin;
