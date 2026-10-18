@@ -15,7 +15,7 @@ import { DashboardBodyMap } from "@/components/member/DashboardBodyMap";
 import { assessmentForSession } from "@/lib/dashboard-assessment";
 import { RUNG_SCALE, RUNG_RECOMMENDATION } from "@/lib/result-headline";
 import { bandForSignal, bandLabelForSignal, signLabel, actionOf, actionLabel } from "@/lib/signal-band";
-import { zoneForSignal, BODY_ZONE_LABEL, type BodyZone } from "@/lib/body-zone-map";
+import { dashboardZoneForSignal, DASHBOARD_ZONE_LABEL, type DashboardZone } from "@/lib/dashboard-body-zones";
 import { getProtocolId } from "@/lib/assessment-display-utils";
 import type { AssessmentPathway } from "@/context/AssessmentContext";
 import "@/components/member/dashboard-v2.css";
@@ -37,7 +37,7 @@ export default function Dashboard() {
   const [source, setSource] = useState("all");
   const [metric, setMetric] = useState<TrendMetric>("all");
   const [selected, setSelected] = useState<StoredSession | null>(null);
-  const [zone, setZone] = useState<BodyZone | null>(null);
+  const [zone, setZone] = useState<DashboardZone | null>(null);
   const [tab, setTab] = useState("overview");
   const [explaining, setExplaining] = useState(false);
   const chronological = useMemo(() => [...sessions].sort((a, b) => a.capturedAt - b.capturedAt), [sessions]);
@@ -48,14 +48,14 @@ export default function Dashboard() {
   const visible = useMemo(() => dashboardSessions(sessions, days, source), [sessions, days, source]);
   const reference = [...visible].reverse().find(isUsableSession);
   const comparable = comparableSessions(visible, reference);
-  const matrix = comparable.slice(-10);
+  const matrix = dailyScores;
 
   const firstName = user?.displayName?.split(" ")[0];
   const canCall = isEntitled("plus");
   useEffect(() => setZone(null), [latest?.sessionId]);
   const assessment = assessmentForSession(latest);
   const phonePath = canCall ? "/checkin/phone?mode=phone" : "/account#subscription";
-  const filteredSignals = latest?.signals.filter((sign) => !zone || zoneForSignal(sign.name) === zone) ?? [];
+  const filteredSignals = latest?.signals.filter((sign) => !zone || dashboardZoneForSignal(sign.name) === zone) ?? [];
   const captureLinks = <><Link className="member-button member-primary" to="/checkin"><Mic size={16} />Record my voice</Link><Link className="member-button" to={phonePath}><Phone size={16} />{canCall ? "Phone check-in" : "Upgrade for phone calls"}</Link></>;
 
 
@@ -74,11 +74,11 @@ export default function Dashboard() {
       {error ? <div className="member-message member-error" role="alert"><h2>We couldn’t load your readings.</h2><p>{error}</p><button onClick={refresh}>Try again</button></div> : loading && !sessions.length ? <div className="member-message" role="status">Loading your check-in history…</div> : !sessions.length ? <section className="member-message"><h2>Your first reading starts with your voice.</h2><p>Record a check-in above to see your actual results here. Your history builds with each completed reading.</p></section> : <>
         <div className="dv-priority-results" aria-label="Your latest assessment">
           <DashboardBodyMap session={latest} zone={zone} onZoneChange={setZone} loading={false} />
-          <section className="dv-panel dv-signals"><div className="member-section-heading"><h2>PHYSIOLOGIC ANALYSIS</h2><small>{assessment.flaggedCount} OF {latest?.signals.length ?? 0} FLAGGED</small></div><div className="dv-signal-filter"><p>{zone ? `${BODY_ZONE_LABEL[zone]} signals` : "Select a region in the body map to filter these results."}</p>{zone && <button onClick={() => setZone(null)}>Show all signs</button>}</div><div className="dv-report-signals"><SignalPanel signals={filteredSignals.map((s) => ({ ...s, level: s.level || "inconclusive" }))} showContent bandColors={SIGNAL_COLORS} /></div>{!filteredSignals.length && <p>No signs returned for this region in this recording.</p>}</section>
+          <section className="dv-panel dv-signals"><div className="member-section-heading"><h2>PHYSIOLOGIC ANALYSIS</h2><small>{assessment.flaggedCount} OF {latest?.signals.length ?? 0} FLAGGED</small></div><div className="dv-signal-filter"><p>{zone ? `${DASHBOARD_ZONE_LABEL[zone]} signals` : "Select a region in the body map to filter these results."}</p>{zone && <button onClick={() => setZone(null)}>Show all signs</button>}</div><div className="dv-report-signals"><SignalPanel signals={filteredSignals.map((s) => ({ ...s, level: s.level || "inconclusive" }))} showContent bandColors={SIGNAL_COLORS} /></div>{!filteredSignals.length && <p>No signs returned for this region in this recording.</p>}</section>
 
         </div>
           <div className="member-metrics">{METRICS.slice(1).map(({ key, label }) => <button key={key} className={`member-metric ${key}`} onClick={() => setMetric(key === "overall" ? "all" : key)} aria-pressed={metric === key}><small>{label.toUpperCase()} INDEX</small><strong>{latest ? metricValue(latest, key) ?? "Not read" : "Not read"}</strong><small>{score?.groups.find((group) => group.group === key)?.signals.filter((sign) => sign.index !== null).length ?? 0} readable signs</small></button>)}</div>
-        {latest && <div className="dv-summary"><div><small>{assessment.title.toUpperCase()} PROFILE</small><strong>{assessment.profileLabel}</strong></div><div><small>ASSESSMENT</small><strong>{RUNG_RECOMMENDATION[assessment.rung]}</strong></div><div className="dv-scale" aria-label={`Assessment profile: ${assessment.profileLabel}`}>{RUNG_SCALE.map((rung) => <span key={rung.key} className={assessment.rung === rung.key ? "is-current" : ""} aria-current={assessment.rung === rung.key ? "true" : undefined}>{rung.label}</span>)}{assessment.rung === "unreadable" && <span className="is-current">INCONCLUSIVE</span>}</div></div>}
+        {latest && <div className="dv-summary"><div><small>{assessment.title.toUpperCase()} PROFILE</small><strong>{assessment.profileLabel}</strong></div><div><small>ASSESSMENT</small><strong>{RUNG_RECOMMENDATION[assessment.rung]}</strong></div><div className="dv-scale" aria-label={`Assessment profile: ${assessment.profileLabel}`}>{RUNG_SCALE.map((rung) => <span key={rung.key} className={`dv-level-${rung.key} ${assessment.rung === rung.key ? "is-current" : ""}`} aria-current={assessment.rung === rung.key ? "true" : undefined}>{rung.label}</span>)}{assessment.rung === "unreadable" && <span className="is-current">INCONCLUSIVE</span>}</div></div>}
         <div className="dv-tabs" aria-label="Dashboard view">{["overview", "assessment"].map((value) => <button key={value} aria-pressed={tab === value} onClick={() => setTab(value)}>{value === "overview" ? "Trends & history" : "Assessment details"}</button>)}</div>
         {tab === "overview" && <>
           <section className="member-section dv-panel">
@@ -86,7 +86,7 @@ export default function Dashboard() {
               <div className="member-controls"><span className="member-note">Saved history period</span><div className="member-ranges" aria-label="History period">{[7, 30, 90].map((n) => <button key={n} aria-pressed={days === n} onClick={() => setDays(n)}>{n}D</button>)}</div></div>
               <div className="member-controls member-source-controls"><label htmlFor="source"><SlidersHorizontal size={14} />Recording source</label><select id="source" value={source} onChange={(e) => setSource(e.target.value)}><option value="all">All sources</option><option value="browser">Browser</option><option value="phone">Phone</option><option value="unknown">Source not recorded</option></select></div>
             </>} />
-            {matrix.length > 0 && <div className="member-matrix-scroll"><table className="member-matrix"><caption>Your saved comparable readings</caption><thead><tr><th scope="col">SIGNAL INDEX</th>{matrix.map((session) => <th scope="col" key={session.sessionId}><button onClick={() => setSelected(session)} title={dateTime(session.capturedAt)}>{date(session.capturedAt)}</button></th>)}</tr></thead><tbody>{METRICS.map(({ key, label }) => <tr key={key}><th scope="row">{label}</th>{matrix.map((session) => { const value = metricValue(session, key); return <td key={session.sessionId} className={value !== null && value >= 67 ? "member-matrix-clear" : ""}>{value ?? "Not read"}</td>; })}</tr>)}</tbody></table></div>}
+            <div className="member-matrix-scroll"><table className="member-matrix dv-daily-matrix"><caption>Your saved readings · Last 3 days</caption><thead><tr><th scope="col">SIGNAL INDEX</th>{matrix.map((day) => <th scope="col" key={day.date}>{day.session ? <button onClick={() => setSelected(day.session!)} title={dateTime(day.session.capturedAt)}>{date(day.date)}</button> : date(day.date)}</th>)}</tr></thead><tbody>{METRICS.map(({ key, label }) => <tr key={key}><th scope="row">{label}</th>{matrix.map((day) => { const value = day.session ? metricValue(day.session, key) : null; return <td key={day.date} className={value !== null && value >= 67 ? "member-matrix-clear" : ""}>{value ?? (day.session || day.hasRecordings ? "Not read" : "No reading")}</td>; })}</tr>)}</tbody></table></div>
           </section>
           <section className="member-section dv-panel"><div className="member-section-heading"><h2>Recent check-ins</h2><span className="member-note">{visible.length} in this view</span></div><div className="member-table-scroll"><table className="member-sessions"><thead><tr><th scope="col">RECORDED</th><th scope="col">SOURCE</th><th scope="col">MODEL</th><th scope="col">STATUS</th><th scope="col">REVIEW</th></tr></thead><tbody>{[...visible].reverse().map((session) => <tr key={session.sessionId}><td>{dateTime(session.capturedAt)}</td><td>{sourceLabel(session)}</td><td>{session.model || "Not recorded"}</td><td>{stateLabel(session)}</td><td><button onClick={() => setSelected(session)} aria-label={`Open reading from ${dateTime(session.capturedAt)}`}>Open <ArrowUpRight size={14} /></button></td></tr>)}</tbody></table></div></section>
 

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Dashboard from "@/pages/Dashboard";
 const mocks = vi.hoisted(() => ({ sessions: [], loading: false, error: null as string | null, entitled: true, refresh: vi.fn() }));
@@ -17,8 +17,15 @@ describe("selected live dashboard", () => {
     expect(screen.getAllByRole("link", { name: "Record my voice" })[0]).toHaveAttribute("href", "/checkin");
     expect(screen.getAllByRole("link", { name: "Phone check-in" })[0]).toHaveAttribute("href", "/checkin/phone?mode=phone");
     expect(screen.getByRole("heading", { name: "YOUR SERASONA SCORE" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /Explore Mouth/ }));
-    expect(screen.getByText("Mouth signals")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Neurocognitive" })).toBeInTheDocument();
+    expect(document.querySelectorAll(".dv-body-info > div")).toHaveLength(0);
+    const matrix = screen.getByRole("table", { name: "Your saved readings · Last 3 days" });
+    expect(within(matrix).getAllByRole("columnheader")).toHaveLength(4);
+    expect(within(matrix).getAllByText("No reading")).toHaveLength(8);
+    expect(document.querySelectorAll(".dv-scale > span")).toHaveLength(4);
+    expect(document.querySelectorAll(".dv-scale > [aria-current=true]")).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: /Explore Core/ }));
+    expect(screen.getByText("Core signals")).toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Stress: MODERATE" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Show all signs" }));
     expect(screen.getByRole("group", { name: "Stress: MODERATE" })).toBeInTheDocument();
