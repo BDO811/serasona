@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import "@/components/member/calling-voice.css";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import { convertToWav, blobToBase64 } from "@/lib/audio-utils";
+import { convertRecordingToWav, blobToBase64, pickSupportedRecordingMimeType } from "@/lib/voice-sample-audio";
 import { cloneVoice, subscribeVoiceClone, type VoiceCloneDoc } from "@/lib/voice-clone-client";
 
 /**
@@ -14,10 +15,17 @@ import { cloneVoice, subscribeVoiceClone, type VoiceCloneDoc } from "@/lib/voice
  * gender -> consent -> submit -> poll the resulting doc for ready/failed.
  */
 
-const MIN_SECONDS = 15;
+const MIN_SECONDS = 60;
 const MAX_SECONDS = 180;
 
-type Phase = "idle" | "requesting" | "recording" | "review" | "submitting" | "done" | "error";
+const READING_PASSAGE = [
+  "Hello! It is so nice to have a little time to talk with you today. I hope you are feeling comfortable and that your morning has started well. I have been thinking about the small things that make an ordinary day feel special: a warm cup of coffee, sunlight through the window, and hearing a familiar voice.",
+  "This morning I opened the curtains and watched a few birds hopping along the fence. One of them picked up a tiny twig, dropped it, and tried again. It made me smile. After breakfast, I went outside for a short walk. The air was fresh, the street was quiet, and someone nearby was baking bread. It reminded me of being in the kitchen with family, sharing stories while something delicious was cooking.",
+  "What sounds good to you today? Maybe listening to some music, looking through a photo album, or sitting in your favorite chair for a while. There is no need to rush. Take a slow breath and enjoy a little rest. I would love to hear about something that made you happy, whether it happened yesterday or many years ago.",
+  "I am glad we can share these moments. Please take care of yourself, keep some water nearby, and remember that you matter to the people who love you. I hope the rest of your day brings you something pleasant to look forward to. We will talk again soon.",
+];
+
+type Phase = "idle" | "requesting" | "recording" | "processing" | "review" | "submitting" | "done" | "error";
 
 function formatElapsed(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -38,6 +46,9 @@ const VoiceClone = () => {
   const [gender, setGender] = useState<"female" | "male" | "">("");
   const [consented, setConsented] = useState(false);
 
+  const mountedRef = useRef(true);
+  const startedAtRef = useRef(0);
+  const previewRef = useRef<string | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -50,9 +61,13 @@ const VoiceClone = () => {
   }, [user]);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
+      mountedRef.current = false;
+      clearTimer();
+      if (recorderRef.current) recorderRef.current.onstop = null;
       streamRef.current?.getTracks().forEach((t) => t.stop());
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      if (previewRef.current) URL.revokeObjectURL(previewRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -64,6 +79,8 @@ const VoiceClone = () => {
 
   const startRecording = useCallback(async () => {
     setError(null);
+    const mimeType = pickSupportedRecordingMimeType();
+    if (!mimeType) { setError("Recording is not supported in this browser. Try Chrome or Safari."); setPhase("error"); return; }
     setPhase("requesting");
     try {
       // Same constraints as the check-in capture (QuestionFlowVisualizer):
@@ -72,29 +89,26 @@ const VoiceClone = () => {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: { channelCount: { ideal: 1 }, echoCancellation: true, noiseSuppression: true },
       });
+      if (!mountedRef.current) { stream.getTracks().forEach((track) => track.stop()); return; }
       streamRef.current = stream;
       chunksRef.current = [];
 
-      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-        ? "audio/webm;codecs=opus"
-        : "audio/webm";
       const recorder = new MediaRecorder(stream, { mimeType });
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
       recorder.onstop = handleStopped;
       recorderRef.current = recorder;
+      startedAtRef.current = performance.now();
       recorder.start();
 
       setElapsed(0);
       setPhase("recording");
       timerRef.current = setInterval(() => {
-        setElapsed((prev) => {
-          const next = prev + 1;
-          if (next >= MAX_SECONDS) stopRecording();
-          return next;
-        });
-      }, 1000);
+        const seconds = Math.floor((performance.now() - startedAtRef.current) / 1000);
+        setElapsed(Math.min(seconds, MAX_SECONDS));
+        if (seconds >= MAX_SECONDS) stopRecording();
+      }, 250);
     } catch {
       setPhase("error");
       setError("Couldn't access the microphone, check your browser's permission for this site.");
@@ -104,7 +118,9 @@ const VoiceClone = () => {
 
   function stopRecording() {
     clearTimer();
-    recorderRef.current?.stop();
+    if (recorderRef.current?.state !== "recording") return;
+    setPhase("processing");
+    recorderRef.current.stop();
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
   }
@@ -113,9 +129,12 @@ const VoiceClone = () => {
     try {
       const mimeType = recorderRef.current?.mimeType || "audio/webm";
       const rawBlob = new Blob(chunksRef.current, { type: mimeType });
-      const wavBlob = await convertToWav(rawBlob);
+      const wavBlob = await convertRecordingToWav(rawBlob, { voiceClone: true });
+      if (!mountedRef.current) return;
       wavBlobRef.current = wavBlob;
-      setPreviewUrl(URL.createObjectURL(wavBlob));
+      const url = URL.createObjectURL(wavBlob);
+      previewRef.current = url;
+      setPreviewUrl(url);
       setPhase("review");
     } catch {
       setPhase("error");
@@ -126,6 +145,9 @@ const VoiceClone = () => {
   function reRecord() {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
+    previewRef.current = null;
+    setConsented(false);
+    setElapsed(0);
     wavBlobRef.current = null;
     setPhase("idle");
   }
@@ -136,7 +158,8 @@ const VoiceClone = () => {
     setError(null);
     try {
       const audioBase64 = await blobToBase64(wavBlobRef.current);
-      await cloneVoice(audioBase64, gender);
+      const result = await cloneVoice(audioBase64, gender);
+      if (result.status === "failed") throw new Error("Your voice could not be created. Please record again.");
       setPhase("done");
     } catch (err) {
       setPhase("error");
@@ -162,11 +185,11 @@ const VoiceClone = () => {
         {existingClone && (
           <div className="rounded-2xl border border-border bg-card p-4 space-y-1">
             <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-              Current calling voice
+              Your recorded voice
             </p>
             <p className="text-foreground">
               {existingClone.status === "ready"
-                ? "Your own voice is active."
+                ? existingClone.selection && existingClone.selection !== "own" ? "Your recorded voice is ready. Select it in your account to use it." : "Your own voice is active."
                 : existingClone.status === "pending"
                   ? "Still processing…"
                   : "The last recording failed, record another below."}
@@ -192,6 +215,8 @@ const VoiceClone = () => {
           </div>
         )}
 
+        {phase === "processing" && <p role="status">Preparing your recording…</p>}
+        {["idle", "requesting", "recording"].includes(phase) && <section className="voice-reading-passage"><h2>Read this aloud</h2><p>Read naturally for at least one minute. You can stop when you finish the passage. Recording ends automatically after three minutes.</p>{READING_PASSAGE.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>}
         {(phase === "review" || phase === "submitting") && previewUrl && (
           <div className="space-y-5">
             <audio controls src={previewUrl} className="w-full" />

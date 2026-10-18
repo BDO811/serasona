@@ -96,3 +96,26 @@ describe("authenticated voice history and phone recovery", () => {
     expect(history.data.sessions[0]).toMatchObject({ status: "low_quality", signals: [], quality: { usable: false, reason: "No clear speech" } });
   });
 });
+
+describe("saved calling voice routing", () => {
+  it("uses the server-selected MyAbuela male voice and ignores injected provider IDs", async () => {
+    const s = service(); s.plus("a"); s.store.set("voiceClones/a", { selection: "male", providerVoiceId: "old-clone", status: "ready" });
+    s.fetch.mockResolvedValue(ok({ sessionId: "call_male_123", status: "dialing" }));
+    await s.run({ action: "startPhone", phone: "+16175550123", consent: true, voiceId: "attacker" }, "a");
+    expect(JSON.parse(s.fetch.mock.calls[0][1].body).voiceId).toBe("Telnyx.Qwen3TTS.5a9bb629-f9cc-4f4f-b2ee-eb07b47d8cd9");
+  });
+  it("preserves an existing ready personal voice and blocks a selected unready clone", async () => {
+    const s = service(); s.plus("a"); s.store.set("voiceClones/a", { providerVoiceId: "personal-ready", status: "ready" });
+    s.fetch.mockResolvedValue(ok({ sessionId: "call_own_123", status: "dialing" }));
+    await s.run({ action: "startPhone", phone: "+16175550123", consent: true }, "a");
+    expect(JSON.parse(s.fetch.mock.calls[0][1].body).voiceId).toBe("personal-ready");
+    s.store.set("voiceClones/a", { selection: "own", status: "pending" });
+    expect((await s.run({ action: "startPhone", phone: "+16175550123", consent: true }, "a")).status).toBe(409);
+    expect(s.fetch).toHaveBeenCalledTimes(1);
+  });
+  it("defaults an account without a preference to the library female voice", async () => {
+    const s = service(); s.plus("a"); s.fetch.mockResolvedValue(ok({ sessionId: "call_female_123", status: "dialing" }));
+    await s.run({ action: "startPhone", phone: "+16175550123", consent: true }, "a");
+    expect(JSON.parse(s.fetch.mock.calls[0][1].body).voiceId).toBe("Minimax.speech-2.8-turbo.TzAbof88qTAKUpml5AfSnl8K7IX5xkk3fmrX31X2jvNAV");
+  });
+});

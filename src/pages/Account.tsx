@@ -4,6 +4,7 @@ import { doc, getDoc, setDoc, deleteField } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 import { ArrowUpRight, Check, LogOut, Save } from "lucide-react";
 import { toast } from "sonner";
+import { CallingVoiceSettings } from "@/components/member/CallingVoiceSettings";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { openBillingPortal, startCheckout } from "@/lib/billing-client";
@@ -101,8 +102,9 @@ export default function Account() {
         {externallyManagedPlan && <p className="member-note">Your plan is managed outside Stripe. Use your original billing provider for plan changes and cancellation.</p>}
         {hasBillingAccount && <button className="member-primary" disabled={Boolean(billing)} onClick={() => changePlan()}>{billing === "portal" ? "Opening billing…" : "Manage billing & subscription"}<ArrowUpRight size={16} /></button>}
         <p className="member-note">Payments, plan changes and cancellations are handled securely in Stripe. Your plan updates after confirmation.</p>
-        {isEntitled("plus") && <Link to="/voice" className="member-button">Choose your calling voice <ArrowUpRight size={16} /></Link>}
+
       </aside></div>
+      <CallingVoiceSettings />
       <section className="member-section"><div className="member-section-heading"><div><h2>Choose your next perspective.</h2><p className="member-note">{hasBillingAccount ? "Change or upgrade your plan through your existing billing account." : "Choose a paid plan to continue beyond your free check-in."}</p></div><Link to="/pricing" className="member-text-button">Compare all features</Link></div><div className="member-plan-grid">{PLANS.map((plan) => {
         const current = subscription.planId === plan.id && ["active", "trialing"].includes(subscription.status);
         return <article key={plan.id} className={`member-plan-card ${current ? "member-plan-current" : ""}`}><small>{current ? "YOUR CURRENT PLAN" : plan.id === "plus" ? "INCLUDES PHONE CALLS" : "VOICE WELLNESS"}</small><h3>{plan.name}</h3><p className="member-plan-price">{plan.price}<span> /month</span></p><p>{plan.description}</p><button className={current ? "" : "member-primary"} disabled={Boolean(billing)} onClick={() => changePlan(plan.id)}>{billing === plan.id ? "Opening…" : current ? "Manage current plan" : hasBillingAccount ? `Change to ${plan.name}` : `Choose ${plan.name}`}<ArrowUpRight size={16} /></button></article>;

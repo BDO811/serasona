@@ -21,3 +21,11 @@ TypeScript, the full Vitest suite and production Vite build must pass. `scripts/
 ## Deployment
 
 Deploy the `voiceHistory` Cloud Function from `gcp-functions/voice-history`, preserving its runtime configuration and public HTTP trigger. Deploy the profile rules with `firebase deploy --only firestore:rules --project amits-playground-po`. Push application changes to `main`; the existing GitHub Pages workflow runs type checks, tests, the production build and artifact verification before publishing to www.serasona.com.
+
+## October 18 account voice and dashboard refinements
+
+The dashboard has one blue acquisition card at the top. Its voice and phone links use the existing authenticated flows. Subscription controls remain exclusively in the member Account page. The physiologic analysis uses the shared report SignalPanel: dark rows with every band visible and the returned band selected. Dashboard colors use blue for normal, without changing signal grading.
+
+The Account calling-voice controls adapt BDO811/myabuela's VoicePicker and family recording flow. Female and male MP3 samples and the two existing Telnyx library voice IDs come from that repository. `cloneVoice` accepts authenticated selectVoice and refreshVoice actions; the saved choice is written only by the backend to the current user's voiceClones document. `voiceHistory` reads this saved choice before placing a phone call. Existing ready personal voices remain selected when no explicit selection exists.
+
+Personal recordings use Minimax through Telnyx's voice_clones/from_upload endpoint, not a separately configured Minimax service. The actual provider/model/voice ID returned by Telnyx is preserved for outbound calls. Recording requires explicit consent, at least 60 seconds, a suggested 2 to 3 minute reading and a 180 second automatic stop. Browser and server validate mono 24kHz PCM WAV audio, audible content and clipping. Provider pending states can be rechecked from Account, and unready personal voices cannot be selected or silently substituted. No personal sample or outbound call was created during implementation verification.

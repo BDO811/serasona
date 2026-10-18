@@ -18,9 +18,13 @@ describe("selected live dashboard", () => {
     expect(screen.getByText("actual-saved-record")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Explore Mouth/ }));
     expect(screen.getByText("Mouth signals")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /Stress MODERATE/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("group", { name: "Stress: MODERATE" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Show all signs" }));
-    expect(screen.getByRole("button", { name: /Stress MODERATE/ })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Stress: MODERATE" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "PHYSIOLOGIC ANALYSIS" })).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Record my voice" })).toHaveLength(1);
+    expect(screen.getAllByRole("link", { name: "Phone check-in" })).toHaveLength(1);
+    expect(screen.queryByText("YOUR SUBSCRIPTION")).not.toBeInTheDocument();
   });
   it("does not insert sample results for an empty account", () => {
     mocks.entitled = false; open();

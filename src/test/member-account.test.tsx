@@ -5,6 +5,7 @@ import Account from "@/pages/Account";
 
 const mocks = vi.hoisted(() => ({ setDoc: vi.fn(), getDoc: vi.fn(), updateProfile: vi.fn(), portal: vi.fn(), checkout: vi.fn(), auth: { user: { uid: "member", email: "member@example.com", displayName: "Member Name" }, subscription: { planId: "plus", status: "active", currentPeriodEnd: null, stripeCustomerId: "cus_existing" }, subscriptionError: null, isEntitled: (plan: string) => plan !== "executive", logOut: vi.fn() } }));
 vi.mock("@/context/AuthContext", () => ({ useAuth: () => mocks.auth }));
+vi.mock("@/lib/voice-clone-client", () => ({ subscribeVoiceClone: (_uid, next) => { next(null); return () => {}; }, selectCallingVoice: vi.fn() }));
 vi.mock("@/lib/firebase", () => ({ db: {} }));
 vi.mock("firebase/firestore", () => ({ doc: (_db: unknown, ...segments: string[]) => segments.join("/"), getDoc: mocks.getDoc, setDoc: mocks.setDoc, deleteField: () => "DELETE" }));
 vi.mock("firebase/auth", () => ({ updateProfile: mocks.updateProfile }));

@@ -262,7 +262,15 @@ async function startPhone(req, res) {
   const phone = req.body.phone;
   if (typeof phone !== "string" || !/^[+][1-9][0-9]{7,14}$/.test(phone)) return res.status(400).json({ error: "Enter a valid phone number." });
   const clone = await firestore.collection("voiceClones").doc(uid).get();
-  const voiceId = clone.data()?.status === "ready" ? clone.data()?.providerVoiceId : null;
+  // The same two Telnyx library voices used by BDO811/myabuela. These are IDs, not credentials.
+  const defaultVoices = {
+    female: "Minimax.speech-2.8-turbo.TzAbof88qTAKUpml5AfSnl8K7IX5xkk3fmrX31X2jvNAV",
+    male: "Telnyx.Qwen3TTS.5a9bb629-f9cc-4f4f-b2ee-eb07b47d8cd9",
+  };
+  const voice = clone.data();
+  const selection = voice?.selection || (voice?.status === "ready" ? "own" : "female");
+  if (selection === "own" && (voice?.status !== "ready" || !voice?.providerVoiceId)) return res.status(409).json({ error: "Your recorded voice is not ready. Select a female or male voice in your account or try again when processing finishes." });
+  const voiceId = selection === "own" ? voice.providerVoiceId : defaultVoices[selection] || defaultVoices.female;
   const response = await fetch(`${HARNESS}/voiceCall/start`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ phone, mode: "phone", model: "haven", brand: "serasona", ...(voiceId ? { voiceId } : {}) }),

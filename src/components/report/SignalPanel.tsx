@@ -5,11 +5,13 @@ import {
   bandLabelForSignal,
   bandScaleOptions,
   signLabel,
+  type DisplayBand,
 } from "@/lib/signal-band";
 import { OptionScale } from "./OptionScale";
 
 interface SignalPanelProps {
   signals: SignalSummary[];
+  bandColors?: Partial<Record<DisplayBand, string>>;
   showContent: boolean;
   isHighVis?: boolean;
   isSeniorMode?: boolean;
@@ -32,6 +34,7 @@ const READOUT_BLUE = "#4a90c9";
 
 export const SignalPanel = ({
   signals,
+  bandColors,
   showContent,
   isHighVis = false,
   isSeniorMode = false,
@@ -51,6 +54,7 @@ export const SignalPanel = ({
         const scale = bandScaleOptions(signal.name).map((o) => ({
           ...o,
           label: bandLabelForSignal(signal.name, o.key),
+          color: bandColors?.[o.key] ?? o.color,
         }));
 
         return (
