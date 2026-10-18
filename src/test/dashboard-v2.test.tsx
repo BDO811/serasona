@@ -13,6 +13,7 @@ beforeEach(() => { cleanup(); mocks.sessions = []; mocks.loading = false; mocks.
 describe("selected live dashboard", () => {
   it("uses saved signs, links to real capture flows and filters the body map", () => {
     mocks.sessions = [saved]; open();
+    expect(screen.getByRole("region", { name: "Serasona Score" })).toHaveTextContent("45");
     expect(screen.getAllByRole("link", { name: "Record my voice" })[0]).toHaveAttribute("href", "/checkin");
     expect(screen.getAllByRole("link", { name: "Phone check-in" })[0]).toHaveAttribute("href", "/checkin/phone?mode=phone");
     expect(screen.getByText("actual-saved-record")).toBeInTheDocument();

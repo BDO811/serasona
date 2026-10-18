@@ -178,6 +178,10 @@ function cleanSignals(raw) {
       score,
       level: cleanString(entry.level, 32),
       flagged: entry.flagged === true,
+      baseline_score: typeof entry.baseline_score === "number" && Number.isFinite(entry.baseline_score) ? entry.baseline_score : null,
+      latest_score: typeof entry.latest_score === "number" && Number.isFinite(entry.latest_score) ? entry.latest_score : null,
+      deviation_from_baseline: typeof entry.deviation_from_baseline === "number" && Number.isFinite(entry.deviation_from_baseline) ? entry.deviation_from_baseline : null,
+      anomaly: typeof entry.anomaly === "boolean" ? entry.anomaly : null,
     });
   }
   return signals;
@@ -272,7 +276,7 @@ async function startPhone(req, res) {
   if (selection === "own" && (voice?.status !== "ready" || !voice?.providerVoiceId)) return res.status(409).json({ error: "Your recorded voice is not ready. Select a female or male voice in your account or try again when processing finishes." });
   const voiceId = selection === "own" ? voice.providerVoiceId : defaultVoices[selection] || defaultVoices.female;
   const response = await fetch(`${HARNESS}/voiceCall/start`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
+    method: "POST", headers: { "Content-Type": "application/json", Authorization: req.headers.authorization },
     body: JSON.stringify({ phone, mode: "phone", model: "haven", brand: "serasona", ...(voiceId ? { voiceId } : {}) }),
     signal: AbortSignal.timeout(25000),
   });

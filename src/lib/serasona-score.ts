@@ -37,7 +37,7 @@ import { bandForSignal, type DisplayBand } from "./signal-band";
 
 export type ScoreGroup = "stress" | "wellness" | "clarity";
 
-interface SignDefinition {
+export interface SignDefinition {
   group: ScoreGroup;
   weight: number;
 }
@@ -82,8 +82,8 @@ export const GROUP_LABELS: Record<ScoreGroup, string> = {
 };
 
 /** A sign the registry doesn't recognise yet (the catalogue added one).
- * Keeps a real reading from being silently dropped out of the composite. */
-const FALLBACK_WEIGHT = 6;
+ * Unknown signs stay visible but unscored until explicitly weighted. */
+const FALLBACK_WEIGHT = 0;
 const FALLBACK_GROUP: ScoreGroup = "wellness";
 
 function definitionFor(name: string): SignDefinition {
@@ -145,7 +145,11 @@ export interface SerasonaScoreResult {
   /** Only the groups with at least one present signal, in a fixed order. */
   groups: GroupScore[];
   signals: ScoredSignal[];
+  version: string;
+  coverageKey: string;
 }
+
+export const SCORE_VERSION = "serasona-1";
 
 function weightedAverage(items: Array<{ index: number; weight: number }>): number | null {
   if (items.length === 0) return null;
@@ -161,10 +165,11 @@ export function computeSerasonaScore(
 ): SerasonaScoreResult | null {
   if (!signals || signals.length === 0) return null;
 
-  const scored: ScoredSignal[] = signals.map((s) => {
+  const unique = [...new Map(signals.map((s) => [s.name, s])).values()];
+  const scored: ScoredSignal[] = unique.map((s) => {
     const def = definitionFor(s.name);
     const displayBand = bandForSignal(s.name, s.level, s.score);
-    const index = displayBand === "INCONCLUSIVE" ? null : BAND_INDEX[displayBand];
+    const index = displayBand === "INCONCLUSIVE" || !SIGN_DEFINITIONS[s.name] || !Number.isFinite(s.score) || s.score < 0 || s.score > 1 ? null : BAND_INDEX[displayBand];
     return { name: s.name, label: s.label || s.name, group: def.group, weight: def.weight, displayBand, index };
   });
 
@@ -185,5 +190,5 @@ export function computeSerasonaScore(
     return { group, label: GROUP_LABELS[group], index: weightedAverage(memberScoreable), signals: members };
   }).filter((g): g is GroupScore => g !== null);
 
-  return { score, band, bandLabel, groups, signals: scored };
+  return { score, band, bandLabel, groups, signals: scored, version: SCORE_VERSION, coverageKey: scoreable.map((s) => s.name).sort().join(",") };
 }

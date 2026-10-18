@@ -47,6 +47,10 @@ import {
 // ============================================================================
 
 export interface V2Signal {
+  baseline_score?: number | null;
+  latest_score?: number | null;
+  deviation_from_baseline?: number | null;
+  anomaly?: boolean | null;
   name: string;
   label?: string;
   model_id?: string;
@@ -496,6 +500,10 @@ export function transformV2ResultToVisualization(
       score: s.score,
       level: s.level,
       flagged: s.flagged,
+      baseline_score: s.baseline_score ?? null,
+      latest_score: s.latest_score ?? null,
+      deviation_from_baseline: s.deviation_from_baseline ?? null,
+      anomaly: s.anomaly ?? null,
     })),
     recommendedAction: summary?.recommended_action || result.signal?.recommended_action,
     flaggedCount,
