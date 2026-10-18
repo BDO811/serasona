@@ -13,6 +13,10 @@ const VOICE_HISTORY_URL =
   (import.meta.env.VITE_VOICE_HISTORY_URL as string | undefined) || DEFAULT_VOICE_HISTORY_URL;
 
 export interface StoredSignal {
+  baseline_score?: number | null;
+  latest_score?: number | null;
+  deviation_from_baseline?: number | null;
+  anomaly?: boolean | null;
   name: string;
   label: string;
   score: number;

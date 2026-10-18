@@ -115,3 +115,18 @@ describe("computeSerasonaScore", () => {
     expect(cl.group).toBe("clarity");
   });
 });
+
+describe("versioned score integrity", () => {
+  it("excludes unknown and invalid readings rather than inventing wellness", () => {
+    expect(computeSerasonaScore([{ name: "new-sign", label: "New", score: .2, level: "none" }])?.score).toBeNull();
+    expect(computeSerasonaScore([{ name: "stress", label: "Stress", score: NaN, level: "none" }])?.score).toBeNull();
+  });
+  it("counts repeated signs once and records scoreable coverage", () => {
+    const stress = { name: "stress", label: "Stress", score: .2, level: "none" };
+    const anxiety = { name: "anxiety", label: "Anxiety", score: .8, level: "elevated" };
+    const once = computeSerasonaScore([stress, anxiety])!;
+    expect(computeSerasonaScore([stress, stress, anxiety])?.score).toBe(once.score);
+    expect(once.coverageKey).toBe("anxiety,stress");
+    expect(once.version).toBe("serasona-1");
+  });
+});

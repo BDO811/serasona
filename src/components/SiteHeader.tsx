@@ -66,6 +66,7 @@ export const SiteHeader = ({ overlay = false }: SiteHeaderProps) => {
             </Link>
           )}
 
+          <Link to="/docs/serasona-score" className={`${link} text-foreground`}>Docs</Link>
           {user ? (
             <>
               <Link to="/dashboard" className={`${link} text-foreground hover:text-primary`}>Dashboard</Link>

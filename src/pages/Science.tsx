@@ -165,6 +165,7 @@ const Science = () => (
         with its sample size and the authors' own stated limitations.
       </p>
 
+      <p className="mt-8"><Link to="/docs/serasona-score" className="underline underline-offset-4">Score calculation and references for every measurement</Link></p>
       {/* Mechanism */}
       <Section eyebrow="The mechanism" title="Four ways state reaches the signal" />
       <div className="mt-10 grid gap-x-10 gap-y-9 sm:grid-cols-2">
@@ -204,29 +205,10 @@ const Science = () => (
       {/* How Serasona is built */}
       <Section eyebrow="The model" title="How Serasona reads it" />
       <p className="mt-8 text-[15px] leading-relaxed text-black/70">
-        The published studies above mostly analyse a handful of hand-chosen
-        acoustic features. Serasona runs on an acoustic model trained directly
-        on raw speech, which learns its own representation rather than being
-        told in advance which features matter. Its native input window is 15
-        seconds of audio, so training volume is counted in 15-second tokens.
+        Each recording runs through the model selected for that check-in. Pulse covers everyday wellness signs; other models add different mental, cognitive, respiratory and physiological patterns. Available models depend on the plan. Access to a model does not mean it ran on every recording.
       </p>
-      <div className="mt-8 grid gap-6 sm:grid-cols-3">
-        {[
-          { k: "~216M", v: "15-second tokens of labelled patient-provider conversation" },
-          { k: "~22.6M", v: "15-second tokens of general English speech for pretraining" },
-          { k: "7", v: "wellness signals reported from a single sample" },
-        ].map((s) => (
-          <div key={s.k} className="rounded-2xl bg-black/[0.035] px-5 py-6">
-            <div className="font-serif text-2xl">{s.k}</div>
-            <p className="mt-2 text-[13px] leading-relaxed text-black/60">{s.v}</p>
-          </div>
-        ))}
-      </div>
-      <p className="mt-8 text-[15px] leading-relaxed text-black/70">
-        Each check-in returns stress, mood, energy, confidence, mental fatigue,
-        alertness and focus. Those seven are reported together because they move
-        together: a single acoustic sample carries evidence about all of them at
-        once, and reading them in isolation would discard that structure.
+      <p className="mt-6 text-[15px] leading-relaxed text-black/70">
+        The Serasona Score combines only the readable signs actually returned. Its relative weights are provisional product choices. The published studies on this page do not validate those weights or establish the accuracy of the composite. <Link to="/docs/serasona-score" className="underline">Read the calculation, full measurement matrix and references.</Link>
       </p>
 
       {/* Limits */}

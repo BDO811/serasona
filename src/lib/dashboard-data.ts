@@ -11,7 +11,7 @@ export function metricValue(session: StoredSession, metric: DashboardMetric) {
 }
 /** Same source, model and returned signal coverage only. Never blend calls and browser audio. */
 export function cohortKey(session: StoredSession) {
-  return JSON.stringify([session.source || "unknown", session.model, session.signals.map((signal) => signal.name).sort()]);
+  return JSON.stringify([session.source || "unknown", session.model, computeSerasonaScore(session.signals)?.coverageKey, computeSerasonaScore(session.signals)?.version]);
 }
 export function dashboardSessions(sessions: StoredSession[], days: number, source: string, now = Date.now()) {
   const cutoff = now - days * 86400000;

@@ -1,3 +1,4 @@
+const crypto = require("node:crypto");
 const Busboy = require("busboy");
 
 // Amplifier Health API v2 — see docs.amplifierhealth.com/api-reference/overview
@@ -258,6 +259,8 @@ exports.analyzeAudio = async (req, res) => {
   try {
     const upstreamForm = new FormData();
     upstreamForm.append("audio", new Blob([audio.buffer], { type: mime }), audio.filename);
+    upstreamForm.append("recorded_at", new Date().toISOString());
+    const groupId = crypto.createHash("sha256").update(`serasona:${caller.uid}:browser`).digest("hex");
 
     // Query string wins; the form field is the fallback for clients that cannot
     // set one. Both go through the allowlist, and then through entitlement:
@@ -277,7 +280,7 @@ exports.analyzeAudio = async (req, res) => {
     console.log(`[analyze-audio] Using model: ${modelName} (plan: ${caller.planId})`);
 
     const submitStart = Date.now();
-    const submitResponse = await fetch(`${API_URL}/v2/models/${modelName}/analyze`, {
+    const submitResponse = await fetch(`${API_URL}/v2/models/${modelName}/groups/${groupId}/analyze/longitudinal`, {
       method: "POST",
       headers: authHeaders,
       body: upstreamForm,

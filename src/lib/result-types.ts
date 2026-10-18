@@ -44,6 +44,10 @@ export interface ExtendedMetric {
 
 /** v2 `signals[]` entry, reduced to what the report screens need. */
 export interface SignalSummary {
+  baseline_score?: number | null;
+  latest_score?: number | null;
+  deviation_from_baseline?: number | null;
+  anomaly?: boolean | null;
   name: string;
   label: string;
   score: number; // 0-1
