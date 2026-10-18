@@ -21,6 +21,7 @@ import type { AssessmentPathway } from "@/context/AssessmentContext";
 import "@/components/member/dashboard-v2.css";
 import type { StoredSession } from "@/lib/voice-history-client";
 
+import { lastThreeDailyScores } from "@/lib/daily-scores";
 import { scoreMatrixForPlan } from "@/lib/score-matrix";
 
 const SIGNAL_COLORS = { NORMAL: "#99E4FF", LOW: "#F5EF79", MODERATE: "#FFC163", ELEVATED: "#FF6173", INCONCLUSIVE: "#CECECE" };
@@ -42,6 +43,7 @@ export default function Dashboard() {
   const chronological = useMemo(() => [...sessions].sort((a, b) => a.capturedAt - b.capturedAt), [sessions]);
   const readable = chronological.filter(isUsableSession);
   const latest = readable[readable.length - 1];
+  const dailyScores = lastThreeDailyScores(sessions);
   const score = latest ? computeSerasonaScore(latest.signals) : null;
   const visible = useMemo(() => dashboardSessions(sessions, days, source), [sessions, days, source]);
   const reference = [...visible].reverse().find(isUsableSession);
@@ -60,8 +62,11 @@ export default function Dashboard() {
   return <MemberShell motionControl>
     <main className="dashboard-v2 dv-priority">
       <section className="dv-score-banner" aria-labelledby="serasona-score-title">
-        <div className="dv-score-copy"><h1 id="serasona-score-title">YOUR SERASONA SCORE</h1><p>{firstName ? `${firstName}, your` : "Your"} latest voice check-in, at a glance.</p><div className="dv-score-meta">{latest ? <><span>{score?.bandLabel || "Inconclusive"}</span><span>{dateTime(latest.capturedAt)} · {sourceLabel(latest)}</span></> : <span>{loading ? "Loading your readings…" : error ? "Results unavailable" : "Your first check-in starts below"}</span>}</div><button className="dv-score-method" onClick={() => setExplaining(true)}>View score weights and level matrix</button></div>
-        <div className="dv-score-readout" aria-live="polite"><strong>{loading && !sessions.length ? "…" : score?.score ?? "Not yet"}</strong>{score?.score != null && <span>/ 100</span>}</div><button className="member-icon-button dv-score-refresh" onClick={refresh} disabled={loading} aria-label="Refresh results"><RefreshCw size={18} className={loading ? "member-spin" : ""} /></button>
+        <div className="dv-score-copy"><h1 id="serasona-score-title">YOUR SERASONA SCORE</h1><p>{firstName ? `${firstName}, your` : "Your"} last three days. The latest scored check-in from each day.</p><button className="dv-score-method" onClick={() => setExplaining(true)}>View score weights and level matrix</button></div>
+        <div className="dv-score-days" aria-label="Last three days of Serasona scores" aria-live="polite">{dailyScores.map((day, index) => {
+          const content = <><span className="dv-day-heading">{day.label}<small>{date(day.date)}</small></span><span className="dv-day-value">{loading && !sessions.length ? "…" : error ? "Unavailable" : day.score ?? (day.hasRecordings ? "No score" : "No reading")}{day.score != null && <small>/ 100</small>}</span><span className="dv-day-context">{day.session ? <>{day.band} · {sourceLabel(day.session)}<small>{new Date(day.session.capturedAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}</small></> : loading ? "Loading readings" : day.hasRecordings ? "No readable score returned" : "No saved check-in"}</span></>;
+          return day.session ? <button key={day.date} className={`dv-score-day ${index === 0 ? "is-today" : ""}`} onClick={() => setSelected(day.session!)} aria-label={`Review ${day.label.toLowerCase()}, ${date(day.date)}: Serasona score ${day.score}`}>{content}</button> : <div key={day.date} className="dv-score-day is-empty">{content}</div>;
+        })}</div><button className="member-icon-button dv-score-refresh" onClick={refresh} disabled={loading} aria-label="Refresh results"><RefreshCw size={18} className={loading ? "member-spin" : ""} /></button>
         <VoiceSculpture />
       </section>
       {subscriptionError && <p className="member-message" role="alert">{subscriptionError}</p>}
