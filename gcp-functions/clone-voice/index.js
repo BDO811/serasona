@@ -2,26 +2,53 @@
 // the phone check-in (voice-call-harness) can call them back in a voice they
 // chose instead of the stock ElevenLabs/Polly default.
 //
-// Same provider MyAbuela already ships with (Telnyx's native Voice Design Lab,
-// Minimax provider via POST /v2/voice_clones/from_upload) rather than a
-// separate ElevenLabs integration — one Telnyx account, one API key, no
-// per-provider BYOK key to manage, and the resulting voice id format
-// (`{Provider}.{Model}.{provider_voice_id}`) drops straight into the same
-// `<Say voice="...">` the harness already uses for its default voice.
-// Confirmed against developers.telnyx.com/docs/voice/voice-design-lab/
-// clone-voice/{quickstart,responses}.
-
+// Telnyx's native Voice Design Lab (POST /v2/voice_clones/from_upload), same
+// account as everything else here, rather than a separate ElevenLabs
+// integration — one API key, no per-provider BYOK key to manage, and the
+// resulting voice id format (`{Provider}.{Model}.{provider_voice_id}`) drops
+// straight into the same `<Say voice="...">` the harness already uses.
+//
+// provider=telnyx, model_id=Ultra specifically — Telnyx's own quickstart docs
+// call this out as "the higher-quality Ultra model" versus the default
+// (Qwen3TTS) or Minimax options, and Ultra's provider_voice_id is a
+// Cartesia-assigned id (confirmed against
+// developers.telnyx.com/docs/voice/voice-design-lab/clone-voice/responses) —
+// Cartesia is a dedicated voice-cloning model, not a general TTS engine with
+// cloning bolted on, which is the actual lever for sounding like the real
+// person rather than a good-but-generic voice. The tradeoff: Ultra clones
+// are created async (202 Accepted, status "pending"), unlike Minimax's
+// synchronous "active" — hence pollUntilActive below. Confirmed empirically
+// 2026-10-17: a clone went pending -> active in 30-40s.
 const admin = require("firebase-admin");
 
 if (!admin.apps.length) admin.initializeApp();
 
 const TELNYX_API = "https://api.telnyx.com/v2";
 
-// Minimax's own floor is ~10s ("Audio is too short"); this just bounds the
-// request body. 14MB base64 is roughly a 3.5 minute WAV at 48kHz mono, well
-// above Minimax's 1-2 minute sweet spot — matches MyAbuela's own ceiling for
-// the same reason (recordWebCheckIn.ts / cloneFamilyVoice.ts).
+// 14MB base64 is roughly a 3.5 minute WAV at 48kHz mono — generous headroom
+// over the 1-3 minute sweet spot voice cloning generally wants, regardless of
+// provider.
 const MAX_BASE64_LENGTH = 14_000_000;
+
+// Stays comfortably inside the function's 120s timeout (deployed with
+// --timeout=120s) while giving a slow clone room to finish rather than
+// bailing into "pending" on every request.
+const POLL_INTERVAL_MS = 5000;
+const POLL_MAX_ATTEMPTS = 16;
+
+async function pollUntilActive(apiKey, cloneId) {
+  for (let i = 0; i < POLL_MAX_ATTEMPTS; i++) {
+    await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    const res = await fetch(`${TELNYX_API}/voice_clones`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (!res.ok) continue;
+    const json = await res.json();
+    const match = (json.data || []).find((c) => c.id === cloneId);
+    if (match && match.status !== "pending") return match;
+  }
+  return null; // still pending after the full poll window
+}
 
 const PLAN_RANK = { free: 0, core: 1, plus: 2, executive: 3 };
 
@@ -94,7 +121,8 @@ exports.cloneVoice = async (req, res) => {
     form.append("name", `serasona-${decoded.uid}`);
     form.append("language", "en");
     form.append("gender", gender);
-    form.append("provider", "minimax");
+    form.append("provider", "telnyx");
+    form.append("model_id", "Ultra");
 
     const telnyxRes = await fetch(`${TELNYX_API}/voice_clones/from_upload`, {
       method: "POST",
@@ -108,7 +136,7 @@ exports.cloneVoice = async (req, res) => {
       await cloneRef.set(
         {
           displayName,
-          provider: "minimax",
+          provider: "telnyx",
           providerVoiceId: null,
           status: "failed",
           consentGivenAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -118,19 +146,25 @@ exports.cloneVoice = async (req, res) => {
       return res.status(502).json({ error: "Couldn't create that voice. Try again in a moment." });
     }
 
-    const json = await telnyxRes.json();
-    const { provider, model_id, provider_voice_id, status } = json.data ?? {};
+    // Ultra clones come back 202/"pending" — poll until Cartesia finishes
+    // processing (confirmed empirically: 30-40s) rather than handing the
+    // client a "pending" doc for a clone that would have been ready in under
+    // a minute anyway.
+    let clone = (await telnyxRes.json()).data ?? {};
+    if (clone.status === "pending") {
+      const polled = await pollUntilActive(apiKey, clone.id);
+      if (polled) clone = polled;
+    }
+
+    const { provider, model_id, provider_voice_id, status } = clone;
     const providerVoiceId =
       provider && model_id && provider_voice_id ? `${provider}.${model_id}.${provider_voice_id}` : null;
-    // Minimax clones are synchronous ("active" on creation); map defensively
-    // in case Telnyx ever returns "pending"/"expired" for this provider too —
-    // same mapping MyAbuela's voiceClone.ts uses.
     const localStatus = !providerVoiceId ? "failed" : status === "active" ? "ready" : status === "pending" ? "pending" : "failed";
 
     await cloneRef.set(
       {
         displayName,
-        provider: "minimax",
+        provider: provider ? provider.toLowerCase() : "telnyx",
         providerVoiceId,
         status: localStatus,
         consentGivenAt: admin.firestore.FieldValue.serverTimestamp(),
