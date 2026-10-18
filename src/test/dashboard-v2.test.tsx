@@ -13,10 +13,10 @@ beforeEach(() => { cleanup(); mocks.sessions = []; mocks.loading = false; mocks.
 describe("selected live dashboard", () => {
   it("uses saved signs, links to real capture flows and filters the body map", () => {
     mocks.sessions = [saved]; open();
-    expect(screen.getByRole("region", { name: "Serasona Score" })).toHaveTextContent("45");
+    expect(screen.getByRole("region", { name: "YOUR SERASONA SCORE" })).toHaveTextContent("45");
     expect(screen.getAllByRole("link", { name: "Record my voice" })[0]).toHaveAttribute("href", "/checkin");
     expect(screen.getAllByRole("link", { name: "Phone check-in" })[0]).toHaveAttribute("href", "/checkin/phone?mode=phone");
-    expect(screen.getByText("actual-saved-record")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "YOUR SERASONA SCORE" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Explore Mouth/ }));
     expect(screen.getByText("Mouth signals")).toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Stress: MODERATE" })).not.toBeInTheDocument();
@@ -26,6 +26,15 @@ describe("selected live dashboard", () => {
     expect(screen.getAllByRole("link", { name: "Record my voice" })).toHaveLength(1);
     expect(screen.getAllByRole("link", { name: "Phone check-in" })).toHaveLength(1);
     expect(screen.queryByText("YOUR SUBSCRIPTION")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Assessment details" }));
+    expect(screen.getByText("actual-saved-record")).toBeInTheDocument();
+  });
+  it("keeps the requested sample chart separate from saved readings", () => {
+    mocks.sessions = [saved]; open();
+    expect(screen.getByText("SAMPLE DATA · 10 MEASUREMENTS")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "My results" }));
+    expect(screen.getByText("YOUR SAVED RESULTS · LAST 10")).toBeInTheDocument();
+    expect(screen.queryByText("SAMPLE DATA · 10 MEASUREMENTS")).not.toBeInTheDocument();
   });
   it("does not insert sample results for an empty account", () => {
     mocks.entitled = false; open();
