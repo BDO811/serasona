@@ -2,8 +2,8 @@
  * Clone a recorded voice sample into a reusable Telnyx voice id, so the phone
  * check-in calls back in a voice the member chose rather than the stock
  * default. Backend: gcp-functions/clone-voice (Telnyx's native Voice Design
- * Lab / Minimax provider, same account the voice-call-harness already dials
- * through — see that function's own header comment for why).
+ * Lab, Ultra/Cartesia model, same account the voice-call-harness already
+ * dials through — see that function's own header comment for why).
  */
 
 import { auth, db } from "@/lib/firebase";
