@@ -10,6 +10,8 @@ describe("score documentation coverage", () => {
   it("documents every weighted sign and resolves its reference links", () => {
     expect(Object.keys(MEASUREMENT_EVIDENCE).sort()).toEqual(Object.keys(SIGN_DEFINITIONS).sort());
     render(<MemoryRouter><ScoreDocs /></MemoryRouter>);
+    expect(screen.getByRole("img", { name: "Serasona" })).toHaveAttribute("src", expect.stringContaining("serasona-logo-full.svg"));
+    expect(screen.queryByRole("img", { name: /amplifier/i })).not.toBeInTheDocument();
     for (const [name, evidence] of Object.entries(MEASUREMENT_EVIDENCE)) {
       const section = document.getElementById(`measurement-${name}`)!;
       expect(within(section).getByRole("heading", { name: evidence.label })).toBeInTheDocument();
