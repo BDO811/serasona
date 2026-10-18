@@ -92,7 +92,7 @@ function definitionFor(name: string): SignDefinition {
 
 /** Band to composite index. Ordinal, not linear in raw score — see module
  * doc. Inconclusive has no index; it is filtered out before this runs. */
-const BAND_INDEX: Record<Exclude<DisplayBand, "INCONCLUSIVE">, number> = {
+export const BAND_INDEX: Record<Exclude<DisplayBand, "INCONCLUSIVE">, number> = {
   NORMAL: 100,
   LOW: 68,
   MODERATE: 38,

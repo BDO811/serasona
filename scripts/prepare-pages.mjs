@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 export async function preparePages(directory = "dist") {
   const root = resolve(directory);
   const html = await readFile(resolve(root, "index.html"), "utf8");
-  for (const route of ["login", "dashboard", "account"]) {
+  for (const route of ["login", "dashboard", "account", "docs", "docs/serasona-score"]) {
     const folder = resolve(root, route);
     await mkdir(folder, { recursive: true });
     await writeFile(resolve(folder, "index.html"), html);

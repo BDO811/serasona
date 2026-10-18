@@ -34,3 +34,7 @@ Serasona phone analysis is performed by the separately deployed voice-call-harne
 Build and test both repositories. Deploy Serasona analyzeAudio and voiceHistory with their existing API credentials and runtime configuration. Deploy MyAbuela recording handlers, webhook and refreshLongitudinal. Existing historical Serasona jobs are not automatically backfilled into the new browser group. Baselines start with new grouped recordings unless a separately verified migration is performed.
 
 API contract: https://docs.amplifierhealth.com/reference/longitudinal-api
+
+## Public documentation
+
+The public page at `/docs/serasona-score` explains the calculation, band exceptions, plan matrix, all 21 weights, comparison rules and measurement specific evidence. Its bibliography is in `src/lib/score-evidence.ts`; weights and model membership come from the live scoring registries. References describe research context, not clinical validation of Serasona or its product weights.
