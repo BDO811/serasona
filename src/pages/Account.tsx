@@ -46,7 +46,7 @@ export default function Account() {
     }).catch(() => { if (!canceled) setError("Your profile could not be loaded. Please retry before editing."); }).finally(() => { if (!canceled) setLoading(false); });
     return () => { canceled = true; };
   }, [user?.uid, revision]);
-  useEffect(() => { if (location.hash === "#subscription") document.getElementById("subscription")?.scrollIntoView({ block: "start" }); }, [location.hash]);
+  useEffect(() => { if (["#subscription", "#calling-voice"].includes(location.hash)) document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: "start" }); }, [location.hash, loading]);
 
   const save = async (event: FormEvent) => {
     event.preventDefault();
