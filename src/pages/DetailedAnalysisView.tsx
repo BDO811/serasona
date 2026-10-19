@@ -19,7 +19,7 @@ const DetailedAnalysisView = () => {
 
   useEffect(() => {
     if (!visualizedResult?.biomarkers?.length) {
-      navigate("/");
+      navigate("/dashboard", { replace: true });
     }
   }, [visualizedResult, navigate]);
 
@@ -395,7 +395,7 @@ const DetailedAnalysisView = () => {
   };
 
   const handleBack = () => {
-    navigate("/");
+    navigate("/dashboard", { replace: true });
   };
 
   return (

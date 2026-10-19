@@ -133,8 +133,8 @@ const App = () => (
                   <Route path="/smooth-hero-demo" element={<SmoothHeroDemo />} />
                 </>
               )}
-              <Route path="/analysis-failed" element={<AnalysisFailed onRestart={() => window.location.href = "/"} />} />
-              <Route path="/recording-not-supported" element={<RecordingNotSupported onBack={() => window.location.href = "/"} />} />
+              <Route path="/analysis-failed" element={<AnalysisFailed onRestart={() => window.location.href = "/dashboard"} />} />
+              <Route path="/recording-not-supported" element={<RecordingNotSupported onBack={() => window.location.href = "/dashboard"} />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<PageShell><NotFound /></PageShell>} />
             </Routes>

@@ -1,0 +1,42 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { AssessmentProvider, useAssessment } from "@/context/AssessmentContext";
+import Index from "@/pages/Index";
+import Dashboard from "@/pages/Dashboard";
+import { computeSerasonaScore } from "@/lib/serasona-score";
+const api = vi.hoisted(() => ({ fetch: vi.fn(), save: vi.fn(), token: vi.fn().mockResolvedValue("test-token") }));
+vi.mock("@/context/AuthContext", () => ({ useAuth: () => ({ user: { uid: "test-member", displayName: "Test", getIdToken: api.token }, subscription: { planId: "executive", status: "active" }, isEntitled: () => true }) }));
+vi.mock("@/lib/firebase", () => ({ isFirebaseConfigured: true }));
+vi.mock("@/lib/voice-history-client", async (original) => ({ ...await original(), fetchHistory: api.fetch, saveSession: api.save }));
+vi.mock("@/components/NavigationOverlay", () => ({ NavigationOverlay: () => null }));
+vi.mock("@/components/member/VoiceSculpture", () => ({ VoiceSculpture: () => null, VoiceWave: () => null }));
+vi.mock("@/components/QuestionFlowVisualizer", () => ({ QuestionFlowVisualizer: ({ onComplete }) => <button onClick={onComplete}>Finish recording</button> }));
+vi.mock("@/components/AnalysisAnimation", () => ({ AnalysisAnimation: ({ onComplete }) => {
+  const { setVisualizedResult } = useAssessment();
+  return <button onClick={() => { setVisualizedResult({ jobId: "new-job", modelName: "pulse", signals: [{ name: "stress", label: "Stress", score: .8, level: "elevated", flagged: true }, { name: "dehydration", label: "Dehydration", score: .3, level: "moderate", flagged: true }, { name: "elevated-blood-pressure", label: "Blood Pressure", score: .1, level: "low", flagged: false }] } as never); onComplete({ id: "result" }); }}>Finish analysis</button>;
+} }));
+vi.stubGlobal("ResizeObserver", class { observe() {} unobserve() {} disconnect() {} });
+afterEach(cleanup);
+describe("completed analysis to live dashboard history", () => {
+ it("awaits persistence and immediately uses the new reading in score, body regions and analysis", async () => {
+  let resolveSave: (value: boolean) => void;
+  let saved: any = null;
+  api.fetch.mockImplementation(async () => saved ? [saved] : []);
+  api.save.mockImplementation((payload) => new Promise<boolean>((resolve) => { resolveSave = (ok) => { if (ok) saved = { ...payload, sessionId: payload.jobId, capturedAt: Date.now() }; resolve(ok); }; }));
+  render(<MemoryRouter initialEntries={["/checkin"]}><AssessmentProvider><Routes><Route path="/checkin" element={<Index initialState="capture" presetPathway="WELLNESS" exitTo="/dashboard" />} /><Route path="/dashboard" element={<Dashboard />} /></Routes></AssessmentProvider></MemoryRouter>);
+  fireEvent.click(screen.getByRole("button", { name: "Finish recording" }));
+  fireEvent.click(screen.getByRole("button", { name: "Finish analysis" }));
+  await waitFor(() => expect(api.save).toHaveBeenCalledTimes(1));
+  expect(api.save.mock.calls[0][0]).toMatchObject({jobId:"new-job",source:"browser",model:"pulse",pathway:"WELLNESS"});
+  expect(api.fetch).toHaveBeenCalledTimes(1);
+  resolveSave!(true);
+  await waitFor(() => expect(screen.getByRole("group", { name: "Stress: ELEVATED" })).toBeInTheDocument());
+  const score = computeSerasonaScore(saved.signals)!.score;
+  expect(screen.getByRole("button", { name: new RegExp(`Review today.*score ${score}`) })).toBeInTheDocument();
+  for (const label of ["Neurocognitive", "Cardiorespiratory", "Core"]) expect(screen.getByRole("button", { name: new RegExp(`Explore ${label}`) })).toBeInTheDocument();
+  expect(screen.getByRole("group", { name: "Dehydration: MODERATE" })).toBeInTheDocument();
+  expect(api.fetch).toHaveBeenCalledTimes(2);
+  expect(within(screen.getByRole("table", { name: "Your saved readings · Last 3 days" })).getAllByText(String(score)).length).toBeGreaterThan(0);
+ });
+});

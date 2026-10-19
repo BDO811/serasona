@@ -10,7 +10,7 @@ describe("GitHub Pages member documents", () => {
       const entry = '<html><script src="/assets/current-release.js"></script></html>';
       await writeFile(join(directory, "index.html"), entry);
       await preparePages(directory);
-      for (const path of ["login/index.html", "dashboard/index.html", "account/index.html", "docs/index.html", "docs/serasona-score/index.html", "404.html"]) expect(await readFile(join(directory, path), "utf8")).toBe(entry);
+      for (const path of ["login/index.html", "dashboard/index.html", "account/index.html", "docs/index.html", "docs/serasona-score/index.html", "checkin/index.html", "checkin/phone/index.html", "voice/index.html", "signup/index.html", "reset-password/index.html", "science/index.html", "models/index.html", "terms/index.html", "privacy/index.html", "pricing/index.html", "admin/index.html", "history/index.html", "detailed-analysis/index.html", "404.html"]) expect(await readFile(join(directory, path), "utf8")).toBe(entry);
     } finally { await rm(directory, { recursive: true, force: true }); }
   });
 });

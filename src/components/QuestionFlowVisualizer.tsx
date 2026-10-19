@@ -332,6 +332,8 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
           console.log("[QuestionFlowVisualizer] Result transformed:", visualized);
         } catch (transformError) {
           console.error("[QuestionFlowVisualizer] Transformation failed:", transformError);
+          setApiStatus("failed");
+          return;
         }
       }
       
@@ -383,6 +385,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
 
         mediaRecorder.onerror = (event) => {
           console.error("MediaRecorder error:", event);
+          setApiStatus("failed");
         };
 
         /*
@@ -696,6 +699,8 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
           advanceToNextQuestion();
         } catch (error) {
           console.error("[QuestionFlowVisualizer] Error processing segment:", error);
+          setHasRecordedCurrentQuestion(false);
+          setInsufficientSpeechWarning("This recording could not be read. Please record this answer again.");
         }
       };
     }
@@ -711,15 +716,17 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
     startRecording();
   }, [isComplete, isRecording, stopRecording, startRecording]);
 
+  const rippleIdRef = useRef(0);
   // Generate ripples while recording
   useEffect(() => {
     if (!isRecording) return;
 
     const interval = setInterval(() => {
       const intensity = 0.5 + Math.random() * 0.5;
+      const ripple = { id: ++rippleIdRef.current, startTime: Date.now(), intensity };
       setRipples(prev => [
         ...prev.slice(-5),
-        { id: Date.now(), startTime: Date.now(), intensity }
+        ripple
       ]);
     }, 400);
 
