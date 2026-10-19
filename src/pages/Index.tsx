@@ -43,7 +43,8 @@ const Index = ({ initialState = "home", presetPathway, exitTo }: IndexProps = {}
   // Consent is already on file from signup (see Signup.tsx), so there is
   // nothing to collect here beyond the pathway itself.
   useEffect(() => {
-    if (presetPathway && pathway !== presetPathway) {
+    if (presetPathway) {
+      resetAssessment();
       setPathway(presetPathway);
       setUserProfile({ consentGiven: true });
     }
@@ -63,10 +64,10 @@ const Index = ({ initialState = "home", presetPathway, exitTo }: IndexProps = {}
   }, [isFastTrack, pathway]);
 
   useEffect(() => {
-    if (visualizedResult && selectedArchetype) {
+    if (!exitTo && visualizedResult && selectedArchetype) {
       setAppState("reveal");
     }
-  }, [visualizedResult, selectedArchetype]);
+  }, [visualizedResult, selectedArchetype, exitTo]);
 
   // The free check-in requires an account too. Before accounts existed this
   // walked straight into language -> triage -> capture for anyone, and triage
@@ -123,8 +124,12 @@ const Index = ({ initialState = "home", presetPathway, exitTo }: IndexProps = {}
 
   const handleAnalysisComplete = useCallback((archetype: ArchetypeData) => {
     setSelectedArchetype(archetype);
+    if (exitTo) {
+      navigate(exitTo, { replace: true });
+      return;
+    }
     setAppState("reveal");
-  }, []);
+  }, [exitTo, navigate, setSelectedArchetype]);
 
   const handleAnalysisFailed = useCallback(() => {
     setAppState("failed");

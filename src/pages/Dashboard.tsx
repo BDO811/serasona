@@ -32,7 +32,7 @@ const stateLabel = (session: StoredSession) => session.status && session.status 
 
 export default function Dashboard() {
   const { user, subscription, subscriptionError, isEntitled } = useAuth();
-  const { sessions, loading, error, refresh } = useVoiceHistory({ refreshInterval: 30000 });
+  const { sessions, loading, error, refresh } = useVoiceHistory({ save: true, refreshInterval: 30000 });
   const [days, setDays] = useState(30);
   const [source, setSource] = useState("all");
   const [metric, setMetric] = useState<TrendMetric>("all");

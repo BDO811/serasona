@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { Phone, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -13,6 +13,7 @@ import { computeSerasonaScore } from "@/lib/serasona-score";
 const WAITING: Record<string, string> = { dialing: "Connecting your call…", ringing: "Your phone is ringing.", in_call: "Your check-in is in progress.", analyzing: "Reading your voice…", capturing: "Capturing your voice…", sending_link: "Preparing your check-in…", link_sent: "Your check-in is ready." };
 export default function CheckinByPhone() {
   const { user, isEntitled } = useAuth();
+  const navigate = useNavigate();
   const [phone, setPhone] = useState("");
   const [consent, setConsent] = useState(false);
   const [session, setSession] = useState<VoiceCheckinSession | null>(null);
@@ -30,8 +31,8 @@ export default function CheckinByPhone() {
   if (!isEntitled("plus")) return <Navigate to="/account#subscription" replace />;
   const saveFinal = async (id: string) => {
     setSaving(true); setSaveError("");
-    try { await trackPhoneSession(id); }
-    catch (err) { setSaveError(err instanceof Error ? err.message : "History sync is unavailable. Please retry."); }
+    try { await trackPhoneSession(id); return true; }
+    catch (err) { setSaveError(err instanceof Error ? err.message : "History sync is unavailable. Please retry."); return false; }
     finally { setSaving(false); }
   };
   const begin = async () => {
@@ -47,7 +48,9 @@ export default function CheckinByPhone() {
       setSession({ sessionId: started.sessionId, status: started.status, provider: started.provider, model: "haven", speechSeconds: null, captureSampleRate: null, smsStatus: null, error: null, quality: null, result: null });
       const final = await pollVoiceCheckin(started.sessionId, { signal: controller.signal, onTick: setSession });
       if (controller.signal.aborted) return;
-      setSession(final); await saveFinal(final.sessionId);
+      setSession(final);
+      const saved = await saveFinal(final.sessionId);
+      if (saved && final.status === "complete" && !controller.signal.aborted) navigate("/dashboard", { replace: true });
     } catch (err) {
       if (!controller.signal.aborted) setError(err instanceof VoiceCheckinError ? [err.message, err.hint].filter(Boolean).join(" ") : "Could not complete the check-in. Your dashboard can recover a call that already started.");
     } finally { if (!controller.signal.aborted) setStarting(false); }
