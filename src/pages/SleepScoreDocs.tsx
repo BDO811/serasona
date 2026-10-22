@@ -14,7 +14,7 @@ export default function SleepScoreDocs() {
       <h1>How the Sleep Score works.</h1>
       <p className="score-docs-lead">A second read of the same recording, over the signs published research connects to sleep debt.</p>
       <p>The score runs from 0 to 100. Higher values mean fewer flagged signs in the sleep-relevant set. It does not ask about sleep, estimate how long you slept, or read a sleep stage — Serasona has no sleep-specific voice model. It is a provisional, exploratory index built from signs the platform already measures for other reasons. The weights and thresholds are product choices, not coefficients established by the papers below, and the composite itself has not been clinically validated.</p>
-      <nav className="score-docs-contents" aria-label="On this page"><a href="#calculation">Calculation</a><a href="#evidence">Why these signs</a><a href="#weights">Weights</a><a href="#limits">What this is not</a><a href="#references">References</a></nav>
+      <nav className="score-docs-contents" aria-label="On this page"><a href="#calculation">Calculation</a><a href="#evidence">Why these signs</a><a href="#weights">Weights</a><a href="#references">References</a></nav>
 
       <section id="calculation"><h2>From recording to score</h2>
         <p>This reuses the same sign bands the Serasona Score uses (see <Link to="/docs/serasona-score">its calculation</Link>), restricted to the subset listed under Weights below. A sign outside that set — hydration, allergy, head impact and the rest — is simply not part of this question, not counted as normal.</p>
@@ -24,11 +24,10 @@ export default function SleepScoreDocs() {
       </section>
 
       <section id="evidence"><h2>Why these signs, and on what evidence</h2>
-        <p>Only one of the eleven signs below has published research reading it from voice specifically after sleep loss: fatigue. The rest are here because non-voice sleep research connects that construct to sleep debt, and Serasona's own voice-based sign separately claims to read that construct — two evidence chains joined at the construct, not one study that measured both sleep and voice together. “Direct research” means a study examined voice and sleep loss together. “Related research” means sleep debt and voice were studied separately and are joined here by the shared construct. “Physiological rationale” means an established mechanism without a study of either side specific to Serasona. None of these labels establishes Serasona accuracy, and the Related and Physiological rationale signs do not become sleep measurements by being included here.</p>
+        <p>These signs are included because non-voice sleep research connects that construct to sleep debt, and Serasona's own voice-based sign separately claims to read that construct — two evidence chains joined at the construct, not one study that measured both sleep and voice together. “Direct research” means a study examined voice and sleep loss together. “Related research” means sleep debt and voice were studied separately and are joined here by the shared construct. “Physiological rationale” means an established mechanism without a study of either side specific to Serasona. None of these labels establishes Serasona accuracy, and the Related and Physiological rationale signs do not become sleep measurements by being included here.</p>
         {Object.entries(SLEEP_SIGN_WEIGHTS).map(([name]) => {
           const evidence = SLEEP_MEASUREMENT_RATIONALE[name];
           return <article className="score-docs-measurement" id={`sleep-measurement-${name}`} key={name}>
-            <p className="score-docs-label">{evidence.basis}</p>
             <h3>{evidence.label}</h3>
             <p>{evidence.rationale}</p>
             <p className="score-docs-citations">{evidence.references.map((id) => <a key={id} href={`#sleep-reference-${id}`}>{sleepReferenceFor(id).title.split(". ")[0]}</a>)}</p>
