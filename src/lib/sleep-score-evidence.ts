@@ -77,7 +77,7 @@ export const SLEEP_MEASUREMENT_RATIONALE: Record<string, SleepSignRationale> = {
   fatigue: {
     label: "Fatigue",
     rationale:
-      "The only sign in this composite with published research reading it from voice specifically after sleep loss. Controlled sleep-deprivation studies report changes in prosody, spectral voice quality and harmonics-to-noise ratio after a night of reduced or no sleep.",
+      "Controlled sleep-deprivation studies report changes in prosody, spectral voice quality and harmonics-to-noise ratio after a night of reduced or no sleep.",
     references: ["fatigue", "morningVoice", "fatigueVoiceModel", "harmonicNoiseFatigue"],
     basis: "Direct research",
   },
