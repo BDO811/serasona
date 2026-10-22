@@ -21,13 +21,14 @@ import type { AssessmentPathway } from "@/context/AssessmentContext";
 import "@/components/member/dashboard-v2.css";
 import type { StoredSession } from "@/lib/voice-history-client";
 
-import { lastThreeDailyScores } from "@/lib/daily-scores";
+import { lastThreeMeasurements } from "@/lib/daily-scores";
 import { scoreMatrixForPlan } from "@/lib/score-matrix";
 
 const SIGNAL_COLORS = { NORMAL: "#99E4FF", LOW: "#F5EF79", MODERATE: "#FFC163", ELEVATED: "#FF6173", INCONCLUSIVE: "#CECECE" };
 const METRICS = [{ key: "overall", label: "Serasona" }, { key: "stress", label: "Stress" }, { key: "wellness", label: "Wellness" }, { key: "clarity", label: "Clarity" }] as const;
 const date = (ms: number) => new Date(ms).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 const dateTime = (ms: number) => new Date(ms).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+const dateAndTime = (ms: number) => new Date(ms).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 const stateLabel = (session: StoredSession) => session.status && session.status !== "complete" ? session.status.replace(/_/g, " ") : session.quality?.usable === false ? "Unusable audio" : session.signals.length ? "Results available" : "No readable results";
 
 export default function Dashboard() {
@@ -43,12 +44,12 @@ export default function Dashboard() {
   const chronological = useMemo(() => [...sessions].sort((a, b) => a.capturedAt - b.capturedAt), [sessions]);
   const readable = chronological.filter(isUsableSession);
   const latest = readable[readable.length - 1];
-  const dailyScores = lastThreeDailyScores(sessions);
+  const measurements = lastThreeMeasurements(sessions);
   const score = latest ? computeSerasonaScore(latest.signals) : null;
   const visible = useMemo(() => dashboardSessions(sessions, days, source), [sessions, days, source]);
   const reference = [...visible].reverse().find(isUsableSession);
   const comparable = comparableSessions(visible, reference);
-  const matrix = dailyScores;
+  const matrix = measurements;
 
   const firstName = user?.displayName?.split(" ")[0];
   const canCall = isEntitled("plus");
@@ -62,10 +63,10 @@ export default function Dashboard() {
   return <MemberShell motionControl>
     <main className="dashboard-v2 dv-priority">
       <section className="dv-score-banner" aria-labelledby="serasona-score-title">
-        <div className="dv-score-copy"><h1 id="serasona-score-title">YOUR SERASONA SCORE</h1><p>{firstName ? `${firstName}, your` : "Your"} last three days. The latest scored check-in from each day.</p><button className="dv-score-method" onClick={() => setExplaining(true)}>View score weights and level matrix</button></div>
-        <div className="dv-score-days" aria-label="Last three days of Serasona scores" aria-live="polite">{dailyScores.map((day, index) => {
-          const content = <><span className="dv-day-heading">{day.label}<small>{date(day.date)}</small></span><span className="dv-day-value">{loading && !sessions.length ? "…" : error ? "Unavailable" : day.score ?? (day.hasRecordings ? "No score" : "No reading")}{day.score != null && <small>/ 100</small>}</span><span className="dv-day-context">{day.session ? <>{day.band} · {sourceLabel(day.session)}<small>{new Date(day.session.capturedAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}</small></> : loading ? "Loading readings" : day.hasRecordings ? "No readable score returned" : "No saved check-in"}</span></>;
-          return day.session ? <button key={day.date} className={`dv-score-day ${index === 0 ? "is-today" : ""}`} onClick={() => setSelected(day.session!)} aria-label={`Review ${day.label.toLowerCase()}, ${date(day.date)}: Serasona score ${day.score}`}>{content}</button> : <div key={day.date} className="dv-score-day is-empty">{content}</div>;
+        <div className="dv-score-copy"><h1 id="serasona-score-title">YOUR SERASONA SCORE</h1><p>{firstName ? `${firstName}, your` : "Your"} last three measurements. The latest scored check-ins, whenever they were recorded.</p><button className="dv-score-method" onClick={() => setExplaining(true)}>View score weights and level matrix</button></div>
+        <div className="dv-score-days" aria-label="Last three measurements of Serasona scores" aria-live="polite">{measurements.map((measurement, index) => {
+          const content = <><span className="dv-day-heading">{measurement.label}<small>{measurement.capturedAt ? date(measurement.capturedAt) : "—"}</small></span><span className="dv-day-value">{loading && !sessions.length ? "…" : error ? "Unavailable" : measurement.score ?? "No reading"}{measurement.score != null && <small>/ 100</small>}</span><span className="dv-day-context">{measurement.session ? <>{measurement.band} · {sourceLabel(measurement.session)}<small>{new Date(measurement.session.capturedAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}</small></> : loading ? "Loading readings" : "No saved check-in yet"}</span></>;
+          return measurement.session ? <button key={index} className={`dv-score-day ${index === 0 ? "is-latest" : ""}`} onClick={() => setSelected(measurement.session!)} aria-label={`Review ${measurement.label.toLowerCase()} reading, ${dateTime(measurement.session.capturedAt)}: Serasona score ${measurement.score}`}>{content}</button> : <div key={index} className="dv-score-day is-empty">{content}</div>;
         })}</div><button className="member-icon-button dv-score-refresh" onClick={refresh} disabled={loading} aria-label="Refresh results"><RefreshCw size={18} className={loading ? "member-spin" : ""} /></button>
         <VoiceSculpture />
       </section>
@@ -86,7 +87,7 @@ export default function Dashboard() {
               <div className="member-controls"><span className="member-note">Saved history period</span><div className="member-ranges" aria-label="History period">{[7, 30, 90].map((n) => <button key={n} aria-pressed={days === n} onClick={() => setDays(n)}>{n}D</button>)}</div></div>
               <div className="member-controls member-source-controls"><label htmlFor="source"><SlidersHorizontal size={14} />Recording source</label><select id="source" value={source} onChange={(e) => setSource(e.target.value)}><option value="all">All sources</option><option value="browser">Browser</option><option value="phone">Phone</option><option value="unknown">Source not recorded</option></select></div>
             </>} />
-            <div className="member-matrix-scroll"><table className="member-matrix dv-daily-matrix"><caption>Your saved readings · Last 3 days</caption><thead><tr><th scope="col">SIGNAL INDEX</th>{matrix.map((day) => <th scope="col" key={day.date}>{day.session ? <button onClick={() => setSelected(day.session!)} title={dateTime(day.session.capturedAt)}>{date(day.date)}</button> : date(day.date)}</th>)}</tr></thead><tbody>{METRICS.map(({ key, label }) => <tr key={key}><th scope="row">{label}</th>{matrix.map((day) => { const value = day.session ? metricValue(day.session, key) : null; return <td key={day.date} className={value !== null && value >= 67 ? "member-matrix-clear" : ""}>{value ?? (day.session || day.hasRecordings ? "Not read" : "No reading")}</td>; })}</tr>)}</tbody></table></div>
+            <div className="member-matrix-scroll"><table className="member-matrix dv-daily-matrix"><caption>Your saved readings · Last 3 measurements</caption><thead><tr><th scope="col">SIGNAL INDEX</th>{matrix.map((measurement, index) => <th scope="col" key={index}>{measurement.session ? <button onClick={() => setSelected(measurement.session!)} title={dateTime(measurement.session.capturedAt)}>{dateAndTime(measurement.session.capturedAt)}</button> : "—"}</th>)}</tr></thead><tbody>{METRICS.map(({ key, label }) => <tr key={key}><th scope="row">{label}</th>{matrix.map((measurement, index) => { const value = measurement.session ? metricValue(measurement.session, key) : null; return <td key={index} className={value !== null && value >= 67 ? "member-matrix-clear" : ""}>{value ?? (measurement.session ? "Not read" : "No reading")}</td>; })}</tr>)}</tbody></table></div>
           </section>
           <section className="member-section dv-panel"><div className="member-section-heading"><h2>Recent check-ins</h2><span className="member-note">{visible.length} in this view</span></div><div className="member-table-scroll"><table className="member-sessions"><thead><tr><th scope="col">RECORDED</th><th scope="col">SOURCE</th><th scope="col">MODEL</th><th scope="col">STATUS</th><th scope="col">REVIEW</th></tr></thead><tbody>{[...visible].reverse().map((session) => <tr key={session.sessionId}><td>{dateTime(session.capturedAt)}</td><td>{sourceLabel(session)}</td><td>{session.model || "Not recorded"}</td><td>{stateLabel(session)}</td><td><button onClick={() => setSelected(session)} aria-label={`Open reading from ${dateTime(session.capturedAt)}`}>Open <ArrowUpRight size={14} /></button></td></tr>)}</tbody></table></div></section>
 

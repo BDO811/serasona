@@ -19,7 +19,7 @@ describe("selected live dashboard", () => {
     expect(screen.getByRole("heading", { name: "YOUR SERASONA SCORE" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Neurocognitive" })).toBeInTheDocument();
     expect(document.querySelectorAll(".dv-body-info > div")).toHaveLength(0);
-    const matrix = screen.getByRole("table", { name: "Your saved readings · Last 3 days" });
+    const matrix = screen.getByRole("table", { name: "Your saved readings · Last 3 measurements" });
     expect(within(matrix).getAllByRole("columnheader")).toHaveLength(4);
     expect(within(matrix).getAllByText("No reading")).toHaveLength(8);
     expect(document.querySelectorAll(".dv-scale > span")).toHaveLength(4);
