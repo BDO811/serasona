@@ -165,7 +165,7 @@ export const ParallaxBand = ({
         className="absolute inset-0 h-[118%] w-full object-cover"
         style={reduce ? undefined : { y }}
       />
-      <div className="absolute inset-0 bg-[#1b1510]/35" />
+      <div className="absolute inset-0 bg-[#111111]/35" />
       {children ? (
         <div className="relative flex min-h-[inherit] items-center justify-center px-6 py-24">
           {children}
@@ -211,7 +211,7 @@ export const StickyCta = ({ onStart, afterPx = 900 }: { onStart: () => void; aft
         onClick={onStart}
         tabIndex={show ? 0 : -1}
         aria-hidden={!show}
-        className="pointer-events-auto rounded-full bg-black px-8 py-4 font-mono text-[11px] uppercase tracking-[0.2em] text-[#fbf7f1] shadow-[0_12px_32px_-10px_rgba(27,21,16,0.6)] transition-transform hover:scale-[1.03]"
+        className="pointer-events-auto rounded-full bg-black px-8 py-4 font-mono text-[11px] uppercase tracking-[0.2em] text-primary-foreground shadow-[0_12px_32px_-10px_rgba(27,21,16,0.6)] transition-transform hover:scale-[1.03]"
       >
         Try Serasona · 20 seconds
       </button>

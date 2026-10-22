@@ -97,10 +97,7 @@ const WAVEFORM_BARS = Array.from({ length: 48 }, (_, i) => {
 
 export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
   return (
-    <div
-      className="absolute inset-0 overflow-y-auto"
-      style={{ backgroundColor: "#fbf7f1" }}
-    >
+    <div className="absolute inset-0 overflow-y-auto bg-background">
       {/* Shared site chrome: adapts to who is signed in, which the inline
           nav this replaced did not. */}
       <SiteHeader overlay />
@@ -132,14 +129,14 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           {/* Full line, tablet and up: the long form reads fine once there's
               width for it to wrap at most twice. */}
           <span className="hidden md:inline">
-            <span className="font-semibold text-[#0d6a76]">No ring, no band, no wearable to buy,</span>
+            <span className="font-semibold">No ring, no band, no wearable to buy,</span>
             <br />
             <span className="italic text-4xl">get a deeper understanding of your body than any device.</span>
           </span>
           {/* Phone-width variant: same claim, fewer words, so it doesn't run
               seven lines deep before the CTA ever comes into view. */}
           <span className="md:hidden">
-            <span className="font-semibold text-[#0d6a76]">No wearable to buy or wear,</span>
+            <span className="font-semibold">No wearable to buy or wear,</span>
             <br />
             <span className="italic">just a deeper read than any device.</span>
           </span>
@@ -187,7 +184,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={onComplete}
-          className="mt-12 rounded-full bg-black px-10 py-5 font-mono text-sm font-medium uppercase tracking-[0.2em] text-[#fbf7f1] transition-colors hover:bg-black/[0.85]"
+          className="mt-12 rounded-full bg-primary px-10 py-5 font-mono text-sm font-medium uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-bone-800"
         >
           Try Serasona
         </motion.button>
@@ -251,7 +248,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           stops reading as one long column of centred text. */}
       <ParallaxBand src={asset("video/band-conversation.jpg")}>
         <Reveal>
-          <p className="mx-auto max-w-[680px] text-center font-serif text-2xl leading-snug text-[#fbf7f1] md:text-4xl">
+          <p className="mx-auto max-w-[680px] text-center font-serif text-2xl leading-snug text-primary-foreground md:text-4xl">
             A wearable waits on your wrist. Serasona uses the thing you were
             going to do anyway.
           </p>
@@ -303,7 +300,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
       </div>
 
       {/* Pricing teaser */}
-      <div className="border-t border-black/10 px-6 py-24 md:py-28" style={{ backgroundColor: "#f2ebe0" }}>
+      <div className="border-t border-black/10 px-6 py-24 md:py-28 bg-secondary">
         <div className="mx-auto max-w-[700px] text-center">
           <Reveal><h2 className="font-serif text-3xl text-black md:text-4xl">Simple pricing</h2></Reveal>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-black/65">
@@ -312,7 +309,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           </p>
           <Link
             to="/pricing"
-            className="mt-8 inline-block rounded-full bg-black px-8 py-4 font-mono text-xs font-medium uppercase tracking-[0.2em] text-[#fbf7f1] transition-colors hover:bg-black/[0.85]"
+            className="mt-8 inline-block rounded-full bg-primary px-8 py-4 font-mono text-xs font-medium uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-bone-800"
           >
             See plans and pricing
           </Link>
@@ -346,7 +343,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
       </div>
 
       {/* FAQ */}
-      <div className="border-t border-black/10 px-6 py-24 md:py-28" style={{ backgroundColor: "#f2ebe0" }}>
+      <div className="border-t border-black/10 px-6 py-24 md:py-28 bg-secondary">
         <div className="mx-auto max-w-[700px]">
           <Reveal><h2 className="text-center font-serif text-3xl text-black md:text-4xl">Questions</h2></Reveal>
           <Accordion type="single" collapsible className="mt-10">

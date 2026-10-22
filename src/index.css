@@ -8,87 +8,109 @@
 
 @layer base {
   :root {
-    /* Core palette - Serasona warm paper + ember */
-    --background: 36 56% 96%;
-    --foreground: 27 26% 8%;
+    /* Bone and Signal - bone neutrals carry the brand, black is the action color */
+    --background: 40 26% 93%;   /* bone-100, bg.ground */
+    --foreground: 0 0% 7%;      /* bone-900, text.primary */
 
     /* Paper surfaces */
-    --card: 0 0% 100%;
-    --card-foreground: 27 26% 8%;
+    --card: 0 0% 100%;          /* white, bg.surface */
+    --card-foreground: 0 0% 7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 27 26% 8%;
+    --popover-foreground: 0 0% 7%;
 
-    /* Ember primary (Serasona's one-accent-per-screen color) */
-    --primary: 17 88% 40%;
-    --primary-foreground: 30 100% 98%;
+    /* action.primary: black buttons, no accent color on chrome */
+    --primary: 0 0% 7%;         /* bone-900 */
+    --primary-foreground: 0 0% 100%;
 
-    /* Sunken paper */
-    --secondary: 37 41% 91%;
-    --secondary-foreground: 30 16% 29%;
+    /* bg.sunken: tracks, wells */
+    --secondary: 43 23% 88%;    /* bone-200 */
+    --secondary-foreground: 40 6% 27%;   /* bone-700 */
 
-    --muted: 37 41% 91%;
-    --muted-foreground: 31 14% 38%;
+    --muted: 43 23% 88%;        /* bone-200 */
+    --muted-foreground: 40 6% 40%;       /* bone-600, text.muted */
 
-    --accent: 17 88% 40%;
-    --accent-foreground: 30 100% 98%;
+    /* accent: reserved for info (blue), not a brand color */
+    --accent: 226 82% 55%;      /* blue-500, status.info */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 67% 38%;
+    --destructive: 2 69% 48%;   /* red-500, status.alert */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 37 33% 86%;
-    --input: 37 41% 91%;
-    --ring: 17 88% 40%;
+    --border: 40 18% 84%;       /* bone-300, border.subtle */
+    --input: 43 23% 88%;        /* bone-200 */
+    --ring: 226 82% 55%;        /* blue-500, link/focus */
 
-    --radius: 1.25rem;
+    --radius: 1.25rem;          /* 20px, "lg" / cards */
 
-    /* Custom tokens - now ember-based, not cyan */
-    --cyan-glow: 17 88% 40%;
+    /* status tokens */
+    --status-steady: 152 68% 28%;        /* green-500 */
+    --status-steady-bg: 142 35% 88%;     /* green-100 */
+    --status-steady-text: 152 69% 19%;   /* green-700 */
+    --status-info: 226 82% 55%;          /* blue-500 */
+    --status-info-bg: 223 79% 92%;       /* blue-100 */
+    --status-info-text: 224 64% 33%;     /* blue-700 */
+    --status-alert: 2 69% 48%;           /* red-500 */
+    --status-alert-bg: 4 71% 91%;        /* red-100 */
+    --status-alert-text: 0 63% 31%;      /* red-700 */
+
+    /* Legacy glow/glass tokens, now keyed to status.info instead of ember */
+    --cyan-glow: 226 82% 55%;
     --glass-bg: 0 0% 100% / 0.65;
-    --glass-border: 17 88% 40% / 0.1;
+    --glass-border: 226 82% 55% / 0.1;
 
     /* Sidebar - light theme */
-    --sidebar-background: 37 41% 91%;
-    --sidebar-foreground: 27 26% 8%;
-    --sidebar-primary: 17 88% 40%;
-    --sidebar-primary-foreground: 30 100% 98%;
-    --sidebar-accent: 37 33% 86%;
-    --sidebar-accent-foreground: 27 26% 8%;
-    --sidebar-border: 37 33% 86%;
-    --sidebar-ring: 17 88% 40%;
+    --sidebar-background: 43 23% 88%;
+    --sidebar-foreground: 0 0% 7%;
+    --sidebar-primary: 0 0% 7%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 18% 84%;
+    --sidebar-accent-foreground: 0 0% 7%;
+    --sidebar-border: 40 18% 84%;
+    --sidebar-ring: 226 82% 55%;
   }
 
+  /* Watch/OLED-style dark theme: black ground, 300-step signal ramps, light action fill */
   .dark {
-    --background: 30 18% 7%;
-    --foreground: 33 44% 95%;
-    --card: 30 15% 10%;
-    --card-foreground: 33 44% 95%;
-    --popover: 30 15% 10%;
-    --popover-foreground: 33 44% 95%;
-    --primary: 21 100% 65%;
-    --primary-foreground: 27 26% 8%;
-    --secondary: 30 18% 4%;
-    --secondary-foreground: 31 17% 72%;
-    --muted: 30 18% 4%;
-    --muted-foreground: 32 12% 56%;
-    --accent: 21 100% 65%;
-    --accent-foreground: 27 26% 8%;
-    --destructive: 5 100% 76%;
-    --destructive-foreground: 27 26% 8%;
-    --border: 30 16% 15%;
-    --input: 30 18% 4%;
-    --ring: 21 100% 65%;
-    --cyan-glow: 21 100% 65%;
-    --glass-bg: 30 15% 10% / 0.65;
-    --glass-border: 21 100% 65% / 0.1;
-    --sidebar-background: 30 18% 4%;
-    --sidebar-foreground: 33 44% 95%;
-    --sidebar-primary: 21 100% 65%;
-    --sidebar-primary-foreground: 27 26% 8%;
-    --sidebar-accent: 30 16% 15%;
-    --sidebar-accent-foreground: 33 44% 95%;
-    --sidebar-border: 30 16% 15%;
-    --sidebar-ring: 21 100% 65%;
+    --background: 0 0% 0%;
+    --foreground: 40 26% 93%;   /* bone-100 */
+    --card: 36 6% 16%;          /* bone-800 */
+    --card-foreground: 40 26% 93%;
+    --popover: 36 6% 16%;
+    --popover-foreground: 40 26% 93%;
+    --primary: 40 26% 93%;      /* bone-100 action fill on OLED */
+    --primary-foreground: 0 0% 7%;
+    --secondary: 36 6% 16%;
+    --secondary-foreground: 41 12% 69%;  /* bone-400 */
+    --muted: 36 6% 16%;
+    --muted-foreground: 41 12% 69%;
+    --accent: 225 84% 76%;      /* blue-300 */
+    --accent-foreground: 0 0% 7%;
+    --destructive: 2 75% 74%;   /* red-300 */
+    --destructive-foreground: 0 0% 7%;
+    --border: 40 6% 27%;        /* bone-700 */
+    --input: 36 6% 16%;
+    --ring: 225 84% 76%;
+    --status-steady: 145 38% 63%;        /* green-300 */
+    --status-steady-bg: 36 6% 16%;
+    --status-steady-text: 145 38% 63%;
+    --status-info: 225 84% 76%;          /* blue-300 */
+    --status-info-bg: 36 6% 16%;
+    --status-info-text: 225 84% 76%;
+    --status-alert: 2 75% 74%;           /* red-300 */
+    --status-alert-bg: 36 6% 16%;
+    --status-alert-text: 2 75% 74%;
+    --cyan-glow: 225 84% 76%;
+    --glass-bg: 36 6% 16% / 0.65;
+    --glass-border: 225 84% 76% / 0.1;
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 40 26% 93%;
+    --sidebar-primary: 40 26% 93%;
+    --sidebar-primary-foreground: 0 0% 7%;
+    --sidebar-accent: 36 6% 16%;
+    --sidebar-accent-foreground: 40 26% 93%;
+    --sidebar-border: 40 6% 27%;
+    --sidebar-ring: 225 84% 76%;
   }
 }
 

@@ -132,7 +132,7 @@ const LIMITS = [
 /* ------------------------------------------------------------ component */
 
 const Science = () => (
-  <main className="min-h-screen bg-[#fbf7f1] text-black">
+  <main className="min-h-screen bg-[#F2EFE9] text-black">
     <div className="mx-auto max-w-[760px] px-6 pb-28 pt-16 md:pt-24">
       {/* Hero.
           Deliberately not animated in. This is a long-form reference page, and
@@ -171,7 +171,7 @@ const Science = () => (
       <div className="mt-10 grid gap-x-10 gap-y-9 sm:grid-cols-2">
         {MECHANISM.map((m) => (
           <div key={m.n}>
-            <span className="font-mono text-[11px] tracking-[0.2em] text-[#c2410c]">{m.n}</span>
+            <span className="font-mono text-[11px] tracking-[0.2em] text-[#111111]">{m.n}</span>
             <h3 className="mt-3 font-serif text-xl">{m.title}</h3>
             <p className="mt-2 text-[15px] leading-relaxed text-black/65">{m.body}</p>
           </div>
@@ -191,12 +191,12 @@ const Science = () => (
               {e.domain}
             </span>
             <div className="mt-3 flex flex-wrap items-baseline gap-x-4">
-              <span className="font-serif text-3xl text-[#c2410c] md:text-4xl">{e.headline}</span>
+              <span className="font-serif text-3xl text-[#111111] md:text-4xl">{e.headline}</span>
               <span className="text-sm text-black/55">{e.unit}</span>
             </div>
             <p className="mt-4 text-[15px] leading-relaxed text-black/70">
               {e.body}
-              <sup className="ml-1 font-mono text-[10px] text-[#c2410c]">{e.note}</sup>
+              <sup className="ml-1 font-mono text-[10px] text-[#111111]">{e.note}</sup>
             </p>
           </article>
         ))}
@@ -215,7 +215,7 @@ const Science = () => (
       <Section eyebrow="The limits" title="Where this runs out" />
       <div className="mt-10 space-y-8">
         {LIMITS.map((l) => (
-          <div key={l.title} className="border-l-2 border-[#c2410c]/35 pl-5">
+          <div key={l.title} className="border-l-2 border-[#111111]/35 pl-5">
             <h3 className="font-serif text-xl">{l.title}</h3>
             <p className="mt-2 text-[15px] leading-relaxed text-black/65">{l.body}</p>
           </div>
@@ -227,7 +227,7 @@ const Science = () => (
       <ol className="mt-10 space-y-7">
         {REFERENCES.map((r) => (
           <li key={r.n} className="flex gap-4">
-            <span className="shrink-0 font-mono text-[11px] text-[#c2410c]">{r.n}</span>
+            <span className="shrink-0 font-mono text-[11px] text-[#111111]">{r.n}</span>
             <div>
               <p className="text-[14px] leading-relaxed text-black/75">{r.cite}</p>
               <a

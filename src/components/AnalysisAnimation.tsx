@@ -837,7 +837,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
   return (
     <motion.div
       className="fixed inset-0 flex items-center justify-center overflow-hidden"
-      style={{ backgroundColor: "#fbf7f1" }}
+      style={{ backgroundColor: "#F2EFE9" }}
       initial={{ opacity: 1 }}
     >
       {/* Flash overlay - uses archetype color */}

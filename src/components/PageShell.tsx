@@ -13,7 +13,7 @@ import { SiteHeader } from "@/components/SiteHeader";
  * own exits.
  */
 export const PageShell = ({ children }: { children: ReactNode }) => (
-  <div className="min-h-screen bg-[#fbf7f1]">
+  <div className="min-h-screen bg-background">
     <SiteHeader />
     {children}
   </div>

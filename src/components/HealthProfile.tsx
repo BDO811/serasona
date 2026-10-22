@@ -173,7 +173,7 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
   return (
     <motion.div
       className="relative w-full flex items-start justify-center pt-20 pb-8 md:pt-24 md:pb-12"
-      style={{ backgroundColor: "#fbf7f1" }}
+      style={{ backgroundColor: "#F2EFE9" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
