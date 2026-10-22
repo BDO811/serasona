@@ -30,3 +30,12 @@ dist-ssr
 _vibe/*
 AGENTS.md
 
+# iOS / watchOS (ios/) build artifacts. Serasona.xcodeproj itself IS checked
+# in for zero-setup opening in Xcode, but it is generated from ios/project.yml
+# via `xcodegen generate` — regenerate rather than hand-editing it; see ios/README.md.
+ios/.build
+ios/Packages/SerasonaKit/.build
+ios/DerivedData
+ios/**/*.xcuserstate
+ios/**/xcuserdata/
+
