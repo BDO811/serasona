@@ -25,6 +25,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Science from "./pages/Science";
 import ScoreDocs from "./pages/ScoreDocs";
+import SleepScoreDocs from "./pages/SleepScoreDocs";
 import Models from "./pages/Models";
 import Admin from "./pages/Admin";
 import CheckinByPhone from "./pages/CheckinByPhone";
@@ -73,6 +74,7 @@ const App = () => {
               <Route path="/privacy" element={<PageShell><Privacy /></PageShell>} />
               <Route path="/docs" element={<Navigate to="/docs/serasona-score" replace />} />
               <Route path="/docs/serasona-score" element={<PageShell><ScoreDocs /></PageShell>} />
+              <Route path="/docs/sleep-score" element={<PageShell><SleepScoreDocs /></PageShell>} />
               <Route path="/science" element={<PageShell><Science /></PageShell>} />
               <Route path="/models" element={<PageShell><Models /></PageShell>} />
               <Route

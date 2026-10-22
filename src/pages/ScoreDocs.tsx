@@ -58,7 +58,7 @@ export default function ScoreDocs() {
       </section>
 
       <section id="references"><h2>References</h2><p>Selected primary studies and technical documentation, reviewed October 18, 2026. These studies use different populations, tasks and models. Their findings do not supply the score’s weights or transfer their reported performance to Serasona.</p><ol>{Object.entries(SCORE_REFERENCES).map(([id, reference]) => <li id={`reference-${id}`} key={id}><a href={reference.url} target="_blank" rel="noopener noreferrer">{reference.title}</a></li>)}</ol><p><a href="https://docs.amplifierhealth.com/catalogs/signs/" target="_blank" rel="noopener noreferrer">Voice biomarker technical catalogue</a> supplies provider terminology, mechanisms and its own evidence classifications. It is technical documentation rather than independent validation.</p></section>
-      <footer><p>Serasona is a general wellness product. Voice patterns do not establish a diagnosis or replace clinical measurements such as blood pressure, blood tests, spirometry or a cognitive assessment.</p><Link to="/dashboard">Your dashboard</Link><Link to="/science">Voice science</Link></footer>
+      <footer><p>Serasona is a general wellness product. Voice patterns do not establish a diagnosis or replace clinical measurements such as blood pressure, blood tests, spirometry or a cognitive assessment.</p><Link to="/dashboard">Your dashboard</Link><Link to="/docs/sleep-score">Sleep Score method</Link><Link to="/science">Voice science</Link></footer>
     </article>
   </main>;
 }
