@@ -60,7 +60,7 @@ export default function Dashboard() {
   const captureLinks = <><Link className="member-button member-primary" to="/checkin"><Mic size={16} />Record my voice</Link><Link className="member-button" to={phonePath}><Phone size={16} />{canCall ? "Phone check-in" : "Upgrade for phone calls"}</Link></>;
 
 
-  return <MemberShell motionControl>
+  return <MemberShell>
     <main className="dashboard-v2 dv-priority">
       <section className="dv-score-banner" aria-labelledby="serasona-score-title">
         <div className="dv-score-copy"><h1 id="serasona-score-title">YOUR SERASONA SCORE</h1><p>{firstName ? `${firstName}, your` : "Your"} last three measurements. The latest scored check-ins, whenever they were recorded.</p><button className="dv-score-method" onClick={() => setExplaining(true)}>View score weights and level matrix</button></div>

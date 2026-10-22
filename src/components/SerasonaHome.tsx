@@ -134,7 +134,7 @@ export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
           <span className="hidden md:inline">
             <span className="font-semibold text-[#0d6a76]">No ring, no band, no wearable to buy,</span>
             <br />
-            <span className="italic">get a deeper understanding of your body than any device.</span>
+            <span className="italic text-4xl">get a deeper understanding of your body than any device.</span>
           </span>
           {/* Phone-width variant: same claim, fewer words, so it doesn't run
               seven lines deep before the CTA ever comes into view. */}

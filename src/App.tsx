@@ -7,6 +7,7 @@ import { AssessmentProvider } from "@/context/AssessmentContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { PageShell } from "@/components/PageShell";
+import { useGlobalNoWrap } from "@/hooks/useGlobalNoWrap";
 import Index from "./pages/Index";
 import DetailedAnalysisView from "./pages/DetailedAnalysisView";
 import Dashboard from "./pages/Dashboard";
@@ -33,7 +34,9 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  useGlobalNoWrap();
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -143,6 +146,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
