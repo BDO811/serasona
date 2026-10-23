@@ -22,10 +22,10 @@ import { asset } from "@/lib/asset";
 type Phase = "speaking" | "analysing" | "result";
 
 const SIGNALS = [
-  { name: "Stress", level: "Moderate", pct: 0.58, tone: "#c2410c" },
-  { name: "Energy", level: "Steady", pct: 0.71, tone: "#0d6a76" },
-  { name: "Mental fatigue", level: "Elevated", pct: 0.64, tone: "#a94e08" },
-  { name: "Focus", level: "Clear", pct: 0.79, tone: "#0d6a76" },
+  { name: "Stress", level: "Moderate", pct: 0.58, tone: "#2F5BEA" },
+  { name: "Energy", level: "Steady", pct: 0.71, tone: "#177A4B" },
+  { name: "Mental fatigue", level: "Elevated", pct: 0.64, tone: "#D12B26" },
+  { name: "Focus", level: "Clear", pct: 0.79, tone: "#177A4B" },
 ];
 
 // Bar heights for the idle waveform. Fixed rather than random so the shape is
@@ -68,7 +68,7 @@ export const VoiceDemo = () => {
 
   return (
     <div
-      className="relative mx-auto w-full max-w-[420px] select-none rounded-[28px] border border-black/10 bg-[#fbf7f1] px-7 py-8 shadow-[0_18px_50px_-24px_rgba(27,21,16,0.45)]"
+      className="relative mx-auto w-full max-w-[420px] select-none rounded-[28px] border border-black/10 bg-card px-7 py-8 shadow-[0_18px_50px_-24px_rgba(17, 17, 17,0.45)]"
       role="img"
       aria-label="A demonstration of a Serasona check-in: twenty seconds of speech resolving into seven wellness signals."
     >
@@ -80,7 +80,7 @@ export const VoiceDemo = () => {
         <div className="flex items-center gap-2">
           <motion.span
             className="h-[7px] w-[7px] rounded-full"
-            style={{ background: speaking ? "#c2410c" : "#0d6a76" }}
+            style={{ background: speaking ? "#111111" : "#2F5BEA" }}
             animate={reduceMotion || !speaking ? {} : { opacity: [1, 0.25, 1] }}
             transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -102,7 +102,7 @@ export const VoiceDemo = () => {
               className="w-[2.5px] rounded-full"
               style={{
                 height: `${h * 100}%`,
-                background: speaking ? "rgba(27,21,16,0.78)" : "rgba(27,21,16,0.18)",
+                background: speaking ? "rgba(17, 17, 17,0.78)" : "rgba(17, 17, 17,0.18)",
               }}
               animate={
                 reduceMotion || !speaking
@@ -128,7 +128,7 @@ export const VoiceDemo = () => {
               {[0, 1, 2].map((i) => (
                 <motion.span
                   key={i}
-                  className="h-1.5 w-1.5 rounded-full bg-[#c2410c]"
+                  className="h-1.5 w-1.5 rounded-full bg-foreground"
                   animate={reduceMotion ? {} : { y: [0, -5, 0], opacity: [0.4, 1, 0.4] }}
                   transition={{ duration: 0.85, repeat: Infinity, delay: i * 0.14 }}
                 />
@@ -226,7 +226,7 @@ const Speaker = ({ speaking }: { speaking: boolean }) => {
         <source src={asset("video/speaker.mp4")} type="video/mp4" />
       </video>
       {/* Warms the clip's white studio background into the card's paper. */}
-      <div className="pointer-events-none absolute inset-0 rounded-full bg-[#c2410c] mix-blend-multiply opacity-[0.06]" />
+      <div className="pointer-events-none absolute inset-0 rounded-full bg-foreground mix-blend-multiply opacity-[0.06]" />
       <div className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-black/10" />
     </div>
   );

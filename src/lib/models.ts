@@ -21,7 +21,7 @@ export interface VoiceModel {
   body: string;
   /** Exactly the signs the API returns for this model, in plain language. */
   signs: string[];
-  /** Serasona palette. No greens anywhere in this brand. */
+  /** Bone neutral only — color is reserved for status (steady/info/alert) elsewhere in the product. */
   tone: string;
   /** Background photo under the card header. */
   image: string;
@@ -43,7 +43,7 @@ export const MODELS: VoiceModel[] = [
     tagline: "Everyday wellness",
     body: "The baseline read, and the one every plan includes. Pulse is what answers the question you actually asked when you opened the app: how am I doing today, and is that different from yesterday.",
     signs: ["Mood", "Anxiety", "Stress", "Fatigue", "Hydration", "Blood pressure"],
-    tone: "#c2410c",
+    tone: "#111111",
     image: "models/pulse.jpg",
     included: true,
   },
@@ -53,7 +53,7 @@ export const MODELS: VoiceModel[] = [
     tagline: "Mental and behavioural health",
     body: "Where Pulse gives you one reading for mood, Haven separates it out. It adds hypervigilance and attention dysregulation, which move independently of stress and tend to be the first things to shift when something is building.",
     signs: ["Hypervigilance", "Attention dysregulation", "Mood disruption", "Anxiety", "Stress", "Fatigue"],
-    tone: "#7b2d5e",
+    tone: "#2B2926",
     image: "models/haven.jpg",
   },
   {
@@ -62,7 +62,7 @@ export const MODELS: VoiceModel[] = [
     tagline: "Performance and strain",
     body: "Built around training load rather than mood. Apex reads cardiovascular strain and cognitive load together, which is the combination that tells you whether a hard week is being absorbed or is starting to cost you.",
     signs: ["Cardiovascular strain", "Cognitive load", "Head impact", "Hydration", "Fatigue", "Stress", "Anxiety"],
-    tone: "#a94e08",
+    tone: "#4A4741",
     image: "models/apex.jpg",
   },
   {
@@ -71,7 +71,7 @@ export const MODELS: VoiceModel[] = [
     tagline: "Cardiometabolic",
     body: "The slower-moving signals. These shift over weeks rather than hours, so Tide is the model that rewards a long run of check-ins more than any single one.",
     signs: ["Metabolic load", "Blood pressure", "Iron deficiency", "Hydration", "Dry mouth", "Fatigue"],
-    tone: "#0d6a76",
+    tone: "#111111",
     image: "models/tide.jpg",
   },
   {
@@ -80,7 +80,7 @@ export const MODELS: VoiceModel[] = [
     tagline: "Women's health",
     body: "Reads hormonal and iron-related patterns alongside the usual wellness signals. Aria is the one model here built for a specific physiology rather than for everyone, so it is off unless you turn it on.",
     signs: ["Elevated androgens", "Iron deficiency", "Mood disruption", "Blood pressure", "Hydration", "Fatigue", "Anxiety"],
-    tone: "#9d4e6c",
+    tone: "#2B2926",
     image: "models/aria.jpg",
   },
   {
@@ -89,7 +89,7 @@ export const MODELS: VoiceModel[] = [
     tagline: "Respiratory",
     body: "Listens to the airway rather than the speaker. Breath reads obstruction patterns and allergy response from how air moves through a sentence.",
     signs: ["Airway obstruction pattern", "Allergy"],
-    tone: "#1d5fa8",
+    tone: "#4A4741",
     image: "models/breath.jpg",
     evidence: {
       strength: "strong",
@@ -102,7 +102,7 @@ export const MODELS: VoiceModel[] = [
     tagline: "Cognitive",
     body: "A single signal, tracked against your own baseline over months rather than read day to day. Clarity is only meaningful as a long trend, which is why it is the model that most rewards patience.",
     signs: ["Cognitive impairment pattern"],
-    tone: "#5b4a8a",
+    tone: "#111111",
     image: "models/clarity.jpg",
     evidence: {
       strength: "limited",
@@ -115,7 +115,7 @@ export const MODELS: VoiceModel[] = [
     tagline: "Recovery",
     body: "For anyone staying on track and wanting an objective read on it. Harbor adds emotional destabilization, which tends to move before the patterns it sits alongside.",
     signs: ["Alcohol use pattern", "Substance use pattern", "Emotional destabilization", "Anxiety", "Stress", "Fatigue"],
-    tone: "#2d5c6b",
+    tone: "#2B2926",
     image: "models/harbor.jpg",
     sensitive:
       "Harbor infers alcohol and substance-use patterns and stores the result against your account. That is a different category of personal information from the rest of this catalogue, so enabling it takes its own explicit consent and it can be deleted on its own.",

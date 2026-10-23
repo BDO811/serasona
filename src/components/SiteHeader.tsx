@@ -79,7 +79,7 @@ export const SiteHeader = ({ overlay = false }: SiteHeaderProps) => {
               </Link>
               <Link
                 to="/signup"
-                className={`${link} rounded-full bg-primary px-3.5 py-2 md:px-4 text-primary-foreground hover:opacity-90`}
+                className={`${link} rounded-full bg-primary px-3.5 py-2 md:px-4 text-primary-foreground hover:bg-bone-800`}
               >
                 Start
               </Link>

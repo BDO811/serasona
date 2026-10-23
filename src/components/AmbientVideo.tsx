@@ -95,7 +95,7 @@ export const AmbientVideo = () => {
       {/* Only a bottom fade now. At 20% the footage is already quiet enough to
           sit under the headline, so the one job left is to land its bottom edge
           on paper rather than cutting the picture off mid-frame. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#fbf7f1]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#F2EFE9]" />
     </div>
   );
 };

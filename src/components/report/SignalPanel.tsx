@@ -29,8 +29,8 @@ interface SignalPanelProps {
  * probability, not a common one, so comparing it across rows invited a false
  * reading. See lib/signal-band.ts.
  */
-/** Serasona's hydration blue #4a90c9. Dark rows only, which is all of these. */
-const READOUT_BLUE = "#4a90c9";
+/** status.info, dark-ground step. Dark rows only, which is all of these. */
+const READOUT_BLUE = "#8FA9F5";
 
 export const SignalPanel = ({
   signals,
@@ -44,7 +44,7 @@ export const SignalPanel = ({
   }
 
   return (
-    <div className="flex flex-col gap-px bg-[#1b1510]/15 rounded-lg overflow-hidden">
+    <div className="flex flex-col gap-px bg-[#111111]/15 rounded-lg overflow-hidden">
       {signals.map((signal, index) => {
         const band = bandForSignal(signal.name, signal.level, signal.score);
         // head-impact reads NONE rather than NORMAL; the band itself is

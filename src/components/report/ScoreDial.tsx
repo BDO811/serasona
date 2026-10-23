@@ -16,7 +16,7 @@ export interface ScoreDialProps {
 export const ScoreDial = ({
   value,
   color,
-  trackColor = "#f2ebe0",
+  trackColor = "#E8E4DA",
   size = 200,
   strokeWidth = 14,
   label,

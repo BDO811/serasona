@@ -264,7 +264,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
   const BUTTON_SIZE = isSeniorMode ? 168 : 120;
   const RING_SIZE = Math.round(BUTTON_SIZE * 0.85);
 
-  const accentColor = pathwayConfig?.color || "#c2410c";
+  const accentColor = pathwayConfig?.color || "#111111";
   const metadata = pathwayConfig?.metadata || {
     topLeft: { label: "FREQ", value: "SCAN" },
     topRight: { label: "HARM", value: "DETECT" },
@@ -864,7 +864,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
               {isRecording && (
                 <motion.p
                   className={getTextClasses(isSeniorMode, isHighVis, 'instruction')}
-                  style={{ color: '#c2410c' }}
+                  style={{ color: '#111111' }}
                   animate={{ opacity: [0.7, 1, 0.7] }}
                   transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
                 >
@@ -879,7 +879,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   className={getTextClasses(isSeniorMode, isHighVis, 'instruction')}
-                  style={{ color: '#a94e08' }}
+                  style={{ color: '#2B2926' }}
                 >
                   {insufficientSpeechWarning}
                 </motion.p>
@@ -894,7 +894,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className={getTextClasses(isSeniorMode, isHighVis, 'instruction')}
-              style={{ color: '#c2410c' }}
+              style={{ color: '#111111' }}
             >
               {t("processingResponses", language)}
             </motion.p>
@@ -957,7 +957,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
               cy="50"
               r="46"
               fill="none"
-              stroke="#c2410c"
+              stroke="#111111"
               strokeWidth="2"
               strokeLinecap="round"
               strokeDasharray={2 * Math.PI * 46}
@@ -1001,7 +1001,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
           style={{
             width: BUTTON_SIZE,
             height: BUTTON_SIZE,
-            border: `1px solid ${isRecording ? '#c2410c' : 'rgba(0, 0, 0, 0.3)'}`,
+            border: `1px solid ${isRecording ? '#111111' : 'rgba(0, 0, 0, 0.3)'}`,
             backgroundColor: isRecording ? 'rgba(194, 65, 12, 0.15)' : '#FFFFFF',
             transition: 'border-color 0.2s ease, background-color 0.2s ease',
             pointerEvents: isComplete ? 'none' : 'auto',
@@ -1035,7 +1035,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
             <motion.span
               key="timer"
               className={`font-mono font-bold ${isSeniorMode ? 'text-7xl' : 'text-6xl'}`}
-              style={{ color: '#c2410c' }}
+              style={{ color: '#111111' }}
               animate={{ opacity: [1, 0.6, 1] }}
               transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
             >
@@ -1060,7 +1060,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
             className="w-2 h-2 rounded-full transition-colors duration-300"
             style={{
               backgroundColor: index < currentQuestion 
-                ? '#c2410c' 
+                ? '#111111' 
                 : index === currentQuestion 
                   ? 'rgba(194, 65, 12, 0.5)' 
                   : 'rgba(0, 0, 0, 0.2)'

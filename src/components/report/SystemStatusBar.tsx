@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 // Brand color for static UI frame elements
-const BRAND_COLOR = "#c2410c";
+const BRAND_COLOR = "#111111";
 
 interface SystemStatusBarProps {
   showContent: boolean;
@@ -25,7 +25,7 @@ export const SystemStatusBar = ({ showContent, sampleRate, modelName }: SystemSt
 
   return (
     <motion.div
-      className="flex items-center justify-between px-4 py-2 border-b border-[#1b1510]/10 font-mono text-[9px] md:text-[10px] uppercase tracking-wider"
+      className="flex items-center justify-between px-4 py-2 border-b border-[#111111]/10 font-mono text-[9px] md:text-[10px] uppercase tracking-wider"
       initial={{ opacity: 0 }}
       animate={{ opacity: showContent ? 1 : 0 }}
       transition={{ delay: 0.3, duration: 0.4 }}
@@ -41,28 +41,28 @@ export const SystemStatusBar = ({ showContent, sampleRate, modelName }: SystemSt
           animate={{ opacity: blinkOn ? 1 : 0.4 }}
           transition={{ duration: 0.15 }}
         />
-        <span className="text-[#6f6254]">
+        <span className="text-[#6B675F]">
           Sensor: <span style={{ color: BRAND_COLOR }}>Active</span>
         </span>
       </div>
 
       {/* Divider */}
-      <span className="hidden md:block text-[#574b3f]/50">|</span>
+      <span className="hidden md:block text-[#4A4741]/50">|</span>
 
       {/* Sample Rate */}
       <div className="hidden md:flex items-center gap-2">
-        <span className="text-[#6f6254]">
-          Sample Rate: <span className="text-[#1b1510] font-medium">{sampleRate || "—"}</span>
+        <span className="text-[#6B675F]">
+          Sample Rate: <span className="text-[#111111] font-medium">{sampleRate || "—"}</span>
         </span>
       </div>
 
       {/* Divider */}
-      <span className="text-[#574b3f]/50">|</span>
+      <span className="text-[#4A4741]/50">|</span>
 
       {/* Model Version */}
       <div className="hidden md:flex items-center gap-2">
-        <span className="text-[#6f6254]">
-          Model: <span className="text-[#1b1510] font-medium">
+        <span className="text-[#6B675F]">
+          Model: <span className="text-[#111111] font-medium">
             {(modelName || "—").toUpperCase()}
           </span>
         </span>

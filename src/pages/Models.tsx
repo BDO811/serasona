@@ -60,7 +60,7 @@ const Models = () => {
     best.plan !== plan && best.savingCents > 0 && best.plan !== "free" ? best : null;
 
   return (
-    <main className="min-h-screen bg-[#fbf7f1] text-black">
+    <main className="min-h-screen bg-[#F2EFE9] text-black">
       {/* Hero */}
       <section className="mx-auto max-w-[1040px] px-6 pb-14 pt-16 text-center md:pt-20">
         <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-black/55">
@@ -118,20 +118,20 @@ const Models = () => {
               key={t.name}
               className="rounded-3xl px-6 py-7"
               style={{
-                background: t.highlight ? "#1b1510" : "rgba(27,21,16,0.035)",
-                color: t.highlight ? "#fbf7f1" : undefined,
+                background: t.highlight ? "#111111" : "rgba(17, 17, 17,0.035)",
+                color: t.highlight ? "#FFFFFF" : undefined,
               }}
             >
               <div
                 className="font-mono text-[10px] uppercase tracking-[0.18em]"
-                style={{ color: t.highlight ? "#fbf7f1aa" : "rgba(27,21,16,0.45)" }}
+                style={{ color: t.highlight ? "#FFFFFFaa" : "rgba(17, 17, 17,0.45)" }}
               >
                 {t.name}
               </div>
               <div className="mt-2 font-serif text-3xl">{money(t.price)}</div>
               <div
                 className="mt-3 text-[14px]"
-                style={{ color: t.highlight ? "#fbf7f1cc" : "rgba(27,21,16,0.7)" }}
+                style={{ color: t.highlight ? "#FFFFFFcc" : "rgba(17, 17, 17,0.7)" }}
               >
                 {t.models}
               </div>
@@ -139,13 +139,13 @@ const Models = () => {
               {t.lines.length > 0 ? (
                 <div
                   className="mt-3 space-y-1 border-t pt-3"
-                  style={{ borderColor: t.highlight ? "rgba(251,247,241,0.2)" : "rgba(27,21,16,0.1)" }}
+                  style={{ borderColor: t.highlight ? "rgba(251,247,241,0.2)" : "rgba(17, 17, 17,0.1)" }}
                 >
                   {t.lines.map((m) => (
                     <div
                       key={m.id}
                       className="flex items-center justify-between text-[12px]"
-                      style={{ color: t.highlight ? "rgba(251,247,241,0.75)" : "rgba(27,21,16,0.55)" }}
+                      style={{ color: t.highlight ? "rgba(251,247,241,0.75)" : "rgba(17, 17, 17,0.55)" }}
                     >
                       <span>{m.name}</span>
                       <span>{money(ADDON_PRICE_CENTS)}</span>
@@ -156,7 +156,7 @@ const Models = () => {
 
               <div
                 className="mt-1.5 text-[13px]"
-                style={{ color: t.highlight ? "#c2410c" : "rgba(27,21,16,0.45)" }}
+                style={{ color: t.highlight ? "#111111" : "rgba(17, 17, 17,0.45)" }}
               >
                 {t.extra}
               </div>
@@ -187,7 +187,7 @@ const Models = () => {
 
       {/* Running total */}
       {chargeable > 0 || selected.length > 0 ? (
-        <div className="sticky bottom-0 z-30 border-t border-black/10 bg-[#fbf7f1]/95 px-6 py-4 backdrop-blur">
+        <div className="sticky bottom-0 z-30 border-t border-black/10 bg-[#F2EFE9]/95 px-6 py-4 backdrop-blur">
           <div className="mx-auto flex max-w-[1040px] flex-wrap items-center justify-between gap-4">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-black/50">
@@ -201,7 +201,7 @@ const Models = () => {
                 {upgrade ? (
                   <span className="text-sm text-black/55">
                     or{" "}
-                    <span className="capitalize text-[#c2410c]">{upgrade.plan}</span> at{" "}
+                    <span className="capitalize text-[#111111]">{upgrade.plan}</span> at{" "}
                     {money(upgrade.totalCents)} and save {money(upgrade.savingCents)}
                   </span>
                 ) : null}
@@ -209,8 +209,7 @@ const Models = () => {
             </div>
             <Link
               to="/pricing"
-              className="rounded-full px-7 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-[#fbf7f1] transition-transform hover:scale-[1.02]"
-              style={{ background: upgrade ? "#c2410c" : "#000" }}
+              className="rounded-full px-7 py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-[#FFFFFF] bg-[#111111] transition-transform hover:scale-[1.02]"
             >
               {upgrade ? `Switch to ${upgrade.plan}` : "Continue"}
             </Link>
@@ -242,7 +241,7 @@ const ModelCard = ({
   <article
     className="flex h-full flex-col overflow-hidden rounded-3xl border transition-shadow"
     style={{
-      borderColor: selected ? model.tone : "rgba(27,21,16,0.12)",
+      borderColor: selected ? model.tone : "rgba(17, 17, 17,0.12)",
       boxShadow: selected ? `0 0 0 1px ${model.tone}` : undefined,
     }}
   >
@@ -259,13 +258,13 @@ const ModelCard = ({
       <div className="absolute inset-0 mix-blend-multiply" style={{ background: model.tone, opacity: 0.55 }} />
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5">
         <div>
-          <h2 className="font-serif text-2xl text-[#fbf7f1]">{model.name}</h2>
-          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-[#fbf7f1]/85">
+          <h2 className="font-serif text-2xl text-[#FFFFFF]">{model.name}</h2>
+          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-[#FFFFFF]/85">
             {model.tagline}
           </p>
         </div>
         {model.included ? (
-          <span className="rounded-full bg-[#fbf7f1] px-3 py-1 font-mono text-[9px] uppercase tracking-[0.14em]" style={{ color: model.tone }}>
+          <span className="rounded-full bg-[#FFFFFF] px-3 py-1 font-mono text-[9px] uppercase tracking-[0.14em]" style={{ color: model.tone }}>
             Included
           </span>
         ) : null}
@@ -296,8 +295,8 @@ const ModelCard = ({
         <div
           className="mt-5 rounded-2xl border-l-2 px-4 py-3"
           style={{
-            borderColor: model.evidence.strength === "strong" ? model.tone : "rgba(27,21,16,0.3)",
-            background: "rgba(27,21,16,0.03)",
+            borderColor: model.evidence.strength === "strong" ? model.tone : "rgba(17, 17, 17,0.3)",
+            background: "rgba(17, 17, 17,0.03)",
           }}
         >
           <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-black/45">
@@ -328,7 +327,7 @@ const ModelCard = ({
             className="w-full rounded-full px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors"
             style={
               selected
-                ? { background: model.tone, color: "#fbf7f1" }
+                ? { background: model.tone, color: "#FFFFFF" }
                 : { background: "transparent", color: model.tone, boxShadow: `inset 0 0 0 1px ${model.tone}66` }
             }
           >

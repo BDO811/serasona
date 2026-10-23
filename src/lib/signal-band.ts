@@ -66,10 +66,10 @@ const LEVEL_TREATMENT: Record<SignalLevel, UiTreatment> = {
  * collapses — a bright caution tone has too little contrast there.
  */
 const TREATMENT_COLOR: Record<UiTreatment, { dark: string; light: string }> = {
-  neutral: { dark: "#a89483", light: "#6f6254" },
-  informational: { dark: "#3ba8b8", light: "#0d6a76" },
-  caution: { dark: "#d9822f", light: "#a94e08" },
-  alert: { dark: "#c2608a", light: "#7b2d5e" },
+  neutral: { dark: "#B9B3A6", light: "#4A4741" },
+  informational: { dark: "#8FA9F5", light: "#1E3A8A" },
+  caution: { dark: "#EE8E8A", light: "#D12B26" },
+  alert: { dark: "#D12B26", light: "#7F1D1D" },
 };
 
 export type Surface = "dark" | "light";
@@ -184,11 +184,11 @@ export function bandRank(band: DisplayBand): number {
  * light value measured above 4.5:1 against the beige page.
  */
 const BAND_COLOR: Record<DisplayBand, { dark: string; light: string }> = {
-  NORMAL: { dark: "#3ba8b8", light: "#0d6a76" },
-  LOW: { dark: "#d9b35c", light: "#8a6a1f" },
-  MODERATE: { dark: "#d9822f", light: "#a94e08" },
-  ELEVATED: { dark: "#c2608a", light: "#7b2d5e" },
-  INCONCLUSIVE: { dark: "#a89483", light: "#6f6254" },
+  NORMAL: { dark: "#7CC49A", light: "#0F5132" },
+  LOW: { dark: "#8FA9F5", light: "#1E3A8A" },
+  MODERATE: { dark: "#EE8E8A", light: "#D12B26" },
+  ELEVATED: { dark: "#D12B26", light: "#7F1D1D" },
+  INCONCLUSIVE: { dark: "#B9B3A6", light: "#4A4741" },
 };
 
 /**

@@ -25,7 +25,7 @@ import type { StoredSession } from "@/lib/voice-history-client";
 import { lastThreeMeasurements } from "@/lib/daily-scores";
 import { scoreMatrixForPlan } from "@/lib/score-matrix";
 
-const SIGNAL_COLORS = { NORMAL: "#99E4FF", LOW: "#F5EF79", MODERATE: "#FFC163", ELEVATED: "#FF6173", INCONCLUSIVE: "#CECECE" };
+const SIGNAL_COLORS = { NORMAL: "#7CC49A", LOW: "#8FA9F5", MODERATE: "#EE8E8A", ELEVATED: "#D12B26", INCONCLUSIVE: "#B9B3A6" };
 const METRICS = [{ key: "overall", label: "Serasona" }, { key: "stress", label: "Stress" }, { key: "wellness", label: "Wellness" }, { key: "clarity", label: "Clarity" }] as const;
 const date = (ms: number) => new Date(ms).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 const dateTime = (ms: number) => new Date(ms).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
