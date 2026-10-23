@@ -40,7 +40,7 @@ export const ARCHETYPES: ArchetypeData[] = [
     name: 'HARMONIC',
     title: 'HARMONIC CONNECTOR',
     shape: 'circle',
-    color: '#00FF94', // Electric Teal
+    color: '#111111', // Bone 900
     description: 'Your acoustic signature reveals deep empathy and connection. You bridge gaps between ideas and people, creating unity through understanding and compassion.',
     vitality: 82,
     resonance: 95,
@@ -51,7 +51,7 @@ export const ARCHETYPES: ArchetypeData[] = [
     name: 'KINETIC',
     title: 'KINETIC CATALYST',
     shape: 'triangle',
-    color: '#FFB800', // Solar Amber
+    color: '#2B2926', // Bone 800
     description: 'Your vocal energy suggests high adaptability and forward momentum. You are a catalyst for change, pushing boundaries and inspiring transformation.',
     vitality: 88,
     resonance: 72,
@@ -62,7 +62,7 @@ export const ARCHETYPES: ArchetypeData[] = [
     name: 'RADIANT',
     title: 'RADIANT SOURCE',
     shape: 'starburst',
-    color: '#FF0055', // Crimson Ruby
+    color: '#4A4741', // Bone 700
     description: 'Your voice emanates warmth and inspiration. You are a beacon of creativity, illuminating paths for others and radiating positive energy.',
     vitality: 91,
     resonance: 85,
@@ -73,7 +73,7 @@ export const ARCHETYPES: ArchetypeData[] = [
     name: 'GROUNDED',
     title: 'GROUNDED ANCHOR',
     shape: 'square',
-    color: '#2E5CFF', // Deep Sapphire
+    color: '#6B675F', // Bone 600
     description: 'Your voice carries the weight of stability and presence. You are a foundation for others, providing calm assurance and unwavering strength.',
     vitality: 76,
     resonance: 91,
@@ -84,7 +84,7 @@ export const ARCHETYPES: ArchetypeData[] = [
     name: 'RESONANT',
     title: 'RESONANT VISIONARY',
     shape: 'diamond',
-    color: '#9D00FF', // Amethyst
+    color: '#111111', // Bone 900
     description: 'Your acoustic patterns reveal profound insight and foresight. You perceive what others cannot, translating vision into reality.',
     vitality: 84,
     resonance: 89,
@@ -95,7 +95,7 @@ export const ARCHETYPES: ArchetypeData[] = [
     name: 'ETHEREAL',
     title: 'ETHEREAL WEAVER',
     shape: 'hexagon',
-    color: '#c2410c', // Ember
+    color: '#2B2926', // Bone 800
     description: 'Your voice carries ethereal qualities of interconnection. You weave together disparate elements into harmonious patterns.',
     vitality: 79,
     resonance: 93,
@@ -306,10 +306,12 @@ const generateGrid = (count: number, size: number) => {
 
 // Each of the 6 stages gets its own color and its own particle-mark shape,
 // so the graphic reads as 6 distinct moments rather than one repeating loop.
-// These are deliberately dark and saturated: the screen sits on the Serasona
-// paper background #fbf7f1, and a mid-tone or bright hue (the old orange and
-// yellow especially) sank into that background instead of reading against it.
-const STAGE_COLORS = ["#c2410c", "#1d5fa8", "#7b2d5e", "#1b1510", "#a94e08", "#0d6a76"];
+// Bone neutrals only, darkest to lightest: color here marks progression
+// through the stages, not a status, so it stays out of the steady/info/alert
+// palette. The screen sits on the Serasona paper background #F2EFE9, and a
+// mid-tone or bright hue sinks into that background instead of reading
+// against it, which is what inkOnBeige below guards against.
+const STAGE_COLORS = ["#111111", "#2B2926", "#4A4741", "#6B675F", "#8F897D", "#B9B3A6"];
 const STAGE_SHAPES: Array<"circle" | "star" | "triangle" | "square" | "diamond"> = [
   "circle",
   "star",
@@ -329,16 +331,15 @@ function hexToRgb(hex: string): Rgb {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-    : { r: 194, g: 65, b: 12 }; // fall back to the brand ember
+    : { r: 17, g: 17, b: 17 }; // fall back to bone-900
 }
 
 /**
- * The Serasona paper background #fbf7f1 is a light surface, so anything above
+ * The Serasona paper background #F2EFE9 is a light surface, so anything above
  * roughly 40% luminance stops reading as ink and starts blending in. The
- * archetype palette is neon by design (#00FF94, #FFB800), which is why the
- * final stage used to wash out. Scale any color down to that ceiling,
- * preserving its hue, so every stage stays bold and dark against the
- * background.
+ * lighter bone steps (400 and up) would otherwise wash out on the final
+ * stage. Scale any color down to that ceiling, preserving its hue, so every
+ * stage stays bold and dark against the background.
  */
 const MAX_LUMINANCE_ON_BEIGE = 0.42;
 function inkOnBeige({ r, g, b }: Rgb): Rgb {

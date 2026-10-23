@@ -1,9 +1,9 @@
 import type { StoredSession } from "./voice-history-client";
 import { isUsableSession, metricValue } from "./dashboard-data";
 export const TREND_SERIES = [
-  { key: "stress", label: "Stress index", color: "#7040b8" },
-  { key: "wellness", label: "Wellness index", color: "#b14a27" },
-  { key: "clarity", label: "Clarity index", color: "#295caa" },
+  { key: "stress", label: "Stress index", color: "#D12B26" },
+  { key: "wellness", label: "Wellness index", color: "#177A4B" },
+  { key: "clarity", label: "Clarity index", color: "#2F5BEA" },
 ] as const;
 export type TrendMetric = "all" | typeof TREND_SERIES[number]["key"];
 export interface TrendReading { capturedAt: number; stress: number | null; wellness: number | null; clarity: number | null }

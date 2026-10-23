@@ -69,10 +69,10 @@ describe("SubDimensionPanel", () => {
   it("keeps each word's colour tied to its meaning, not its position", () => {
     panel([APEX_RUN[1]]);
     const rgb = (el: HTMLElement) => getComputedStyle(el).color;
-    // Blue at the favourable anchor, teal in the middle, plum at the far end.
-    expect(rgb(screen.getByText("ENERGETIC"))).toBe("rgb(74, 144, 201)");
-    expect(rgb(screen.getByText("NORMAL"))).toBe("rgb(59, 168, 184)");
-    expect(rgb(screen.getByText("TIRED"))).toBe("rgb(194, 96, 138)");
+    // Green at the favourable anchor, blue in the middle, red at the far end.
+    expect(rgb(screen.getByText("ENERGETIC"))).toBe("rgb(124, 196, 154)");
+    expect(rgb(screen.getByText("NORMAL"))).toBe("rgb(143, 169, 245)");
+    expect(rgb(screen.getByText("TIRED"))).toBe("rgb(238, 142, 138)");
   });
 
   it("draws the unfavourable word first, so red is left and green is right", () => {

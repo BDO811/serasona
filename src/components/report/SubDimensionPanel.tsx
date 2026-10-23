@@ -14,26 +14,23 @@ interface SubDimensionPanelProps {
  * `result.extended_metrics`, one row per sub-dimension.
  *
  * A sub-dimension has no flag and no threshold, only a position between two
- * named anchors, so the three cells are coloured by direction: blue at the
- * favourable anchor, green in the middle, red at the far end.
+ * named anchors, so the three cells are coloured by direction: green at the
+ * favourable anchor, blue in the middle, red at the far end — the same
+ * steady/info/alert vocabulary as every other scale in Bone and Signal.
  *
  * Which rows appear, what they are called, and the three words each one uses are
  * all decided in lib/sub-dimensions.ts, not here.
  */
 
 /**
- * Colour by band index: blue at the favourable anchor, green in the middle, red
- * at the unfavourable one. Indexed by the row's own band, not by screen
+ * Colour by band index: green at the favourable anchor, blue in the middle,
+ * red at the unfavourable one. Indexed by the row's own band, not by screen
  * position, so it stays correct however the scale is ordered.
- *
- * Blue is Serasona's hydration blue. It marks the favourable end as
- * better than ordinary rather than merely safe, which green alone could not do
- * once green moved to the middle.
  */
 const DIRECTION_COLORS: Array<{ dark: string; light: string }> = [
-  { dark: "#4a90c9", light: "#1d5fa8" },
-  { dark: "#3ba8b8", light: "#0d6a76" },
-  { dark: "#c2608a", light: "#7b2d5e" },
+  { dark: "#7CC49A", light: "#0F5132" },
+  { dark: "#8FA9F5", light: "#1E3A8A" },
+  { dark: "#EE8E8A", light: "#7F1D1D" },
 ];
 
 /**
@@ -74,7 +71,7 @@ export const SubDimensionPanel = ({
       twenty-four cells. Container width here is set by the chassis, so a
       viewport breakpoint is the wrong lever.
     */
-    <div className="flex flex-col gap-px bg-[#1b1510]/15 rounded-lg overflow-hidden">
+    <div className="flex flex-col gap-px bg-[#111111]/15 rounded-lg overflow-hidden">
       {rows.map((row, index) => (
         <motion.div
           key={row.id}

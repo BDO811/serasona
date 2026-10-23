@@ -118,20 +118,20 @@ const Models = () => {
               key={t.name}
               className="rounded-3xl px-6 py-7"
               style={{
-                background: t.highlight ? "#111111" : "rgba(27,21,16,0.035)",
+                background: t.highlight ? "#111111" : "rgba(17, 17, 17,0.035)",
                 color: t.highlight ? "#FFFFFF" : undefined,
               }}
             >
               <div
                 className="font-mono text-[10px] uppercase tracking-[0.18em]"
-                style={{ color: t.highlight ? "#FFFFFFaa" : "rgba(27,21,16,0.45)" }}
+                style={{ color: t.highlight ? "#FFFFFFaa" : "rgba(17, 17, 17,0.45)" }}
               >
                 {t.name}
               </div>
               <div className="mt-2 font-serif text-3xl">{money(t.price)}</div>
               <div
                 className="mt-3 text-[14px]"
-                style={{ color: t.highlight ? "#FFFFFFcc" : "rgba(27,21,16,0.7)" }}
+                style={{ color: t.highlight ? "#FFFFFFcc" : "rgba(17, 17, 17,0.7)" }}
               >
                 {t.models}
               </div>
@@ -139,13 +139,13 @@ const Models = () => {
               {t.lines.length > 0 ? (
                 <div
                   className="mt-3 space-y-1 border-t pt-3"
-                  style={{ borderColor: t.highlight ? "rgba(251,247,241,0.2)" : "rgba(27,21,16,0.1)" }}
+                  style={{ borderColor: t.highlight ? "rgba(251,247,241,0.2)" : "rgba(17, 17, 17,0.1)" }}
                 >
                   {t.lines.map((m) => (
                     <div
                       key={m.id}
                       className="flex items-center justify-between text-[12px]"
-                      style={{ color: t.highlight ? "rgba(251,247,241,0.75)" : "rgba(27,21,16,0.55)" }}
+                      style={{ color: t.highlight ? "rgba(251,247,241,0.75)" : "rgba(17, 17, 17,0.55)" }}
                     >
                       <span>{m.name}</span>
                       <span>{money(ADDON_PRICE_CENTS)}</span>
@@ -156,7 +156,7 @@ const Models = () => {
 
               <div
                 className="mt-1.5 text-[13px]"
-                style={{ color: t.highlight ? "#111111" : "rgba(27,21,16,0.45)" }}
+                style={{ color: t.highlight ? "#111111" : "rgba(17, 17, 17,0.45)" }}
               >
                 {t.extra}
               </div>
@@ -241,7 +241,7 @@ const ModelCard = ({
   <article
     className="flex h-full flex-col overflow-hidden rounded-3xl border transition-shadow"
     style={{
-      borderColor: selected ? model.tone : "rgba(27,21,16,0.12)",
+      borderColor: selected ? model.tone : "rgba(17, 17, 17,0.12)",
       boxShadow: selected ? `0 0 0 1px ${model.tone}` : undefined,
     }}
   >
@@ -295,8 +295,8 @@ const ModelCard = ({
         <div
           className="mt-5 rounded-2xl border-l-2 px-4 py-3"
           style={{
-            borderColor: model.evidence.strength === "strong" ? model.tone : "rgba(27,21,16,0.3)",
-            background: "rgba(27,21,16,0.03)",
+            borderColor: model.evidence.strength === "strong" ? model.tone : "rgba(17, 17, 17,0.3)",
+            background: "rgba(17, 17, 17,0.03)",
           }}
         >
           <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-black/45">

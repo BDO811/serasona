@@ -207,7 +207,7 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
             The data blocks inside keep their own black canvas.
           */
           background: 'rgba(0, 0, 0, 0.03)',
-          border: '1px solid rgba(27, 21, 16, 0.15)',
+          border: '1px solid rgba(17, 17, 17, 0.15)',
         }}
       >
         {/* Measurement Grid Pattern Texture */}
@@ -215,8 +215,8 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
           className="absolute inset-0 pointer-events-none opacity-[0.03]"
           style={{
             backgroundImage: `
-              linear-gradient(rgba(27,21,16,0.5) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(27,21,16,0.5) 1px, transparent 1px)
+              linear-gradient(rgba(17, 17, 17,0.5) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(17, 17, 17,0.5) 1px, transparent 1px)
             `,
             backgroundSize: '24px 24px',
           }}
@@ -231,44 +231,44 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
 
         {/* Header Metadata Row */}
         <motion.div
-          className="flex items-center justify-center gap-4 px-4 py-3 border-b border-[#1b1510]/10 flex-wrap"
+          className="flex items-center justify-center gap-4 px-4 py-3 border-b border-[#111111]/10 flex-wrap"
           initial={{ opacity: 0 }}
           animate={{ opacity: showContent ? 1 : 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <span className={`font-mono uppercase tracking-widest ${
-            isHighVis ? 'text-[10px] md:text-xs font-semibold text-[#1b1510]' : 'text-[9px] md:text-[10px] text-[#1b1510]'
+            isHighVis ? 'text-[10px] md:text-xs font-semibold text-[#111111]' : 'text-[9px] md:text-[10px] text-[#111111]'
           }`}>
             {assessmentTitle} Assessment
           </span>
-          <span className={'text-[#574b3f]/50'}>|</span>
+          <span className={'text-[#4A4741]/50'}>|</span>
           <span className={`font-mono uppercase tracking-widest ${
-            isHighVis ? 'text-[10px] md:text-xs font-medium text-[#6f6254]' : 'text-[9px] md:text-[10px] text-[#6f6254]'
+            isHighVis ? 'text-[10px] md:text-xs font-medium text-[#6B675F]' : 'text-[9px] md:text-[10px] text-[#6B675F]'
           }`}>
             Protocol: {protocolId}
           </span>
-          <span className={'text-[#574b3f]/50'}>|</span>
+          <span className={'text-[#4A4741]/50'}>|</span>
           <span className={`font-mono uppercase tracking-widest ${
-            isHighVis ? 'text-[10px] md:text-xs font-medium text-[#6f6254]' : 'text-[9px] md:text-[10px] text-[#6f6254]'
+            isHighVis ? 'text-[10px] md:text-xs font-medium text-[#6B675F]' : 'text-[9px] md:text-[10px] text-[#6B675F]'
           }`}>
             Date: {currentDate}
           </span>
-          <span className={'text-[#574b3f]/50'}>|</span>
+          <span className={'text-[#4A4741]/50'}>|</span>
           <span className={`font-mono uppercase tracking-widest ${
-            isHighVis ? 'text-[10px] md:text-xs font-medium text-[#6f6254]' : 'text-[9px] md:text-[10px] text-[#6f6254]'
+            isHighVis ? 'text-[10px] md:text-xs font-medium text-[#6B675F]' : 'text-[9px] md:text-[10px] text-[#6B675F]'
           }`}>
             Outcome: {formatLikelihoodTierForDisplay(visualizedResult.likelihoodTier)}
           </span>
-          <span className={'text-[#574b3f]/50'}>|</span>
+          <span className={'text-[#4A4741]/50'}>|</span>
           <span className={`font-mono uppercase tracking-widest ${
-            isHighVis ? 'text-[10px] md:text-xs font-medium text-[#6f6254]' : 'text-[9px] md:text-[10px] text-[#6f6254]'
+            isHighVis ? 'text-[10px] md:text-xs font-medium text-[#6B675F]' : 'text-[9px] md:text-[10px] text-[#6B675F]'
           }`}>
             Job ID: {visualizedResult.jobId}
           </span>
         </motion.div>
 
         {/* Hero: subject, assessment scale, and the rung's phrase over the spectrogram */}
-        <div className="relative px-4 py-4 md:py-5 border-b border-[#1b1510]/10">
+        <div className="relative px-4 py-4 md:py-5 border-b border-[#111111]/10">
           {/*
             The assessment subject, above the scale that grades it.
 
@@ -313,7 +313,7 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
             </motion.div>
           )}
 
-          <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#1b1510' }}>
+          <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#111111' }}>
             {/*
               The phrase and its colour both come from the rung, so they cannot
               disagree with the lit word on the scale above. Previously the
@@ -329,7 +329,7 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
 
           <motion.div
             className={`text-center font-mono uppercase mt-2 ${HERO_PAIR_TYPE}`}
-            style={{ color: '#574b3f' }}
+            style={{ color: '#4A4741' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: showContent ? 1 : 0 }}
             transition={{ delay: 1.4, duration: 0.5 }}
@@ -337,7 +337,7 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
             Assessment
           </motion.div>
           <p className={`text-center font-mono uppercase tracking-widest mt-0.5 ${
-            isSeniorMode ? 'text-sm font-medium text-[#6f6254]' : isHighVis ? 'text-[10px] font-medium text-[#6f6254]' : 'text-[9px] text-[#6f6254]'
+            isSeniorMode ? 'text-sm font-medium text-[#6B675F]' : isHighVis ? 'text-[10px] font-medium text-[#6B675F]' : 'text-[9px] text-[#6B675F]'
           }`}>
             {t("basedOnVocalAnalysis", language)}
           </p>
@@ -364,10 +364,10 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
           sections that used to list the same data as plain text rows. See
           BodyMapPanel.tsx for the zone grouping and why it is single-column.
         */}
-        <div className="px-4 py-3 border-b border-[#1b1510]/10">
+        <div className="px-4 py-3 border-b border-[#111111]/10">
           <motion.h3
             className={`font-mono uppercase tracking-widest mb-2 ${
-              isHighVis ? 'text-[10px] md:text-xs font-semibold text-[#1b1510]' : 'text-[9px] font-medium text-[#1b1510]'
+              isHighVis ? 'text-[10px] md:text-xs font-semibold text-[#111111]' : 'text-[9px] font-medium text-[#111111]'
             }`}
             initial={{ opacity: 0 }}
             animate={{ opacity: showContent ? 1 : 0 }}
@@ -375,7 +375,7 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
           >
             Body Map
             {visualizedResult.totalSignals ? (
-              <span className="text-[#574b3f]">
+              <span className="text-[#4A4741]">
                 {" "}· {visualizedResult.flaggedCount ?? 0} of {visualizedResult.totalSignals} flagged
               </span>
             ) : null}
@@ -392,7 +392,7 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
 
         {/* Returning member: what moved since their previous visit */}
         {voiceHistory.isReturning && voiceHistory.signals.length > 0 && (
-          <div className="px-4 py-3 border-b border-[#1b1510]/10">
+          <div className="px-4 py-3 border-b border-[#111111]/10">
             <SinceLastVisitPanel
               signals={voiceHistory.signals}
               sessionCount={voiceHistory.sessions.length}
@@ -425,13 +425,13 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
               <div 
                 className="relative overflow-hidden rounded-lg p-5 md:p-6"
                 style={{
-                  background: 'rgba(27, 21, 16, 0.9)',
-                  border: '1px solid rgba(217, 130, 47, 0.55)',
+                  background: 'rgba(17, 17, 17, 0.9)',
+                  border: '1px solid rgba(209, 43, 38, 0.55)',
                 }}
               >
                 <div className="flex items-start">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-mono text-xs md:text-sm uppercase tracking-widest font-semibold mb-2" style={{ color: '#d9822f' }}>
+                    <h3 className="font-mono text-xs md:text-sm uppercase tracking-widest font-semibold mb-2" style={{ color: '#EE8E8A' }}>
                       AUDIO QUALITY INSUFFICIENT
                     </h3>
                     <p className="font-mono text-[10px] md:text-xs text-white leading-relaxed mb-4">
@@ -445,9 +445,9 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
                           isSeniorMode ? 'py-5 text-base' : 'py-3 text-xs'
                         }`}
                         style={{
-                          background: 'linear-gradient(135deg, #d9822f 0%, #a94e08 100%)',
+                          background: 'linear-gradient(135deg, #D12B26 0%, #A8201C 100%)',
                           color: 'white',
-                          boxShadow: '0 4px 20px rgba(217, 130, 47, 0.3)',
+                          boxShadow: '0 4px 20px rgba(209, 43, 38, 0.3)',
                         }}
                       >
                         <span className="flex items-center justify-center gap-2">
@@ -480,7 +480,7 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
                       : 'py-2.5 text-[10px]'
                 }`}
                 style={{
-                  backgroundColor: 'rgba(27, 21, 16, 0.85)',
+                  backgroundColor: 'rgba(17, 17, 17, 0.85)',
                   border: '1px solid rgba(255, 255, 255, 0.14)',
                   color: isSeniorMode ? 'rgba(255, 255, 255, 0.95)' : isHighVis ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.6)',
                 }}
@@ -493,10 +493,10 @@ export const HealthProfile = ({ archetype, onReset, onRecapture }: HealthProfile
               onClick={onReset}
               className={`font-mono uppercase tracking-widest transition-colors ${
                 isSeniorMode 
-                  ? 'text-sm font-medium text-[#1b1510] hover:text-black' 
+                  ? 'text-sm font-medium text-[#111111] hover:text-black' 
                   : isHighVis 
-                    ? 'text-xs font-medium text-[#1b1510] hover:text-black' 
-                    : 'text-[10px] text-[#6f6254] hover:text-black'
+                    ? 'text-xs font-medium text-[#111111] hover:text-black' 
+                    : 'text-[10px] text-[#6B675F] hover:text-black'
               }`}
             >
               {t("startNewScreening", language)}

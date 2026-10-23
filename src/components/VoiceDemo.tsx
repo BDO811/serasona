@@ -68,7 +68,7 @@ export const VoiceDemo = () => {
 
   return (
     <div
-      className="relative mx-auto w-full max-w-[420px] select-none rounded-[28px] border border-black/10 bg-card px-7 py-8 shadow-[0_18px_50px_-24px_rgba(27,21,16,0.45)]"
+      className="relative mx-auto w-full max-w-[420px] select-none rounded-[28px] border border-black/10 bg-card px-7 py-8 shadow-[0_18px_50px_-24px_rgba(17, 17, 17,0.45)]"
       role="img"
       aria-label="A demonstration of a Serasona check-in: twenty seconds of speech resolving into seven wellness signals."
     >
@@ -102,7 +102,7 @@ export const VoiceDemo = () => {
               className="w-[2.5px] rounded-full"
               style={{
                 height: `${h * 100}%`,
-                background: speaking ? "rgba(27,21,16,0.78)" : "rgba(27,21,16,0.18)",
+                background: speaking ? "rgba(17, 17, 17,0.78)" : "rgba(17, 17, 17,0.18)",
               }}
               animate={
                 reduceMotion || !speaking

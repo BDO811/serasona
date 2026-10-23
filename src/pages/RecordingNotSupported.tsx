@@ -25,7 +25,7 @@ export const RecordingNotSupported = ({ onBack }: RecordingNotSupportedProps) =>
         className="fixed inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle at 50% 50%, hsla(0, 100%, 50%, 0.03) 0%, transparent 60%)",
+            "radial-gradient(circle at 50% 50%, hsla(2, 69%, 48%, 0.03) 0%, transparent 60%)",
         }}
       />
 
@@ -97,8 +97,8 @@ export const RecordingNotSupported = ({ onBack }: RecordingNotSupportedProps) =>
           onClick={onBack}
           className="inline-flex items-center gap-3 px-8 py-4 rounded-lg font-mono text-sm uppercase tracking-widest font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
           style={{
-            background: `linear-gradient(135deg, ${BRAND_COLOR} 0%, #f2994a 100%)`,
-            color: "#000",
+            background: `linear-gradient(135deg, ${BRAND_COLOR} 0%, #2B2926 100%)`,
+            color: "#FFFFFF",
             boxShadow: `0 4px 20px ${BRAND_COLOR}40`,
           }}
           initial={{ opacity: 0, y: 10 }}

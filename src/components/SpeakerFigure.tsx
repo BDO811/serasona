@@ -156,7 +156,7 @@ export const SpeakerFigure = ({
               style={
                 age === a.id
                   ? { background: tone, color: "#FFFFFF" }
-                  : { color: "rgba(27,21,16,0.45)", boxShadow: "inset 0 0 0 1px rgba(27,21,16,0.15)" }
+                  : { color: "rgba(17, 17, 17,0.45)", boxShadow: "inset 0 0 0 1px rgba(17, 17, 17,0.15)" }
               }
             >
               {a.label}

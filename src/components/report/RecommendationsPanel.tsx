@@ -70,7 +70,7 @@ export const RecommendationsPanel = ({
       {text ? (
         <div
           className="rounded-lg px-4 py-3.5 text-left"
-          style={{ background: "rgba(27, 21, 16, 0.9)", border: "1px solid rgba(255,255,255,0.1)" }}
+          style={{ background: "rgba(17, 17, 17, 0.9)", border: "1px solid rgba(255,255,255,0.1)" }}
         >
           <span className="font-mono text-[9px] uppercase tracking-widest text-white block mb-2">
             Recommendations
@@ -105,7 +105,7 @@ export const RecommendationsPanel = ({
               isSeniorMode ? "text-[12px]" : "text-[10px]"
             }`}
             style={{
-              background: "#c2410c",
+              background: "#111111",
               color: "#FFFFFF",
               border: "1px solid rgba(0,0,0,0.15)",
             }}
@@ -113,7 +113,7 @@ export const RecommendationsPanel = ({
             {state === "loading" ? "Preparing…" : "Click here for recommendations"}
           </button>
           {state === "error" && (
-            <p className="font-mono text-[10px] mt-2" style={{ color: "#7b2d5e" }}>
+            <p className="font-mono text-[10px] mt-2" style={{ color: "#7F1D1D" }}>
               Could not load recommendations. Tap to try again.
             </p>
           )}

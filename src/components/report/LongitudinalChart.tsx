@@ -11,16 +11,18 @@ import { MIN_SESSIONS_FOR_BASELINE, fitLine, formatSigned } from "@/lib/longitud
  *   - the spread band: the range of the user's usual readings
  *   - the long-term drift of the baseline, dashed
  *   - the session polyline with a dot per session
- *   - the short-term trend across the recent window, in amber
+ *   - the short-term trend across the recent window, in status.info blue
  *   - the latest reading, and a bracket measuring its deviation from baseline
  *
- * Colours follow the Amplifier MASTER system on a black data canvas: the
- * lighter green tint, never lime, plus amber for the deviation layer.
+ * Colours follow Bone and Signal on a black data canvas: green-300 for the
+ * baseline/session line (status.steady, dark-ground step), blue-300 for the
+ * deviation/trend layer (status.info, dark-ground step — there is no amber in
+ * this system), and a neutral bone tint for the no-baseline region.
  */
 
-const GREEN = "#3ba8b8";
-const AMBER = "#d9822f";
-const TAN = "#a89483";
+const GREEN = "#7CC49A";
+const AMBER = "#8FA9F5";
+const TAN = "#B9B3A6";
 
 /** Trailing readings that count as the recent window, matching the engine. */
 const RECENT_WINDOW = 3;
@@ -124,7 +126,7 @@ export const LongitudinalChart = ({ read, label }: LongitudinalChartProps) => {
       : PLOT.x1;
 
   return (
-    <div className="rounded-lg overflow-hidden" style={{ backgroundColor: "#1b1510" }}>
+    <div className="rounded-lg overflow-hidden" style={{ backgroundColor: "#111111" }}>
       <div className="flex items-baseline justify-between gap-3 px-4 pt-3 pb-1 flex-wrap">
         <span className="font-mono text-[10px] uppercase tracking-[0.18em]" style={{ color: TAN }}>
           {label}

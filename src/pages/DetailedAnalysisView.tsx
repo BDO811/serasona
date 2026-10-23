@@ -400,8 +400,8 @@ const DetailedAnalysisView = () => {
 
   return (
     <motion.div
-      className="min-h-screen text-[#1b1510]"
-      style={{ backgroundColor: "#fbf7f1" }}
+      className="min-h-screen text-[#111111]"
+      style={{ backgroundColor: "#F2EFE9" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -437,31 +437,31 @@ const DetailedAnalysisView = () => {
           >
             Technical Appendix: {protocolId}
           </h1>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-[#6f6254] mb-3">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-[#6B675F] mb-3">
             {assessmentTitle} Assessment — Detailed Biomarker Analysis
           </p>
           
           {/* Metadata Header Bar (matching dashboard) */}
           {visualizedResult && (
-            <div className="flex flex-col px-4 py-2 border-b border-[#1b1510]/20 font-mono text-[9px] md:text-[10px] uppercase tracking-wider mb-6">
+            <div className="flex flex-col px-4 py-2 border-b border-[#111111]/20 font-mono text-[9px] md:text-[10px] uppercase tracking-wider mb-6">
               {/* First Row: Date | Sample Rate | Model */}
               <div className="flex items-center justify-center gap-3 flex-wrap mb-1">
-                <span className="text-[#6f6254]">
-                  Date: <span className="text-[#1b1510] font-medium">{new Date(visualizedResult.createdAt).toISOString().split('T')[0].replace(/-/g, '.')}</span>
+                <span className="text-[#6B675F]">
+                  Date: <span className="text-[#111111] font-medium">{new Date(visualizedResult.createdAt).toISOString().split('T')[0].replace(/-/g, '.')}</span>
                 </span>
-                <span className="text-[#574b3f]/50">|</span>
-                <span className="text-[#6f6254]">
-                  Sample Rate: <span className="text-[#1b1510] font-medium">48kHz</span>
+                <span className="text-[#4A4741]/50">|</span>
+                <span className="text-[#6B675F]">
+                  Sample Rate: <span className="text-[#111111] font-medium">48kHz</span>
                 </span>
-                <span className="text-[#574b3f]/50">|</span>
-                <span className="text-[#6f6254]">
-                  Model: <span className="text-[#1b1510] font-medium">SERASONA-2.0</span>
+                <span className="text-[#4A4741]/50">|</span>
+                <span className="text-[#6B675F]">
+                  Model: <span className="text-[#111111] font-medium">SERASONA-2.0</span>
                 </span>
               </div>
               {/* Second Row: Job ID only */}
               <div className="flex items-center justify-center gap-3 flex-wrap">
-                <span className="text-[#6f6254]">
-                  Job ID: <span className="text-[#1b1510] font-medium">{visualizedResult.jobId}</span>
+                <span className="text-[#6B675F]">
+                  Job ID: <span className="text-[#111111] font-medium">{visualizedResult.jobId}</span>
                 </span>
               </div>
             </div>
@@ -479,7 +479,7 @@ const DetailedAnalysisView = () => {
                 <div className="max-w-md mx-auto mb-5">
                   <div
                     className="font-mono text-[9px] uppercase tracking-[0.2em] mb-2.5"
-                    style={{ color: "#574b3f" }}
+                    style={{ color: "#4A4741" }}
                   >
                     Assessment
                   </div>
@@ -544,11 +544,11 @@ const DetailedAnalysisView = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <h2 className="font-mono text-[10px] uppercase tracking-widest text-[#1b1510] mb-4 pb-2 border-b border-[#1b1510]/20">
+          <h2 className="font-mono text-[10px] uppercase tracking-widest text-[#111111] mb-4 pb-2 border-b border-[#111111]/20">
             Biometric Results and Descriptions
           </h2>
           
-          <p className="font-mono text-[9px] text-[#6f6254] mb-4">
+          <p className="font-mono text-[9px] text-[#6B675F] mb-4">
             Note: We analyze over 1,000 voice biomarkers. The markers shown here are a small subset that are easiest to interpret and most influential in your result.
           </p>
           
@@ -561,7 +561,7 @@ const DetailedAnalysisView = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 + index * 0.05 }}
                 style={{
-                  background: 'rgba(27, 21, 16, 0.9)',
+                  background: 'rgba(17, 17, 17, 0.9)',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
@@ -655,7 +655,7 @@ const DetailedAnalysisView = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
           >
-            <h2 className="font-mono text-[10px] uppercase tracking-widest text-[#1b1510] mb-2 pb-2 border-b border-[#1b1510]/20">
+            <h2 className="font-mono text-[10px] uppercase tracking-widest text-[#111111] mb-2 pb-2 border-b border-[#111111]/20">
               Sub-Dimension Metrics
             </h2>
             <p className="font-mono text-[9px] text-white leading-relaxed mb-4">
@@ -719,7 +719,7 @@ const DetailedAnalysisView = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <h2 className="font-mono text-[10px] uppercase tracking-widest text-[#1b1510] mb-4 pb-2 border-b border-[#1b1510]/20">
+            <h2 className="font-mono text-[10px] uppercase tracking-widest text-[#111111] mb-4 pb-2 border-b border-[#111111]/20">
               Signal Quality Report
             </h2>
             
@@ -774,7 +774,7 @@ const DetailedAnalysisView = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <h2 className="font-mono text-[10px] uppercase tracking-widest text-[#1b1510] mb-4 pb-2 border-b border-[#1b1510]/20">
+          <h2 className="font-mono text-[10px] uppercase tracking-widest text-[#111111] mb-4 pb-2 border-b border-[#111111]/20">
             Export Report
           </h2>
           
