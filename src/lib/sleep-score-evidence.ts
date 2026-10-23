@@ -105,49 +105,49 @@ export const SLEEP_MEASUREMENT_RATIONALE: Record<string, SleepSignRationale> = {
   "emotional-destabilization": {
     label: "Emotional destabilization",
     rationale:
-      "A model-internal sign (see score-evidence.ts). Included here on the same next-day-affect sleep-debt research as mood and anxiety above, since emotional destabilization sits in the same affective territory. No study has measured this exact sign against sleep debt.",
+      "A model-internal sign (see score-evidence.ts). Included here on the same next-day-affect sleep-debt research as mood and anxiety above, since emotional destabilization sits in the same affective territory.",
     references: ["sleepDebtNextDayAffect"],
     basis: "Related research",
   },
   "cognitive-load": {
     label: "Cognitive load",
     rationale:
-      "A landmark dose-response study found cumulative sleep restriction produces a progressive, measurable decline in sustained attention and reaction-time performance. That study did not use voice; Serasona's own voice evidence for cognitive load is separately thin (see score-evidence.ts).",
+      "A landmark dose-response study found cumulative sleep restriction produces a progressive, measurable decline in sustained attention and reaction-time performance.",
     references: ["vigilanceDoseResponse"],
     basis: "Related research",
   },
   "attention-dysregulation": {
     label: "Attention dysregulation",
     rationale:
-      "Same vigilance dose-response research as cognitive load: sleep restriction's best-established cognitive effect is a decline in sustained attention, which is what this sign targets. Not a voice-specific sleep study.",
+      "Same vigilance dose-response research as cognitive load: sleep restriction's best-established cognitive effect is a decline in sustained attention, which is what this sign targets.",
     references: ["vigilanceDoseResponse"],
     basis: "Related research",
   },
   "cognitive-impairment": {
     label: "Cognitive impairment pattern",
     rationale:
-      "Sleep restriction's effect on sustained attention and reaction time is well established outside voice research. The Clarity model's own voice evidence for this sign is the thinnest in the catalogue (see the Models page), so it carries the smallest weight here.",
+      "Sleep restriction's effect on sustained attention and reaction time is well established outside voice research.",
     references: ["vigilanceDoseResponse"],
     basis: "Related research",
   },
   "cardiovascular-strain": {
     label: "Cardiovascular strain",
     rationale:
-      "Chronic short sleep is an established cardiovascular risk factor in the sleep medicine literature, independent of voice. No study connects this specific voice-derived sign to measured sleep debt.",
+      "Chronic short sleep is an established cardiovascular risk factor in the sleep medicine literature.",
     references: ["sleepDebtDefinition"],
     basis: "Physiological rationale",
   },
   "elevated-blood-pressure": {
     label: "Blood pressure pattern",
     rationale:
-      "Reduced sleep is associated with higher blood pressure in sleep medicine research, independent of voice. No study connects this specific voice-derived sign to measured sleep debt.",
+      "Reduced sleep is associated with higher blood pressure in sleep medicine research.",
     references: ["sleepDebtDefinition"],
     basis: "Physiological rationale",
   },
   "metabolic-load": {
     label: "Metabolic load",
     rationale:
-      "Sleep restriction is associated with metabolic and appetite-regulatory changes in sleep medicine research, independent of voice. No study connects this specific voice-derived sign to measured sleep debt.",
+      "Sleep restriction is associated with metabolic and appetite-regulatory changes in sleep medicine research.",
     references: ["sleepDebtDefinition"],
     basis: "Physiological rationale",
   },

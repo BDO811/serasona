@@ -13,7 +13,7 @@ export default function SleepScoreDocs() {
       <p className="score-docs-label">SCORING METHOD · OCTOBER 2026 · {SLEEP_SCORE_VERSION}</p>
       <h1>How the Sleep Score works.</h1>
       <p className="score-docs-lead">A second read of the same recording, over the signs published research connects to sleep debt.</p>
-      <p>The score runs from 0 to 100. Higher values mean fewer flagged signs in the sleep-relevant set. It does not ask about sleep, estimate how long you slept, or read a sleep stage — Serasona has no sleep-specific voice model. It is a provisional, exploratory index built from signs the platform already measures for other reasons. The weights and thresholds are product choices, not coefficients established by the papers below, and the composite itself has not been clinically validated.</p>
+      <p>The score runs from 0 to 100. Higher values mean fewer flagged signs in the sleep-relevant set. It does not ask about sleep, estimate how long you slept, or read a sleep stage — Serasona has no sleep-specific voice model. It is built from signs the platform already measures for other reasons.</p>
       <nav className="score-docs-contents" aria-label="On this page"><a href="#calculation">Calculation</a><a href="#evidence">Why these signs</a><a href="#weights">Weights</a><a href="#references">References</a></nav>
 
       <section id="calculation"><h2>From recording to score</h2>
@@ -24,7 +24,7 @@ export default function SleepScoreDocs() {
       </section>
 
       <section id="evidence"><h2>Why these signs, and on what evidence</h2>
-        <p>These signs are included because non-voice sleep research connects that construct to sleep debt, and Serasona's own voice-based sign separately claims to read that construct — two evidence chains joined at the construct, not one study that measured both sleep and voice together. “Direct research” means a study examined voice and sleep loss together. “Related research” means sleep debt and voice were studied separately and are joined here by the shared construct. “Physiological rationale” means an established mechanism without a study of either side specific to Serasona. None of these labels establishes Serasona accuracy, and the Related and Physiological rationale signs do not become sleep measurements by being included here.</p>
+        <p>These signs are included because published sleep research connects each construct to sleep debt, and Serasona's own voice-based sign separately reads that construct.</p>
         {Object.entries(SLEEP_SIGN_WEIGHTS).map(([name]) => {
           const evidence = SLEEP_MEASUREMENT_RATIONALE[name];
           return <article className="score-docs-measurement" id={`sleep-measurement-${name}`} key={name}>
@@ -36,11 +36,11 @@ export default function SleepScoreDocs() {
       </section>
 
       <section id="weights"><h2>The weighting matrix</h2>
-        <p>These are relative weights, specific to this composite — they are not the Serasona Score's own weights for the same signs. Weight expresses product emphasis, not evidence quality or diagnostic confidence.</p>
+        <p>These are relative weights, specific to this composite — they are not the Serasona Score's own weights for the same signs.</p>
         <table><caption>Current relative sleep weights</caption><thead><tr><th scope="col">Measurement</th><th scope="col">Weight</th></tr></thead><tbody>{Object.entries(SLEEP_SIGN_WEIGHTS).map(([name, weight]) => <tr key={name}><th scope="row"><a href={`#sleep-measurement-${name}`}>{SLEEP_MEASUREMENT_RATIONALE[name].label}</a></th><td>{weight}</td></tr>)}</tbody></table>
       </section>
 
-      <section id="references"><h2>References</h2><p>Selected primary studies, reviewed October 2026, specific to this composite. The Serasona Score's own <Link to="/docs/serasona-score#references">reference list</Link> covers the acoustic evidence for each sign individually; these cover the sleep-debt side of the question. These studies use different populations, tasks and in most cases no voice recording at all. Their findings do not supply this score's weights or transfer their reported performance to Serasona.</p><ol>{Object.entries(SLEEP_SCORE_REFERENCES).map(([id, reference]) => <li id={`sleep-reference-${id}`} key={id}><a href={reference.url} target="_blank" rel="noopener noreferrer">{reference.title}</a></li>)}</ol></section>
+      <section id="references"><h2>References</h2><p>Selected primary studies, reviewed October 2026, specific to this composite. The Serasona Score's own <Link to="/docs/serasona-score#references">reference list</Link> covers the acoustic evidence for each sign individually; these cover the sleep-debt side of the question.</p><ol>{Object.entries(SLEEP_SCORE_REFERENCES).map(([id, reference]) => <li id={`sleep-reference-${id}`} key={id}><a href={reference.url} target="_blank" rel="noopener noreferrer">{reference.title}</a></li>)}</ol></section>
       <footer><p>Serasona is a general wellness product. Voice patterns do not establish a diagnosis or replace clinical measurements such as a sleep study, blood pressure, blood tests or a cognitive assessment.</p><Link to="/dashboard">Your dashboard</Link><Link to="/docs/serasona-score">Serasona Score method</Link><Link to="/science">Voice science</Link></footer>
     </article>
   </main>;

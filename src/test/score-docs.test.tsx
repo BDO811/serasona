@@ -18,7 +18,6 @@ describe("score documentation coverage", () => {
       expect(within(section).getByRole("link", { name: "Provider sign documentation" })).toHaveAttribute("href", expect.stringContaining("https://docs.amplifierhealth.com/"));
       for (const id of evidence.references) expect(document.getElementById(`reference-${id}`)).toHaveTextContent(SCORE_REFERENCES[id].title);
     }
-    expect(screen.getByText(/weights and thresholds are product choices/)).toBeInTheDocument();
-    expect(screen.getByText(/do not imply a population percentile/i)).toBeInTheDocument();
+    expect(screen.getByText(/Higher values mean fewer flagged signs/)).toBeInTheDocument();
   });
 });

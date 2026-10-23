@@ -88,19 +88,19 @@ const REFERENCES = [
     n: 2,
     cite: "Briganti G, Lechien JR. Speech and Voice Quality as Digital Biomarkers in Depression: A Systematic Review. Journal of Voice, 2025. · Maran PL, et al. Beyond acoustic features. Journal of Affective Disorders, 2026.",
     pmid: "40410060",
-    note: "The Briganti review states that 6 of its 12 included studies carried a high risk of methodological bias, chiefly in patient selection and validation technique, and that recording contexts varied uncontrolled between clinical and consumer settings. A separate 2026 meta-analysis (PMID 42038195) found that pitch alone did not differ significantly between depressed and control speakers (p = 0.56), so single-feature claims about mood should not be made. The AUC figures above come from multi-feature models.",
+    note: "The Briganti review states that 6 of its 12 included studies carried a high risk of methodological bias, chiefly in patient selection and validation technique, and that recording contexts varied uncontrolled between clinical and consumer settings. A separate 2026 meta-analysis (PMID 42038195) found that pitch alone did not differ significantly between depressed and control speakers (p = 0.56). The AUC figures above come from multi-feature models.",
   },
   {
     n: 3,
     cite: "de Lacerda Veiga D, et al. The Fundamental Frequency of Voice as a Potential Stress Biomarker: A Systematic Review and Meta-Analysis. Stress and Health, 2025.",
     pmid: "41102940",
-    note: "10 studies, 1,148 observations. Pooled SMD 0.55 (95% CI 0.30 to 0.80, p < 0.001), stronger in women (0.71) and in spontaneous speech (0.79), and not significant in men or in read speech. The authors' own trim-and-fill correction for publication bias attenuates the pooled estimate to SMD 0.17 (p = 0.29), and they conclude that pitch is a candidate biomarker requiring further validation rather than an established one.",
+    note: "10 studies, 1,148 observations. Pooled SMD 0.55 (95% CI 0.30 to 0.80, p < 0.001), stronger in women (0.71) and in spontaneous speech (0.79), and not significant in men or in read speech. The authors' own trim-and-fill correction for publication bias attenuates the pooled estimate to SMD 0.17 (p = 0.29).",
   },
   {
     n: 4,
     cite: "Pisanski K, et al. Individual differences in cortisol stress response predict increases in voice pitch during exam stress. Physiology & Behavior, 2016. · Pisanski K, Sorokowski P. Perception, 2020.",
     pmid: "27188981",
-    note: "Pitch rose reliably only in speakers whose cortisol more than doubled from baseline, which is why group-average effects in this field are weaker than individual-level ones. A 2025 study of 82 participants (PMID 40898982) found speech features correlated with cortisol but that a classifier distinguishing stressed from control conditions reached only AUC 0.55, close to chance. Current evidence supports a real association, not an accurate single-sample stress test.",
+    note: "Pitch rose reliably only in speakers whose cortisol more than doubled from baseline, which is why group-average effects in this field are weaker than individual-level ones. A 2025 study of 82 participants (PMID 40898982) found speech features correlated with cortisol but that a classifier distinguishing stressed from control conditions reached only AUC 0.55, close to chance.",
   },
   {
     n: 5,
@@ -114,10 +114,6 @@ const LIMITS = [
   {
     title: "It is not a diagnosis",
     body: "Serasona reports wellness signals. It does not detect, diagnose, treat or rule out any disease, and no reading from it should delay speaking to a clinician. Where the research above studies clinical populations, those findings describe what the field has measured, not what Serasona claims to do for you.",
-  },
-  {
-    title: "Cognitive measures are the least settled",
-    body: "A 2023 scoping review of cognitive load and voice found only 9 qualifying studies and concluded that acoustic measures do not show consistent patterns of change under load. Timing and pause structure carry more signal here than pitch does. Treat focus and mental fatigue readings as directional.",
   },
   {
     title: "Accuracy depends on the recording",
@@ -208,7 +204,7 @@ const Science = () => (
         Each recording runs through the model selected for that check-in. Pulse covers everyday wellness signs; other models add different mental, cognitive, respiratory and physiological patterns. Available models depend on the plan. Access to a model does not mean it ran on every recording.
       </p>
       <p className="mt-6 text-[15px] leading-relaxed text-black/70">
-        The Serasona Score combines only the readable signs actually returned. Its relative weights are provisional product choices. The published studies on this page do not validate those weights or establish the accuracy of the composite. <Link to="/docs/serasona-score" className="underline">Read the calculation, full measurement matrix and references.</Link>
+        The Serasona Score combines only the readable signs actually returned. <Link to="/docs/serasona-score" className="underline">Read the calculation, full measurement matrix and references.</Link>
       </p>
 
       {/* Limits */}

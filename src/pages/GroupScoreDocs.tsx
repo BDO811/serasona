@@ -26,7 +26,7 @@ export default function GroupScoreDocs({ group }: { group: ScoreGroup }) {
       <p className="score-docs-label">SCORING METHOD · OCTOBER 2026</p>
       <h1>How the {groupLabel} Index works.</h1>
       <p className="score-docs-lead">One of the three groups inside your Serasona Score, read on its own.</p>
-      <p>The {groupLabel} Index runs from 0 to 100, using only the {signs.length} signs below. Higher values mean fewer flagged signs in this group. It is a provisional product index, not a validated clinical scale.</p>
+      <p>The {groupLabel} Index runs from 0 to 100, using only the {signs.length} signs below. Higher values mean fewer flagged signs in this group.</p>
       <nav className="score-docs-contents" aria-label="On this page"><a href="#calculation">Calculation</a><a href="#measurements">Why these signs</a><a href="#weights">Weights</a><a href="#references">References</a></nav>
 
       <section id="calculation"><h2>From recording to index</h2>
@@ -37,11 +37,9 @@ export default function GroupScoreDocs({ group }: { group: ScoreGroup }) {
       </section>
 
       <section id="measurements"><h2>Why these signs, and on what evidence</h2>
-        <p>“Direct research” means the listed study examines voice in the named domain. “Related research” means its population, task or outcome differs from this exact output. “Physiological rationale” means a plausible mechanism without directly applicable detection validation here. None of these labels establishes Serasona accuracy.</p>
         {signs.map(([name]) => {
           const evidence = MEASUREMENT_EVIDENCE[name];
           return <article className="score-docs-measurement" id={`measurement-${name}`} key={name}>
-            <p className="score-docs-label">{evidence.basis}</p>
             <h3>{evidence.label}</h3>
             <p><strong>Voice features:</strong> {evidence.acoustics}</p>
             <p>{evidence.context}</p>
