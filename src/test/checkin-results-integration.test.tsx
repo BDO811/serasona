@@ -7,7 +7,7 @@ import Dashboard from "@/pages/Dashboard";
 import { computeSerasonaScore } from "@/lib/serasona-score";
 const api = vi.hoisted(() => ({ fetch: vi.fn(), save: vi.fn(), token: vi.fn().mockResolvedValue("test-token") }));
 vi.mock("@/context/AuthContext", () => ({ useAuth: () => ({ user: { uid: "test-member", displayName: "Test", getIdToken: api.token }, subscription: { planId: "executive", status: "active" }, isEntitled: () => true }) }));
-vi.mock("@/lib/firebase", () => ({ isFirebaseConfigured: true }));
+vi.mock("@/lib/firebase", () => ({ isFirebaseConfigured: true, db: null }));
 vi.mock("@/lib/voice-history-client", async (original) => ({ ...await original(), fetchHistory: api.fetch, saveSession: api.save }));
 vi.mock("@/components/NavigationOverlay", () => ({ NavigationOverlay: () => null }));
 vi.mock("@/components/member/VoiceSculpture", () => ({ VoiceSculpture: () => null, VoiceWave: () => null }));

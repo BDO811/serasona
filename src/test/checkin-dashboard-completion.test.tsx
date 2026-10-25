@@ -5,7 +5,7 @@ import Index from "@/pages/Index";
 const state = vi.hoisted(() => ({ pathway: "WELLNESS", isFastTrack: false, setPathway: vi.fn(), setUserProfile: vi.fn(), reset: vi.fn(), setApiStatus: vi.fn(), setApiResult: vi.fn(), apiStatus: null, visualizedResult: null, selectedArchetype: null, setSelectedArchetype: vi.fn() }));
 vi.mock("@/context/AssessmentContext", () => ({ useAssessment: () => state, HEALTH_FOCUS_TO_PATHWAY: {} }));
 vi.mock("@/context/AuthContext", () => ({ useAuth: () => ({ user: { uid: "member" } }) }));
-vi.mock("@/lib/firebase", () => ({ isFirebaseConfigured: true }));
+vi.mock("@/lib/firebase", () => ({ isFirebaseConfigured: true, db: null }));
 vi.mock("@/components/NavigationOverlay", () => ({ NavigationOverlay: () => null }));
 vi.mock("@/components/QuestionFlowVisualizer", () => ({ QuestionFlowVisualizer: ({ onComplete }) => <button onClick={onComplete}>Finish recording</button> }));
 vi.mock("@/components/AnalysisAnimation", () => ({ AnalysisAnimation: ({ onComplete, onFailed }) => <><button onClick={() => onComplete({ id: "analyzed" })}>Analysis complete</button><button onClick={onFailed}>Analysis failed</button></> }));
