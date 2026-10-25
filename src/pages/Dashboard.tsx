@@ -9,6 +9,7 @@ import { db } from "@/lib/firebase";
 import { useVoiceHistory } from "@/hooks/use-voice-history";
 import { MemberShell } from "@/components/member/MemberShell";
 import { VoiceSculpture, VoiceWave } from "@/components/member/VoiceSculpture";
+import { ScoreBannerVideo } from "@/components/member/ScoreBannerVideo";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { SCORE_VERSION, computeSerasonaScore, scoreBandFor } from "@/lib/serasona-score";
 import { computeSleepScore } from "@/lib/sleep-score";
@@ -103,6 +104,7 @@ export default function Dashboard() {
   return <MemberShell>
     <main className="dashboard-v2 dv-priority">
       <section className="dv-score-banner" aria-labelledby="serasona-score-title">
+        <ScoreBannerVideo />
         <div className="dv-score-copy"><h1 id="serasona-score-title">YOUR SERASONA SCORE</h1><p>{firstName ? `${firstName}, your` : "Your"} last three measurements. The latest scored check-ins, whenever they were recorded.</p><button className="dv-score-method" onClick={() => setExplaining(true)}>View score weights and level matrix</button></div>
         <div className="dv-score-days" aria-label="Last three measurements of Serasona scores" aria-live="polite">{measurements.map((measurement, index) => {
           const content = <><span className="dv-day-heading">{measurement.label}<small>{measurement.capturedAt ? date(measurement.capturedAt) : "—"}</small></span><span className="dv-day-value">{loading && !sessions.length ? "…" : error ? "Unavailable" : measurement.score ?? "No reading"}{measurement.score != null && <small>/ 100</small>}</span><span className="dv-day-context">{measurement.session ? <>{measurement.band} · {sourceLabel(measurement.session)}<small>{new Date(measurement.session.capturedAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}</small></> : loading ? "Loading readings" : "No saved check-in yet"}</span></>;
