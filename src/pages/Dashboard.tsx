@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
 import { Mic, Phone, ArrowUpRight, RefreshCw, SlidersHorizontal } from "lucide-react";
 import { DashboardTrends } from "@/components/member/DashboardTrends";
 import type { TrendMetric } from "@/lib/dashboard-trends";
 import { useAuth } from "@/context/AuthContext";
+import { db } from "@/lib/firebase";
 import { useVoiceHistory } from "@/hooks/use-voice-history";
 import { MemberShell } from "@/components/member/MemberShell";
 import { VoiceSculpture, VoiceWave } from "@/components/member/VoiceSculpture";
@@ -40,6 +42,15 @@ export default function Dashboard() {
   const [zone, setZone] = useState<DashboardZone | null>(null);
   const [tab, setTab] = useState("overview");
   const [explaining, setExplaining] = useState(false);
+  const [bodySex, setBodySex] = useState("");
+  useEffect(() => {
+    let canceled = false;
+    if (!user || !db) return;
+    getDoc(doc(db, "users", user.uid)).then((snapshot) => {
+      if (!canceled) setBodySex(snapshot.data()?.biologicalSex ?? "");
+    }).catch(() => {});
+    return () => { canceled = true; };
+  }, [user?.uid]);
   const chronological = useMemo(() => [...sessions].sort((a, b) => a.capturedAt - b.capturedAt), [sessions]);
   const readable = chronological.filter(isUsableSession);
   const latest = readable[readable.length - 1];
@@ -73,7 +84,7 @@ export default function Dashboard() {
     <section className="member-capture dv-capture dv-capture-top" aria-label="Voice check-in"><div className="dv-capture-copy"><VoiceWave /><h2>Your next check-in starts here.</h2><p>Speak naturally. Keep your recording source consistent when following a trend.</p></div><div className="dv-capture-actions">{captureLinks}<p className="member-note">{canCall ? "Phone calls are included in your plan." : "Phone calls require active Plus or Executive."}</p><Link to="/account#calling-voice" className="dv-voice-settings">Choose your calling voice</Link></div></section>
       {error ? <div className="member-message member-error" role="alert"><h2>We couldn’t load your readings.</h2><p>{error}</p><button onClick={refresh}>Try again</button></div> : loading && !sessions.length ? <div className="member-message" role="status">Loading your check-in history…</div> : !sessions.length ? <section className="member-message"><h2>Your first reading starts with your voice.</h2><p>Record a check-in above to see your actual results here. Your history builds with each completed reading.</p></section> : <>
         <div className="dv-priority-results" aria-label="Your latest assessment">
-          <DashboardBodyMap session={latest} zone={zone} onZoneChange={setZone} loading={false} />
+          <DashboardBodyMap session={latest} zone={zone} onZoneChange={setZone} loading={false} bodySex={bodySex} />
           <section className="dv-panel dv-signals"><div className="member-section-heading"><h2>PHYSIOLOGIC ANALYSIS</h2><small>{assessment.flaggedCount} OF {latest?.signals.length ?? 0} FLAGGED</small></div><div className="dv-signal-filter"><p>{zone ? `${DASHBOARD_ZONE_LABEL[zone]} signals` : "Select a region in the body map to filter these results."}</p>{zone && <button onClick={() => setZone(null)}>Show all signs</button>}</div><div className="dv-report-signals"><SignalPanel signals={filteredSignals.map((s) => ({ ...s, level: s.level || "inconclusive" }))} showContent bandColors={SIGNAL_COLORS} /></div>{!filteredSignals.length && <p>No signs returned for this region in this recording.</p>}</section>
 
         </div>
