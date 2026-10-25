@@ -40,6 +40,18 @@ function levelForScore(score: number) {
   const key = score >= 90 ? "clean" : score >= 67 ? "good" : score >= 34 ? "steady" : "focus";
   return RUNG_SCALE.find((r) => r.key === key)!;
 }
+/**
+ * Plots a small trend line for a metric card's last three readings. A
+ * missing reading breaks the line rather than plotting as zero, since a
+ * dip to zero would read as a real bad reading rather than a gap.
+ */
+function sparkline(values: Array<number | null>, width = 84, height = 26, pad = 4) {
+  const step = values.length > 1 ? (width - pad * 2) / (values.length - 1) : 0;
+  const points = values.map((v, i) => ({ x: pad + i * step, y: v == null ? null : pad + (1 - v / 100) * (height - pad * 2), value: v }));
+  let path = "";
+  points.forEach((p, i) => { if (p.y == null) return; path += points[i - 1]?.y != null ? ` L${p.x},${p.y}` : ` M${p.x},${p.y}`; });
+  return { points, path: path.trim(), width, height };
+}
 function hexToRgba(hex: string, alpha: number): string {
   const n = parseInt(hex.slice(1), 16);
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
@@ -129,11 +141,19 @@ export default function Dashboard() {
             const level = card.value != null ? levelForScore(card.value) : null;
             const abnormal = level ? level.key === "focus" || level.key === "steady" : false;
             const style = level ? { background: hexToRgba(level.color, 0.26), borderBottom: `3px solid ${level.colorLight}`, ["--glow-color" as string]: level.colorLight } : undefined;
+            const hist = [...card.history].reverse();
+            const spark = sparkline(hist.map((h) => h.value));
             return <Link key={card.key} to={card.path} style={style} className={`member-metric ${card.key} ${abnormal ? "is-abnormal" : ""}`}>
               <small>{card.label.toUpperCase()}</small>
               <strong>{card.value ?? "Not read"}</strong>
               <small>{card.bandLabel ?? (latest ? "No reading" : "Not read")}</small>
-              <div className="member-metric-history" aria-hidden="true">{[...card.history].reverse().map((h, i) => { const hl = h.value != null ? levelForScore(h.value) : null; return <div key={i} className="member-metric-history-bar"><small>{h.date ?? "—"}</small><span style={{ height: h.value != null ? `${Math.max(6, h.value * 0.28)}px` : "4px", background: hl ? hl.colorLight : "#C9C2B4" }} /></div>; })}</div>
+              <div className="member-metric-history" aria-hidden="true">
+                <div className="member-metric-history-dates">{hist.map((h, i) => <small key={i}>{h.date ?? "—"}</small>)}</div>
+                <svg className="member-metric-history-svg" viewBox={`0 0 ${spark.width} ${spark.height}`} preserveAspectRatio="none">
+                  {spark.path && <path d={spark.path} fill="none" stroke="#B9B3A6" strokeWidth="1.5" />}
+                  {spark.points.map((p, i) => p.y == null ? null : <circle key={i} cx={p.x} cy={p.y} r="3" fill={levelForScore(p.value!).colorLight} />)}
+                </svg>
+              </div>
             </Link>;
           })}</div>
         {latest && <div className="dv-summary"><div><small>{assessment.title.toUpperCase()} PROFILE</small><strong>{assessment.profileLabel}</strong></div><div><small>ASSESSMENT</small><strong>{RUNG_RECOMMENDATION[assessment.rung]}</strong></div><div className="dv-scale" aria-label={`Assessment profile: ${assessment.profileLabel}`}>{RUNG_SCALE.map((rung) => <span key={rung.key} className={`dv-level-${rung.key} ${assessment.rung === rung.key ? "is-current" : ""}`} style={{ ["--level-bg" as string]: rung.color, ["--level-ink" as string]: rung.colorLight, ["--glow-color" as string]: rung.colorLight }} aria-current={assessment.rung === rung.key ? "true" : undefined}>{rung.label}</span>)}{assessment.rung === "unreadable" && <span className="is-current">INCONCLUSIVE</span>}</div></div>}
@@ -144,6 +164,7 @@ export default function Dashboard() {
               <div className="member-controls"><span className="member-note">Saved history period</span><div className="member-ranges" aria-label="History period">{[7, 30, 90].map((n) => <button key={n} aria-pressed={days === n} onClick={() => setDays(n)}>{n}D</button>)}</div></div>
               <div className="member-controls member-source-controls"><label htmlFor="source"><SlidersHorizontal size={14} />Recording source</label><select id="source" value={source} onChange={(e) => setSource(e.target.value)}><option value="all">All sources</option><option value="browser">Browser</option><option value="phone">Phone</option><option value="unknown">Source not recorded</option></select></div>
             </>} />
+            <div className="member-matrix-legend" aria-label="Color key">{RUNG_SCALE.map((r) => <span key={r.key}><i style={{ background: r.color, borderColor: r.colorLight }} />{r.label}</span>)}</div>
             <div className="member-matrix-scroll"><table className="member-matrix dv-daily-matrix"><caption>Your saved readings · Last 3 measurements</caption><thead><tr><th scope="col">SIGNAL INDEX</th>{matrix.map((measurement, index) => <th scope="col" key={index}>{measurement.session ? <button onClick={() => setSelected(measurement.session!)} title={dateTime(measurement.session.capturedAt)}>{dateAndTime(measurement.session.capturedAt)}</button> : "—"}</th>)}</tr></thead><tbody>{METRICS.map(({ key, label }) => <tr key={key}><th scope="row">{label}</th>{matrix.map((measurement, index) => { const value = measurement.session ? metricValue(measurement.session, key) : null; const level = value != null ? levelForScore(value) : null; const style = level ? { background: hexToRgba(level.color, 0.3), color: level.colorLight } : undefined; return <td key={index} style={style}>{value ?? (measurement.session ? "Not read" : "No reading")}</td>; })}</tr>)}</tbody></table></div>
           </section>
           <section className="member-section dv-panel"><div className="member-section-heading"><h2>Recent check-ins</h2><span className="member-note">{visible.length} in this view</span></div><div className="member-table-scroll"><table className="member-sessions"><thead><tr><th scope="col">RECORDED</th><th scope="col">SOURCE</th><th scope="col">MODEL</th><th scope="col">STATUS</th><th scope="col">REVIEW</th></tr></thead><tbody>{[...visible].reverse().map((session) => <tr key={session.sessionId}><td>{dateTime(session.capturedAt)}</td><td>{sourceLabel(session)}</td><td>{session.model || "Not recorded"}</td><td>{stateLabel(session)}</td><td><button onClick={() => setSelected(session)} aria-label={`Open reading from ${dateTime(session.capturedAt)}`}>Open <ArrowUpRight size={14} /></button></td></tr>)}</tbody></table></div></section>
