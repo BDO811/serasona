@@ -117,13 +117,12 @@ describe("RUNG_SCALE", () => {
     }
   });
 
-  it("shares one green across the two good rungs", () => {
-    // Left to right carries the order, so colour is free to carry good versus
-    // caution. A gradient between clean and good would imply a gap the grading
-    // never makes.
-    const clean = RUNG_SCALE.find((r) => r.key === "clean")!;
-    const good = RUNG_SCALE.find((r) => r.key === "good")!;
-    expect(clean.colorLight).toBe(good.colorLight);
+  it("gives all four rungs their own distinct color", () => {
+    // Clean and good grade as the same outcome (see rungFor), but a four-box
+    // scale with two identical colors reads as a missing color rather than a
+    // shared verdict, so each rung still gets its own.
+    const colors = RUNG_SCALE.map((r) => r.colorLight);
+    expect(new Set(colors).size).toBe(colors.length);
   });
 
   it("labels the four rungs LOW / MEDIUM / STRONG / OPTIMAL", () => {
@@ -133,7 +132,7 @@ describe("RUNG_SCALE", () => {
   it("runs alert on the left to positive on the right", () => {
     const colors = RUNG_SCALE.map((r) => r.colorLight);
     expect(colors[0]).toBe("#7F1D1D");
-    expect(colors[colors.length - 1]).toBe("#0F5132");
+    expect(colors[colors.length - 1]).toBe("#7A5B12");
   });
 
   it("uses no risk or diagnostic wording in any label", () => {

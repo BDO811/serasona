@@ -125,8 +125,11 @@ export const RUNG_RECOMMENDATION: Record<HeadlineRung, string> = {
  * "unreadable" is not on the scale for the same reason INCONCLUSIVE is not a
  * band: it describes the recording, not the result.
  *
- * Clean and good share a green because both are good outcomes, and inventing a
- * gradient between them would imply a gap the grading never makes.
+ * Clean and good are graded as the same outcome (clean is "good, with nothing
+ * flagged at all" rather than a step beyond it — see rungFor), but still get
+ * distinct colors: gold for clean, green for good. Two rungs that read the
+ * same color on a four-box scale looked like a missing color, not a shared
+ * verdict.
  */
 export const RUNG_SCALE: Array<{
   key: HeadlineRung;
@@ -137,5 +140,5 @@ export const RUNG_SCALE: Array<{
   { key: "focus", label: "LOW", color: "#EE8E8A", colorLight: "#7F1D1D" },
   { key: "steady", label: "MEDIUM", color: "#8FA9F5", colorLight: "#1E3A8A" },
   { key: "good", label: "STRONG", color: "#7CC49A", colorLight: "#0F5132" },
-  { key: "clean", label: "OPTIMAL", color: "#7CC49A", colorLight: "#0F5132" },
+  { key: "clean", label: "OPTIMAL", color: "#D9B35C", colorLight: "#7A5B12" },
 ];

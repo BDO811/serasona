@@ -61,3 +61,9 @@
 .member-still .dv-dot.is-abnormal{animation:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--dot-color,#E8E4DA) 24%,transparent)}
 @media(prefers-reduced-motion:reduce){.dv-dot.is-abnormal{animation:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--dot-color,#E8E4DA) 24%,transparent)}}
 @media(max-width:560px){.dv-sleep-readout strong{font-size:36px}}
+
+/* Mini last-3-readings graphic at the bottom of each metric card: a date label over a bar, the bar colored by that one reading's own rung. */
+.member-metric-history{display:flex;gap:8px;align-items:flex-end;margin-top:auto;padding-top:6px}
+.member-metric-history-bar{display:flex;flex-direction:column;align-items:center;gap:4px}
+.member-metric-history-bar small{font:8px 'Courier New',monospace;letter-spacing:-.2px;color:#8F897D;white-space:nowrap}
+.member-metric-history-bar span{display:block;width:11px;border-radius:3px 3px 1px 1px}
