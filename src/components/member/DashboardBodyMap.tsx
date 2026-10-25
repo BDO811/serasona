@@ -24,7 +24,7 @@ const POSITIONS: Record<DashboardZone, { left: string; top: string }> = {
  * on a downloaded report, not just "pink means bad" everywhere.
  */
 const ZONE_COLOR: Record<DashboardZone, string> = {
-  neurocognitive: "#c2410c", // ember
+  neurocognitive: "#1d5fa8", // metric-hydration
   cardiorespiratory: "#7b2d5e", // metric-stress
   core: "#0d6a76", // tide
 };
@@ -77,25 +77,25 @@ export function DashboardBodyMap({ session, zone, onZoneChange, loading, bodySex
     function measure() {
       const next: ConnectorLine[] = [];
       if (zone === null) {
-        const allEl = legendRefs.current.all;
-        if (allEl) {
-          const a = allEl.getBoundingClientRect();
-          const ax = a.left + a.width / 2, ay = a.top + a.height / 2;
-          for (const z of DASHBOARD_ZONES) {
-            if (!abnormal[z]) continue;
-            const target = zoneRefs.current[z];
-            if (!target) continue;
-            const t = target.getBoundingClientRect();
-            next.push({ x1: ax, y1: ay, x2: t.left + t.width / 2, y2: t.top + t.height / 2, color: ZONE_COLOR[z] });
-          }
+        // Every abnormal marker on the figure sends its own line up to its
+        // matching legend dot - the line originates at the figure, not the
+        // legend, so it reads as "this is where that color came from".
+        for (const z of DASHBOARD_ZONES) {
+          if (!abnormal[z]) continue;
+          const source = zoneRefs.current[z];
+          const target = legendRefs.current[z];
+          if (!source || !target) continue;
+          const s = source.getBoundingClientRect();
+          const t = target.getBoundingClientRect();
+          next.push({ x1: s.left + s.width / 2, y1: s.top + s.height / 2, x2: t.left + t.width / 2, y2: t.top + t.height / 2, color: ZONE_COLOR[z] });
         }
       } else {
-        const dotEl = legendRefs.current[zone];
+        const source = zoneRefs.current[zone];
         const target = readoutsRef?.current;
-        if (dotEl && target) {
-          const a = dotEl.getBoundingClientRect();
+        if (source && target) {
+          const s = source.getBoundingClientRect();
           const t = target.getBoundingClientRect();
-          next.push({ x1: a.left + a.width / 2, y1: a.top + a.height / 2, x2: t.left, y2: t.top + t.height / 2, color: ZONE_COLOR[zone] });
+          next.push({ x1: s.left + s.width / 2, y1: s.top + s.height / 2, x2: t.left, y2: t.top + t.height / 2, color: ZONE_COLOR[zone] });
         }
       }
       setLines(next);
@@ -134,7 +134,7 @@ export function DashboardBodyMap({ session, zone, onZoneChange, loading, bodySex
     <div className="dv-body-info" aria-live="polite"><h3>{activeZone ? DASHBOARD_ZONE_LABEL[activeZone] : "Neurocognitive · Cardiorespiratory · Core"}</h3></div>
     {lines.length > 0 && typeof document !== "undefined" && createPortal(
       <svg aria-hidden="true" style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh", pointerEvents: "none", zIndex: 60 }}>
-        {lines.map((l, i) => <line key={i} className="dv-connector-line" x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke={l.color} strokeWidth={1.5} opacity={0.8} />)}
+        {lines.map((l, i) => <line key={i} className="dv-connector-line" x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke={l.color} strokeWidth={1.5} strokeLinecap="round" strokeDasharray="0.5 6" opacity={0.4} />)}
       </svg>,
       document.body
     )}

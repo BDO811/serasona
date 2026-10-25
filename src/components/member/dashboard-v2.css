@@ -53,9 +53,8 @@
 .member .dv-legend-dot[aria-pressed=true] .dv-legend-swatch{outline:2px solid #111111;outline-offset:3px}
 .dv-legend-dot small{font:10px 'Courier New',monospace;letter-spacing:-.2px;color:#4A4741}
 .dv-legend-dot[aria-pressed=true] small{color:#111111}
-.dv-dot.is-abnormal{animation:dv-dot-glow 2.2s ease-in-out infinite}
-@keyframes dv-dot-glow{0%,100%{box-shadow:0 0 0 4px color-mix(in srgb,var(--dot-color,#E8E4DA) 35%,transparent)}50%{box-shadow:0 0 0 11px color-mix(in srgb,var(--dot-color,#E8E4DA) 55%,transparent)}}
-.member-still .dv-dot.is-abnormal{animation:none;box-shadow:0 0 0 6px color-mix(in srgb,var(--dot-color,#E8E4DA) 45%,transparent)}
-@media(prefers-reduced-motion:reduce){.dv-dot.is-abnormal{animation:none;box-shadow:0 0 0 6px color-mix(in srgb,var(--dot-color,#E8E4DA) 45%,transparent)}}
-.dv-connector-line{stroke-dasharray:4 4}
+.dv-dot.is-abnormal{animation:dv-dot-glow 3.4s ease-in-out infinite}
+@keyframes dv-dot-glow{0%,100%{box-shadow:0 0 0 3px color-mix(in srgb,var(--dot-color,#E8E4DA) 18%,transparent)}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--dot-color,#E8E4DA) 30%,transparent)}}
+.member-still .dv-dot.is-abnormal{animation:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--dot-color,#E8E4DA) 24%,transparent)}
+@media(prefers-reduced-motion:reduce){.dv-dot.is-abnormal{animation:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--dot-color,#E8E4DA) 24%,transparent)}}
 @media(max-width:560px){.dv-sleep-readout strong{font-size:36px}}
