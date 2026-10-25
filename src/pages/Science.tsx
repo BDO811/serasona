@@ -88,19 +88,19 @@ const REFERENCES = [
     n: 2,
     cite: "Briganti G, Lechien JR. Speech and Voice Quality as Digital Biomarkers in Depression: A Systematic Review. Journal of Voice, 2025. · Maran PL, et al. Beyond acoustic features. Journal of Affective Disorders, 2026.",
     pmid: "40410060",
-    note: "The Briganti review states that 6 of its 12 included studies carried a high risk of methodological bias, chiefly in patient selection and validation technique, and that recording contexts varied uncontrolled between clinical and consumer settings. A separate 2026 meta-analysis (PMID 42038195) found that pitch alone did not differ significantly between depressed and control speakers (p = 0.56), so single-feature claims about mood should not be made. The AUC figures above come from multi-feature models.",
+    note: "The Briganti review states that 6 of its 12 included studies carried a high risk of methodological bias, chiefly in patient selection and validation technique, and that recording contexts varied uncontrolled between clinical and consumer settings. A separate 2026 meta-analysis (PMID 42038195) found that pitch alone did not differ significantly between depressed and control speakers (p = 0.56). The AUC figures above come from multi-feature models.",
   },
   {
     n: 3,
     cite: "de Lacerda Veiga D, et al. The Fundamental Frequency of Voice as a Potential Stress Biomarker: A Systematic Review and Meta-Analysis. Stress and Health, 2025.",
     pmid: "41102940",
-    note: "10 studies, 1,148 observations. Pooled SMD 0.55 (95% CI 0.30 to 0.80, p < 0.001), stronger in women (0.71) and in spontaneous speech (0.79), and not significant in men or in read speech. The authors' own trim-and-fill correction for publication bias attenuates the pooled estimate to SMD 0.17 (p = 0.29), and they conclude that pitch is a candidate biomarker requiring further validation rather than an established one.",
+    note: "10 studies, 1,148 observations. Pooled SMD 0.55 (95% CI 0.30 to 0.80, p < 0.001), stronger in women (0.71) and in spontaneous speech (0.79), and not significant in men or in read speech. The authors' own trim-and-fill correction for publication bias attenuates the pooled estimate to SMD 0.17 (p = 0.29).",
   },
   {
     n: 4,
     cite: "Pisanski K, et al. Individual differences in cortisol stress response predict increases in voice pitch during exam stress. Physiology & Behavior, 2016. · Pisanski K, Sorokowski P. Perception, 2020.",
     pmid: "27188981",
-    note: "Pitch rose reliably only in speakers whose cortisol more than doubled from baseline, which is why group-average effects in this field are weaker than individual-level ones. A 2025 study of 82 participants (PMID 40898982) found speech features correlated with cortisol but that a classifier distinguishing stressed from control conditions reached only AUC 0.55, close to chance. Current evidence supports a real association, not an accurate single-sample stress test.",
+    note: "Pitch rose reliably only in speakers whose cortisol more than doubled from baseline, which is why group-average effects in this field are weaker than individual-level ones. A 2025 study of 82 participants (PMID 40898982) found speech features correlated with cortisol but that a classifier distinguishing stressed from control conditions reached only AUC 0.55, close to chance.",
   },
   {
     n: 5,
@@ -116,10 +116,6 @@ const LIMITS = [
     body: "Serasona reports wellness signals. It does not detect, diagnose, treat or rule out any disease, and no reading from it should delay speaking to a clinician. Where the research above studies clinical populations, those findings describe what the field has measured, not what Serasona claims to do for you.",
   },
   {
-    title: "Cognitive measures are the least settled",
-    body: "A 2023 scoping review of cognitive load and voice found only 9 qualifying studies and concluded that acoustic measures do not show consistent patterns of change under load. Timing and pause structure carry more signal here than pitch does. Treat focus and mental fatigue readings as directional.",
-  },
-  {
     title: "Accuracy depends on the recording",
     body: "Microphone quality, background noise and compression all change the measured acoustics. Telephone audio is narrowband and carries less information than a browser recording. Serasona measures the same way each time so your readings stay comparable to each other.",
   },
@@ -132,7 +128,7 @@ const LIMITS = [
 /* ------------------------------------------------------------ component */
 
 const Science = () => (
-  <main className="min-h-screen bg-[#fbf7f1] text-black">
+  <main className="min-h-screen bg-[#F2EFE9] text-black">
     <div className="mx-auto max-w-[760px] px-6 pb-28 pt-16 md:pt-24">
       {/* Hero.
           Deliberately not animated in. This is a long-form reference page, and
@@ -171,7 +167,7 @@ const Science = () => (
       <div className="mt-10 grid gap-x-10 gap-y-9 sm:grid-cols-2">
         {MECHANISM.map((m) => (
           <div key={m.n}>
-            <span className="font-mono text-[11px] tracking-[0.2em] text-[#c2410c]">{m.n}</span>
+            <span className="font-mono text-[11px] tracking-[0.2em] text-[#111111]">{m.n}</span>
             <h3 className="mt-3 font-serif text-xl">{m.title}</h3>
             <p className="mt-2 text-[15px] leading-relaxed text-black/65">{m.body}</p>
           </div>
@@ -191,12 +187,12 @@ const Science = () => (
               {e.domain}
             </span>
             <div className="mt-3 flex flex-wrap items-baseline gap-x-4">
-              <span className="font-serif text-3xl text-[#c2410c] md:text-4xl">{e.headline}</span>
+              <span className="font-serif text-3xl text-[#111111] md:text-4xl">{e.headline}</span>
               <span className="text-sm text-black/55">{e.unit}</span>
             </div>
             <p className="mt-4 text-[15px] leading-relaxed text-black/70">
               {e.body}
-              <sup className="ml-1 font-mono text-[10px] text-[#c2410c]">{e.note}</sup>
+              <sup className="ml-1 font-mono text-[10px] text-[#111111]">{e.note}</sup>
             </p>
           </article>
         ))}
@@ -208,14 +204,14 @@ const Science = () => (
         Each recording runs through the model selected for that check-in. Pulse covers everyday wellness signs; other models add different mental, cognitive, respiratory and physiological patterns. Available models depend on the plan. Access to a model does not mean it ran on every recording.
       </p>
       <p className="mt-6 text-[15px] leading-relaxed text-black/70">
-        The Serasona Score combines only the readable signs actually returned. Its relative weights are provisional product choices. The published studies on this page do not validate those weights or establish the accuracy of the composite. <Link to="/docs/serasona-score" className="underline">Read the calculation, full measurement matrix and references.</Link>
+        The Serasona Score combines only the readable signs actually returned. <Link to="/docs/serasona-score" className="underline">Read the calculation, full measurement matrix and references.</Link>
       </p>
 
       {/* Limits */}
       <Section eyebrow="The limits" title="Where this runs out" />
       <div className="mt-10 space-y-8">
         {LIMITS.map((l) => (
-          <div key={l.title} className="border-l-2 border-[#c2410c]/35 pl-5">
+          <div key={l.title} className="border-l-2 border-[#111111]/35 pl-5">
             <h3 className="font-serif text-xl">{l.title}</h3>
             <p className="mt-2 text-[15px] leading-relaxed text-black/65">{l.body}</p>
           </div>
@@ -227,7 +223,7 @@ const Science = () => (
       <ol className="mt-10 space-y-7">
         {REFERENCES.map((r) => (
           <li key={r.n} className="flex gap-4">
-            <span className="shrink-0 font-mono text-[11px] text-[#c2410c]">{r.n}</span>
+            <span className="shrink-0 font-mono text-[11px] text-[#111111]">{r.n}</span>
             <div>
               <p className="text-[14px] leading-relaxed text-black/75">{r.cite}</p>
               <a

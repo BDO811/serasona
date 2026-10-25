@@ -80,7 +80,7 @@ export const SpeakerFigure = ({
   age,
   onAgeChange,
   speaking = false,
-  tone = "#c2410c",
+  tone = "#111111",
 }: {
   sex: BiologicalSex;
   onChange: (next: BiologicalSex) => void;
@@ -155,8 +155,8 @@ export const SpeakerFigure = ({
               className="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] transition-colors"
               style={
                 age === a.id
-                  ? { background: tone, color: "#fbf7f1" }
-                  : { color: "rgba(27,21,16,0.45)", boxShadow: "inset 0 0 0 1px rgba(27,21,16,0.15)" }
+                  ? { background: tone, color: "#FFFFFF" }
+                  : { color: "rgba(17, 17, 17,0.45)", boxShadow: "inset 0 0 0 1px rgba(17, 17, 17,0.15)" }
               }
             >
               {a.label}

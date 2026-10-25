@@ -58,10 +58,10 @@ describe("completed analysis to live dashboard history", () => {
   resolveSave!(true);
   await waitFor(() => expect(screen.getAllByRole("group").length).toBeGreaterThanOrEqual(6));
   const score = computeSerasonaScore(saved.signals)!.score;
-  expect(screen.getByRole("button", { name: new RegExp(`Review today.*score ${score}`) })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: new RegExp(`Review latest.*score ${score}`) })).toBeInTheDocument();
   for (const label of ["Neurocognitive", "Cardiorespiratory", "Core"]) expect(screen.getByRole("button", { name: new RegExp(`Explore ${label}`) })).toBeInTheDocument();
 
   expect(api.fetch).toHaveBeenCalledTimes(2);
-  expect(within(screen.getByRole("table", { name: "Your saved readings · Last 3 days" })).getAllByText(String(score)).length).toBeGreaterThan(0);
+  expect(within(screen.getByRole("table", { name: "Your saved readings · Last 3 measurements" })).getAllByText(String(score)).length).toBeGreaterThan(0);
  });
 });

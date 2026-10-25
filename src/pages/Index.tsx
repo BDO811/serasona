@@ -196,7 +196,7 @@ const Index = ({ initialState = "home", presetPathway, exitTo }: IndexProps = {}
       <div 
         className="fixed inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(circle at 50% 50%, hsla(183, 100%, 50%, 0.03) 0%, transparent 60%)",
+          background: "radial-gradient(circle at 50% 50%, hsla(226, 82%, 55%, 0.03) 0%, transparent 60%)",
         }}
       />
 

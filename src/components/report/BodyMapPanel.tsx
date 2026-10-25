@@ -61,20 +61,20 @@ const ZONE_MARKER_POSITION: Record<BodyZone, { left: string; top: string }> = {
 };
 
 /**
- * Each zone gets its own identity color, drawn from tokens already used
- * elsewhere in Serasona's own palette (ember, tide, and the design system's
- * metric-fatigue/metric-stress/metric-hydration set), so the marker on the
- * figure and the zone-header dot are recognizably the same zone from across
- * the screen - not just "pink means bad" everywhere. None of this touches the
- * severity scale colors in signal-band.ts, which stay as they are.
+ * Each zone gets its own identity shade, drawn from the bone neutral scale
+ * rather than a hue, so the marker on the figure and the zone-header dot are
+ * recognizably the same zone from across the screen without spending any of
+ * Bone and Signal's three meaning-bearing colors (steady/info/alert) on an
+ * identity mark. None of this touches the severity scale colors in
+ * signal-band.ts, which stay as they are.
  */
 const ZONE_COLOR: Record<BodyZone, string> = {
-  brain: "#c2410c", // ember - primary accent, cognitive zone
-  mouth: "#1d5fa8", // metric-hydration - mouth/dehydration
-  heart: "#7b2d5e", // metric-stress - cardiovascular
-  core: "#0d6a76", // tide - body-wide energy/chakra center
-  lungs: "#a94e08", // metric-fatigue - breath
-  blood: "#d9b35c", // existing LOW-band gold - blood/metabolic
+  brain: "#111111", // bone-900 - cognitive zone
+  mouth: "#4A4741", // bone-700 - mouth/dehydration
+  heart: "#2B2926", // bone-800 - cardiovascular
+  core: "#6B675F", // bone-600 - body-wide energy/chakra center
+  lungs: "#8F897D", // bone-500 - breath
+  blood: "#4A4741", // bone-700 - blood/metabolic
 };
 
 function hexToRgba(hex: string, alpha: number): string {
@@ -91,9 +91,9 @@ function hexToRgba(hex: string, alpha: number): string {
  * match every other scale on the report, so the order here is reversed).
  */
 const SUBDIM_SCALE_COLOR: Array<{ dark: string; light: string }> = [
-  { dark: "#c2608a", light: "#7b2d5e" }, // unfavourable
-  { dark: "#3ba8b8", light: "#0d6a76" }, // middle
-  { dark: "#4a90c9", light: "#1d5fa8" }, // favourable
+  { dark: "#EE8E8A", light: "#7F1D1D" }, // unfavourable - alert
+  { dark: "#8FA9F5", light: "#1E3A8A" }, // middle - info
+  { dark: "#7CC49A", light: "#0F5132" }, // favourable - steady
 ];
 
 interface SignalRow {
@@ -276,7 +276,7 @@ export const BodyMapPanel = ({
       {/* Full-body graphic with a marker per zone that has data. */}
       <div
         className="relative mx-auto mb-3 rounded-lg overflow-hidden"
-        style={{ backgroundColor: "#1b1510", maxWidth: 220 }}
+        style={{ backgroundColor: "#111111", maxWidth: 220 }}
       >
         <img src={bodyFull} alt="" className="w-full h-auto block" />
         {zonesWithData.map((zone) => {
@@ -317,7 +317,7 @@ export const BodyMapPanel = ({
             >
               <div className="flex items-center gap-2 mb-1.5">
                 <img src={ZONE_ICON[zone]} alt="" className="w-6 h-6 opacity-90" />
-                <span className={`font-mono uppercase tracking-widest ${zoneNameSize} text-[#1b1510]`}>
+                <span className={`font-mono uppercase tracking-widest ${zoneNameSize} text-[#111111]`}>
                   {BODY_ZONE_LABEL[zone]}
                 </span>
                 {/* Static, not blinking: the marker on the body graphic
@@ -327,7 +327,7 @@ export const BodyMapPanel = ({
                 )}
               </div>
 
-              <div className="flex flex-col gap-px bg-[#1b1510]/15 rounded-lg overflow-hidden">
+              <div className="flex flex-col gap-px bg-[#111111]/15 rounded-lg overflow-hidden">
                 {rows.map((row) => {
                   if (row.kind === "lab") {
                     return (
@@ -340,7 +340,7 @@ export const BodyMapPanel = ({
                         <span className={`font-mono uppercase tracking-wider ${labelSize}`}>{row.label}</span>
                         <span
                           className="font-mono text-[11px] font-semibold"
-                          style={{ color: row.isAbnormal ? "#d9822f" : "#3ba8b8" }}
+                          style={{ color: row.isAbnormal ? "#D12B26" : "#177A4B" }}
                         >
                           {row.value}
                         </span>
@@ -372,7 +372,7 @@ export const BodyMapPanel = ({
                         {row.kind === "signal" ? (
                           <span
                             className={`font-mono flex-shrink-0 ${isSeniorMode ? "text-xs" : "text-[10px]"}`}
-                            style={{ color: "#4a90c9" }}
+                            style={{ color: "#2F5BEA" }}
                           >
                             {row.bandWord}
                           </span>

@@ -7,6 +7,7 @@ import { AssessmentProvider } from "@/context/AssessmentContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { PageShell } from "@/components/PageShell";
+import { useGlobalNoWrap } from "@/hooks/useGlobalNoWrap";
 import Index from "./pages/Index";
 import DetailedAnalysisView from "./pages/DetailedAnalysisView";
 import Dashboard from "./pages/Dashboard";
@@ -24,6 +25,8 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Science from "./pages/Science";
 import ScoreDocs from "./pages/ScoreDocs";
+import SleepScoreDocs from "./pages/SleepScoreDocs";
+import GroupScoreDocs from "./pages/GroupScoreDocs";
 import Models from "./pages/Models";
 import Admin from "./pages/Admin";
 import CheckinByPhone from "./pages/CheckinByPhone";
@@ -33,7 +36,9 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  useGlobalNoWrap();
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -70,6 +75,10 @@ const App = () => (
               <Route path="/privacy" element={<PageShell><Privacy /></PageShell>} />
               <Route path="/docs" element={<Navigate to="/docs/serasona-score" replace />} />
               <Route path="/docs/serasona-score" element={<PageShell><ScoreDocs /></PageShell>} />
+              <Route path="/docs/sleep-score" element={<PageShell><SleepScoreDocs /></PageShell>} />
+              <Route path="/docs/stress-score" element={<PageShell><GroupScoreDocs group="stress" /></PageShell>} />
+              <Route path="/docs/wellness-score" element={<PageShell><GroupScoreDocs group="wellness" /></PageShell>} />
+              <Route path="/docs/clarity-score" element={<PageShell><GroupScoreDocs group="clarity" /></PageShell>} />
               <Route path="/science" element={<PageShell><Science /></PageShell>} />
               <Route path="/models" element={<PageShell><Models /></PageShell>} />
               <Route
@@ -143,6 +152,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;

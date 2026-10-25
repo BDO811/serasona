@@ -17,11 +17,11 @@ const getStatusIndicator = (status: "normal" | "elevated" | "low"): { color: str
   // Fallback to original logic if no z-score
   switch (status) {
     case "elevated":
-      return { color: "#d9822f", symbol: "▲" };
+      return { color: "#D12B26", symbol: "▲" };
     case "low":
-      return { color: "#c2608a", symbol: "▼" };
+      return { color: "#2F5BEA", symbol: "▼" };
     default:
-      return { color: "#3ba8b8", symbol: "●" };
+      return { color: "#177A4B", symbol: "●" };
   }
 };
 
@@ -33,7 +33,7 @@ export const BiometricLabGrid = ({ pathway, statusColor, showContent, labMetrics
 
   return (
     <motion.div
-      className="grid grid-cols-2 md:grid-cols-3 gap-px bg-[#1b1510]/15 rounded-lg overflow-hidden"
+      className="grid grid-cols-2 md:grid-cols-3 gap-px bg-[#111111]/15 rounded-lg overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: showContent ? 1 : 0 }}
       transition={{ delay: 1.4, duration: 0.5 }}
