@@ -20,9 +20,15 @@ import { useAuth } from "@/context/AuthContext";
 interface SiteHeaderProps {
   /** Lay it over a full-bleed hero instead of taking its own band of space. */
   overlay?: boolean;
+  /**
+   * The homepage's masthead: the full logo large and centred over a rule, the
+   * same destinations in a line beneath it. Styled by src/styles/home.css, so
+   * it is only meaningful on the home.
+   */
+  masthead?: boolean;
 }
 
-export const SiteHeader = ({ overlay = false }: SiteHeaderProps) => {
+export const SiteHeader = ({ overlay = false, masthead = false }: SiteHeaderProps) => {
   const { user, subscription } = useAuth();
   const { pathname } = useLocation();
 
@@ -35,6 +41,35 @@ export const SiteHeader = ({ overlay = false }: SiteHeaderProps) => {
   // the bar grows to twice its height.
   const link =
     "font-mono text-[11px] uppercase tracking-[0.14em] md:tracking-[0.18em] whitespace-nowrap transition-colors";
+
+  if (masthead) {
+    return (
+      <header className="sh-mast">
+        <div className="sh-container">
+          <Link to="/" aria-label="Serasona home" className="sh-mast__logo">
+            <img src={asset("brand/serasona-logo-full.svg")} alt="Serasona" />
+          </Link>
+          <nav className="sh-mast__bar" aria-label="Site">
+            {!hasPlan && pathname !== "/pricing" && (
+              <Link to="/pricing" className="sh-mast__hide-sm">Plans</Link>
+            )}
+            <Link to="/docs/serasona-score">Docs</Link>
+            {user ? (
+              <>
+                <Link to="/dashboard">Dashboard</Link>
+                <Link to="/account">Account</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/login">Log in</Link>
+                <Link to="/signup" className="is-action">Start</Link>
+              </>
+            )}
+          </nav>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header

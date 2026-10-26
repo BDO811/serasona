@@ -41,8 +41,10 @@ const PHASE_MS: Record<Phase, number> = {
   result: 4600,
 };
 
-export const VoiceDemo = () => {
-  const reduceMotion = useReducedMotion();
+export const VoiceDemo = ({ paused = false }: { paused?: boolean } = {}) => {
+  // Paused holds the loop where it is: on hover, on focus, or from the
+  // pause control the page puts beside the demo.
+  const reduceMotion = !!useReducedMotion() || paused;
   const [phase, setPhase] = useState<Phase>("speaking");
   const [seconds, setSeconds] = useState(0);
   const timer = useRef<number>();
@@ -50,19 +52,23 @@ export const VoiceDemo = () => {
   // Advance through the phases on a loop. Each phase schedules the next, so the
   // cycle self-corrects rather than drifting the way a single interval would.
   useEffect(() => {
+    if (paused) return;
     timer.current = window.setTimeout(() => {
-      setPhase((p) => (p === "speaking" ? "analysing" : p === "analysing" ? "result" : "speaking"));
+      setPhase((p) => {
+        const next = p === "speaking" ? "analysing" : p === "analysing" ? "result" : "speaking";
+        if (next === "speaking") setSeconds(0);
+        return next;
+      });
     }, PHASE_MS[phase]);
     return () => window.clearTimeout(timer.current);
-  }, [phase]);
+  }, [phase, paused]);
 
   // The counter only runs while speaking, and resets as that phase begins.
   useEffect(() => {
-    if (phase !== "speaking") return;
-    setSeconds(0);
+    if (phase !== "speaking" || paused) return;
     const id = window.setInterval(() => setSeconds((s) => Math.min(s + 1, 20)), 210);
     return () => window.clearInterval(id);
-  }, [phase]);
+  }, [phase, paused]);
 
   const speaking = phase === "speaking";
 
@@ -74,7 +80,7 @@ export const VoiceDemo = () => {
     >
       {/* Status line */}
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-black/50">
+        <span className="text-[13px] text-black/60">
           {speaking ? "Listening" : phase === "analysing" ? "Reading" : "Your check-in"}
         </span>
         <div className="flex items-center gap-2">
@@ -84,7 +90,7 @@ export const VoiceDemo = () => {
             animate={reduceMotion || !speaking ? {} : { opacity: [1, 0.25, 1] }}
             transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
           />
-          <span className="font-mono text-[10px] tabular-nums text-black/45">
+          <span className="text-[13px] tabular-nums text-black/60">
             {speaking ? `0:${String(seconds).padStart(2, "0")}` : "0:20"}
           </span>
         </div>
@@ -134,7 +140,7 @@ export const VoiceDemo = () => {
                 />
               ))}
             </div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-black/45">
+            <p className="text-[13px] text-black/60">
               Reading seven signals
             </p>
           </div>
@@ -149,7 +155,7 @@ export const VoiceDemo = () => {
               >
                 <div className="flex items-baseline justify-between">
                   <span className="text-[13px] text-black/75">{s.name}</span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-black/50">
+                  <span className="text-[12px] text-black/60">
                     {s.level}
                   </span>
                 </div>
@@ -164,8 +170,8 @@ export const VoiceDemo = () => {
                 </div>
               </motion.div>
             ))}
-            <p className="pt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-black/35">
-              Illustration · three more signals not shown
+            <p className="pt-1 text-[12px] text-black/55">
+              An illustration. Three more signals not shown.
             </p>
           </div>
         ) : (
