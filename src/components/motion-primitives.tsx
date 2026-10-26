@@ -211,9 +211,9 @@ export const StickyCta = ({ onStart, afterPx = 900 }: { onStart: () => void; aft
         onClick={onStart}
         tabIndex={show ? 0 : -1}
         aria-hidden={!show}
-        className="pointer-events-auto rounded-full bg-black px-8 py-4 font-mono text-[11px] uppercase tracking-[0.2em] text-primary-foreground shadow-[0_12px_32px_-10px_rgba(17, 17, 17,0.6)] transition-transform hover:scale-[1.03]"
+        className="pointer-events-auto min-h-[52px] whitespace-nowrap rounded-full bg-primary px-7 text-[15px] font-semibold text-primary-foreground shadow-[0_1px_2px_rgba(17,17,17,0.12)] transition-colors hover:bg-bone-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
       >
-        Try Serasona · 20 seconds
+        Try a free check-in
       </button>
     </motion.div>
   );

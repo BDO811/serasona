@@ -1,16 +1,16 @@
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { asset } from "@/lib/asset";
 import { SiteHeader } from "@/components/SiteHeader";
 import { VoiceDemo } from "@/components/VoiceDemo";
-import { AmbientVideo } from "@/components/AmbientVideo";
-import { Reveal, CountUp, ParallaxBand, StickyCta } from "@/components/motion-primitives";
+import { StickyCta } from "@/components/motion-primitives";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import "@/styles/home.css";
 
 interface SerasonaHomeProps {
   onComplete: () => void;
@@ -18,17 +18,14 @@ interface SerasonaHomeProps {
 
 const HOW_IT_WORKS = [
   {
-    step: "01",
     title: "Speak for twenty seconds",
     body: "Open the app or pick up when Serasona calls. No forms, no appointment.",
   },
   {
-    step: "02",
     title: "Serasona reads it",
     body: "Ten biomarkers, pulled from how you spoke, not just what you said.",
   },
   {
-    step: "03",
     title: "See what moved",
     body: "Every number is placed against your own last thirty days, never a population average.",
   },
@@ -53,343 +50,334 @@ const VOICE_BIOMARKERS = [
   },
 ];
 
+/** A wearable against a check-in, from the page's own answer to "how is this different". */
+const COMPARE = [
+  { row: "Something to buy", wearable: "A ring or a band", voice: "Nothing" },
+  { row: "Worn on the body", wearable: "Against the skin", voice: "No skin contact" },
+  { row: "Charging", wearable: "Needs charging", voice: "None" },
+  { row: "What it reads", wearable: "Your body", voice: "Your voice" },
+];
+
 const FAQ_ITEMS = [
   {
-    question: "Is Serasona a medical device?",
+    question: "Is it a medical device?",
     answer:
-      "No. Serasona is a wellness product. It does not diagnose, treat, prevent, or cure any condition. It reports a signal — it does not know why a number moved.",
+      "No. Serasona is a wellness product. It does not diagnose, treat, prevent, or cure any condition. It reports a signal; it does not know why a number moved.",
   },
   {
-    question: "What happens to my voice recording?",
+    question: "Is my recording kept?",
     answer:
-      "It's processed to produce your signals and then discarded. Serasona stores the numbers, not the audio, and never sells personal information.",
+      "It’s processed to produce your signals and then discarded. Serasona stores the numbers, not the audio, and never sells personal information.",
   },
   {
-    question: "How is this different from a wearable?",
+    question: "How is it unlike a wearable?",
     answer:
       "A wearable reads your body. Nothing else reads your voice. Twenty seconds of speech, no device, no skin contact, no charging.",
   },
   {
-    question: "What if something looks seriously off?",
+    question: "What if something looks off?",
     answer:
-      "Serasona reports a signal, not a diagnosis — a real person is always an option for anything beyond what a daily check-in can tell you. For medical concerns, talk to a licensed clinician.",
+      "Serasona reports a signal, not a diagnosis. A real person is always an option for anything beyond what a daily check-in can tell you. For medical concerns, talk to a licensed clinician.",
   },
   {
-    question: "Can I use this without the app?",
+    question: "Can I skip the app?",
     answer:
-      "Yes, on Plus and above — Serasona calls you on any phone, including a landline, and the result still lands in your account.",
+      "Yes, on Plus and above. Serasona calls you on any phone, including a landline, and the result still lands in your account.",
   },
 ];
 
 const STATS = [
-  { value: "2.4M", label: "World's Largest Dataset" },
-  { value: "14,000", label: "Physician-Labeled Conditions & States" },
-  { value: "75+", label: "Production Indicators" },
+  { value: "2.4M", label: "World’s largest dataset" },
+  { value: "14,000", label: "Physician-labeled conditions and states" },
+  { value: "75+", label: "Production indicators" },
   { value: "40+", label: "Languages" },
 ];
 
-const WAVEFORM_BARS = Array.from({ length: 48 }, (_, i) => {
-  const t = i / 47;
-  // Layered sine waves for an organic voice-waveform silhouette
-  const h = 0.25 + Math.abs(Math.sin(t * Math.PI * 3.2)) * 0.55 + Math.abs(Math.sin(t * Math.PI * 9)) * 0.2;
-  return Math.min(1, h);
-});
+const PLANS = [
+  { name: "Free", body: "One free check-in to start." },
+  { name: "Core", body: "Tracks ten biomarkers against your own history, every day." },
+  { name: "Plus", body: "Adds a daily call, no app required, on any phone, including a landline." },
+];
+
+const SHOTS = [
+  {
+    id: "assessment",
+    src: "images/product/assessment-optimal.webp",
+    width: 776,
+    height: 352,
+    alt: "A Serasona result banner reading “You are at Peak Performance” over the voice spectrogram",
+    note: "One line first: where today’s read lands on the scale.",
+    tall: false,
+  },
+  {
+    id: "detail",
+    src: "images/product/signal-detail.webp",
+    width: 776,
+    height: 1030,
+    alt: "Serasona’s signal detail: recovery, energy, focus and drive, each placed between its two ends",
+    note: "Then each signal, placed between its two ends, with its own margin.",
+    tall: true,
+  },
+];
 
 export const SerasonaHome = ({ onComplete }: SerasonaHomeProps) => {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [demoHeld, setDemoHeld] = useState(false);
+  const [demoHover, setDemoHover] = useState(false);
+
+  // One reveal. Content is visible by default; only once this script runs does
+  // anything start hidden, so a failed bundle still shows the whole page.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    document.documentElement.classList.add("js");
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-in");
+            io.unobserve(e.target);
+          }
+        }),
+      { root, rootMargin: "0px 0px -10% 0px" },
+    );
+    root.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
+    // Never strand content: anything the observer has not reached shows anyway.
+    const t = window.setTimeout(() => root.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-in")), 2500);
+    return () => {
+      io.disconnect();
+      window.clearTimeout(t);
+    };
+  }, []);
+
   return (
-    <div className="absolute inset-0 overflow-y-auto bg-background">
-      {/* Shared site chrome: adapts to who is signed in, which the inline
-          nav this replaced did not. */}
-      <SiteHeader overlay />
+    // overflow-y-auto stays: StickyCta finds the scroller by that class.
+    <div ref={rootRef} className="sh-home absolute inset-0 overflow-y-auto" data-allow-wrap>
+      <SiteHeader masthead />
       <StickyCta onStart={onComplete} />
 
-      {/* The hero sits in its own stacking context so the ambient footage can
-          run full-bleed behind it and fade out before the sections below. */}
-      <div className="relative">
-        <AmbientVideo />
-
-        <div className="relative mx-auto flex max-w-[900px] flex-col items-center px-6 pb-24 pt-16 text-center md:pt-24">
-        {/* Eyebrow */}
-        <motion.span
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="font-mono text-sm tracking-[0.25em] uppercase text-black/90"
-        >
-          Nothing to buy. Nothing to wear.
-        </motion.span>
-
-        {/* Hero headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="mt-6 font-serif text-[13vw] leading-[0.95] tracking-tight text-black sm:text-6xl md:text-7xl"
-        >
-          {/* Full line, tablet and up: the long form reads fine once there's
-              width for it to wrap at most twice. */}
-          <span className="hidden md:inline">
-            <span className="font-semibold">No ring, no band, no wearable to buy,</span>
-            <br />
-            <span className="italic text-4xl">get a deeper understanding of your body than any device.</span>
-          </span>
-          {/* Phone-width variant: same claim, fewer words, so it doesn't run
-              seven lines deep before the CTA ever comes into view. */}
-          <span className="md:hidden">
-            <span className="font-semibold">No wearable to buy or wear,</span>
-            <br />
-            <span className="italic">just a deeper read than any device.</span>
-          </span>
-        </motion.h1>
-
-        {/* Waveform accent */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mt-10 flex h-14 w-full max-w-md items-center justify-center gap-[3px]"
-        >
-          {WAVEFORM_BARS.map((h, i) => (
-            <motion.div
-              key={i}
-              className="w-[3px] rounded-full bg-black/70"
-              style={{ height: `${h * 100}%`, transformOrigin: "center" }}
-              animate={{ scaleY: [0.4, 1.2, 0.4] }}
-              transition={{
-                duration: 1.1 + (i % 5) * 0.15,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: (i % 12) * 0.06,
-              }}
-            />
-          ))}
-        </motion.div>
-
-        {/* Subhead */}
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-10 max-w-[560px] text-lg leading-relaxed text-black/70 md:text-xl"
-        >
-          You carry an incredible number of measurable signals in your voice
-          that no wearable can read.
-        </motion.p>
-
-        {/* CTA */}
-        <motion.button
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.55 }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={onComplete}
-          className="mt-12 rounded-full bg-primary px-10 py-5 font-mono text-sm font-medium uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-bone-800"
-        >
-          Try Serasona
-        </motion.button>
-
-        <Link
-          to="/pricing"
-          className="mt-5 font-mono text-xs uppercase tracking-[0.15em] text-black/55 underline underline-offset-4 transition-colors hover:text-black/80"
-        >
-          Or see plans and pricing
-        </Link>
-
-        {/* A check-in, playing out. Vector and motion rather than a video file:
-            see VoiceDemo for why this is not a person. */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.7 }}
-          className="mt-24 w-full"
-        >
-          <p className="mb-8 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-black/45">
-            What a check-in looks like
-          </p>
-          <VoiceDemo />
-        </motion.div>
-
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 0.6 }}
-          className="mt-20 grid w-full grid-cols-2 gap-x-6 gap-y-10 border-t border-black/15 pt-12 md:grid-cols-4"
-        >
-          {STATS.map((stat) => (
-            <div key={stat.label}>
-              <CountUp value={stat.value} className="block font-serif text-3xl text-black md:text-4xl" />
-              <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-black/55">
-                {stat.label}
+      <main>
+        {/* Hero: the figure leads, the claim and the action beside it */}
+        <section className="sh-hero" aria-labelledby="sh-hero-head">
+          <div className="sh-container sh-grid sh-hero__grid">
+            <p className="sh-hero__figure" aria-hidden="true">
+              <span className="sh-hero__num">20</span>
+              <span className="sh-hero__unit">seconds</span>
+            </p>
+            <div className="sh-hero__text">
+              <h1 id="sh-hero-head">No ring,<br />no band,<br />no wearable.</h1>
+              <p className="lead">
+                One daily check-in by voice, read against your own history.
+              </p>
+              <div className="sh-hero__actions">
+                <button type="button" className="sh-btn" onClick={onComplete}>
+                  Try a free check-in
+                </button>
+                <Link to="/pricing" className="sh-link">
+                  See plans and pricing
+                </Link>
               </div>
             </div>
-          ))}
-        </motion.div>
-
-        {/* Brand signature: the audio bands alone, closing the page the way
-            they open it in the nav, this time without the wordmark. */}
-        <motion.img
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          src={asset("brand/serasona-logo-bands.svg")}
-          alt=""
-          aria-hidden="true"
-          className="mt-20 h-16 w-auto max-w-full md:h-20"
-        />
-        </div>
-      </div>
-
-      {/* A full-bleed beat between the hero and the explainer, so the page
-          stops reading as one long column of centred text. */}
-      <ParallaxBand src={asset("video/band-conversation.jpg")}>
-        <Reveal>
-          <p className="mx-auto max-w-[680px] text-center font-serif text-2xl leading-snug text-primary-foreground md:text-4xl">
-            A wearable waits on your wrist. Serasona uses the thing you were
-            going to do anyway.
-          </p>
-        </Reveal>
-      </ParallaxBand>
-
-      {/* What's a voice biomarker */}
-      <div className="border-t border-black/10 px-6 py-24 md:py-28">
-        <div className="mx-auto max-w-[900px]">
-          <div className="mx-auto max-w-[640px] text-center">
-            <Reveal><h2 className="font-serif text-3xl text-black md:text-4xl">What's a voice biomarker?</h2></Reveal>
-            <p className="mt-5 text-sm leading-relaxed text-black/65 md:text-base">
-              Speech is one of the most demanding things your body does. In the time it takes to say a
-              sentence, your breath, vocal cords, and articulation all have to coordinate in real time,
-              drawing on the same systems that carry stress, fatigue, and mood. A voice biomarker is a
-              measurable feature of that coordination, the kind a person can't hear by listening but a
-              model can measure reliably, twenty seconds at a time.
-            </p>
           </div>
-          <div className="mt-14 grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-4 md:gap-8">
-            {VOICE_BIOMARKERS.map((item) => (
-              <div key={item.title}>
-                <h3 className="font-serif text-lg text-black">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-black/65">{item.body}</p>
+        </section>
+
+        {/* The check-in: the steps beside the demo playing them out */}
+        <section className="sh-section--first" aria-labelledby="sh-checkin-head">
+          <div className="sh-container sh-grid">
+            <div className="sh-checkin__steps" data-reveal>
+              <div className="sh-head">
+                <h2 id="sh-checkin-head">Speak, then see what moved</h2>
               </div>
-            ))}
+              <ol className="sh-steps">
+                {HOW_IT_WORKS.map((item) => (
+                  <li key={item.title}>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <figure
+              className="sh-checkin__demo"
+              onPointerEnter={() => setDemoHover(true)}
+              onPointerLeave={() => setDemoHover(false)}
+              onFocus={() => setDemoHover(true)}
+              onBlur={() => setDemoHover(false)}
+            >
+              {/* A check-in, playing out. Vector and motion rather than a
+                  video file: see VoiceDemo for why this is not a person. */}
+              <VoiceDemo paused={demoHeld || demoHover} />
+              <button
+                type="button"
+                className="sh-quiet sh-checkin__pause"
+                aria-pressed={demoHeld}
+                onClick={() => setDemoHeld((h) => !h)}
+              >
+                {demoHeld ? "Play" : "Pause"}
+              </button>
+            </figure>
           </div>
-          <p className="mx-auto mt-14 max-w-[640px] text-center text-sm leading-relaxed text-black/65">
-            None of these features mean anything on their own. What matters is how yours move against your
-            own history, not against anyone else's.
-          </p>
-        </div>
-      </div>
+        </section>
 
-      {/* How it works */}
-      <div className="border-t border-black/10 px-6 py-24 md:py-28">
-        <div className="mx-auto max-w-[900px]">
-          <Reveal><h2 className="text-center font-serif text-3xl text-black md:text-4xl">How it works</h2></Reveal>
-          <div className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-8">
-            {HOW_IT_WORKS.map((item) => (
-              <div key={item.step}>
-                <div className="font-mono text-xs tracking-[0.2em] text-black/40">{item.step}</div>
-                <h3 className="mt-3 font-serif text-xl text-black">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-black/65">{item.body}</p>
+        {/* What a voice biomarker is: the head beside four rows */}
+        <section className="sh-section--l" aria-labelledby="sh-bio-head">
+          <div className="sh-container">
+            <div className="sh-rows__head sh-head">
+              <h2 id="sh-bio-head">What’s a voice biomarker?</h2>
+              <p className="lead">
+                A measurable feature of how your breath, vocal cords and articulation coordinate as you speak.
+              </p>
+            </div>
+            <ul className="sh-rows__list" data-reveal>
+              {VOICE_BIOMARKERS.map((item) => (
+                <li key={item.title}>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* A wearable against your voice */}
+        <section className="sh-section" aria-labelledby="sh-compare-head">
+          <div className="sh-container sh-grid">
+            <figure className="sh-compare__photo">
+              <img
+                src={asset("video/band-conversation.jpg")}
+                alt="A woman on a phone call at home, smiling"
+                width={1600}
+                height={1068}
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+            <div className="sh-compare__body">
+              <div className="sh-head sh-head--flush">
+                <h2 id="sh-compare-head">A wearable waits on your wrist</h2>
+                <p className="lead">Serasona uses the thing you were going to do anyway.</p>
               </div>
-            ))}
+              <table className="sh-table">
+                <thead>
+                  <tr>
+                    <th scope="col"><span className="visually-hidden">Compared</span></th>
+                    <th scope="col">A wearable</th>
+                    <th scope="col">Serasona</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARE.map((r) => (
+                    <tr key={r.row}>
+                      <th scope="row">{r.row}</th>
+                      <td>{r.wearable}</td>
+                      <td>{r.voice}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* Pricing teaser */}
-      <div className="border-t border-black/10 px-6 py-24 md:py-28 bg-secondary">
-        <div className="mx-auto max-w-[700px] text-center">
-          <Reveal><h2 className="font-serif text-3xl text-black md:text-4xl">Simple pricing</h2></Reveal>
-          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-black/65">
-            One free check-in to start. Core tracks ten biomarkers against your own history, every day.
-            Plus adds a daily call, no app required.
+        {/* What lands after: the real result screens, both at once */}
+        <section className="sh-section--l" aria-labelledby="sh-result-head">
+          <div className="sh-container">
+            <div className="sh-head">
+              <h2 id="sh-result-head">What lands after you speak</h2>
+            </div>
+            <div className="sh-result">
+              {SHOTS.map((s) => (
+                <figure key={s.id} className={`sh-result__shot${s.tall ? " sh-result__shot--tall" : ""}`} data-kind="product">
+                  <img src={asset(s.src)} alt={s.alt} width={s.width} height={s.height} loading="lazy" decoding="async" />
+                  <figcaption>{s.note}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* The model behind the read */}
+        <section className="sh-section" aria-labelledby="sh-model-head">
+          <div className="sh-container">
+            <div className="sh-head">
+              <h2 id="sh-model-head">The model behind each read</h2>
+            </div>
+            <dl className="sh-figures" data-reveal>
+              {STATS.map((stat) => (
+                <div key={stat.label}>
+                  <dt>{stat.label}</dt>
+                  <dd>{stat.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {/* Plans, and the action once more */}
+        <section className="sh-section--l" aria-labelledby="sh-plans-head">
+          <div className="sh-container">
+            <div className="sh-head">
+              <h2 id="sh-plans-head">Start free, then every day</h2>
+            </div>
+            <div className="sh-plans">
+              {PLANS.map((p) => (
+                <article key={p.name} className="sh-plan">
+                  <h3>{p.name}</h3>
+                  <p>{p.body}</p>
+                </article>
+              ))}
+            </div>
+            <div className="sh-close">
+              <p>Your first check-in costs nothing.</p>
+              <div className="sh-close__actions">
+                <Link to="/pricing" className="sh-link">
+                  See plans and pricing
+                </Link>
+                <button type="button" className="sh-btn" onClick={onComplete}>
+                  Try a free check-in
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Questions */}
+        <section className="sh-section--l" aria-labelledby="sh-faq-head">
+          <div className="sh-container sh-grid">
+            <div className="sh-faq__head">
+              <h2 id="sh-faq-head">Before you speak</h2>
+            </div>
+            <Accordion type="single" collapsible className="sh-faq__list">
+              {FAQ_ITEMS.map((item) => (
+                <AccordionItem key={item.question} value={item.question}>
+                  <AccordionTrigger className="sh-faq__q py-3 font-semibold">{item.question}</AccordionTrigger>
+                  <AccordionContent className="sh-faq__a">{item.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer: the audio bands as a sign-off */}
+      <footer className="sh-foot">
+        <div className="sh-container">
+          <div className="sh-foot__sign">
+            <img src={asset("brand/serasona-logo-full.svg")} alt="Serasona" />
+          </div>
+          <nav className="sh-foot__links" aria-label="Footer">
+            <Link to="/pricing">Pricing</Link>
+            <Link to="/signup">Create account</Link>
+            <Link to="/login">Log in</Link>
+            <Link to="/models">Models</Link>
+            <Link to="/science">Scientific Analysis</Link>
+          </nav>
+          <p className="sh-foot__legal">
+            Serasona is a wellness product. It is not a medical device and does not diagnose, treat, prevent,
+            or cure any condition.
           </p>
-          <Link
-            to="/pricing"
-            className="mt-8 inline-block rounded-full bg-primary px-8 py-4 font-mono text-xs font-medium uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-bone-800"
-          >
-            See plans and pricing
-          </Link>
         </div>
-      </div>
-
-      {/* Trust / escalation */}
-      <div className="border-t border-black/10 px-6 py-24 md:py-28">
-        <div className="mx-auto grid max-w-[900px] grid-cols-1 gap-10 md:grid-cols-3">
-          <div>
-            <h3 className="font-serif text-lg text-black">Never a diagnosis</h3>
-            <p className="mt-2 text-sm leading-relaxed text-black/65">
-              Serasona reports a signal. It is a wellness product and does not diagnose, treat, prevent, or
-              cure any condition.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-serif text-lg text-black">Compared to you, only</h3>
-            <p className="mt-2 text-sm leading-relaxed text-black/65">
-              Every number is read against your own thirty-day history, never a population average.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-serif text-lg text-black">A real person is always an option</h3>
-            <p className="mt-2 text-sm leading-relaxed text-black/65">
-              For anything a daily check-in can't answer, talk to a licensed clinician. Serasona is a
-              companion, not a replacement.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* FAQ */}
-      <div className="border-t border-black/10 px-6 py-24 md:py-28 bg-secondary">
-        <div className="mx-auto max-w-[700px]">
-          <Reveal><h2 className="text-center font-serif text-3xl text-black md:text-4xl">Questions</h2></Reveal>
-          <Accordion type="single" collapsible className="mt-10">
-            {FAQ_ITEMS.map((item) => (
-              <AccordionItem key={item.question} value={item.question}>
-                <AccordionTrigger className="text-left font-serif text-base text-black">
-                  {item.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-sm leading-relaxed text-black/65">
-                  {item.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="border-t border-black/10 px-6 py-16 text-center">
-        <img
-          src={asset("brand/serasona-logo-full.svg")}
-          alt="Serasona"
-          className="mx-auto h-6 w-auto"
-        />
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-mono text-xs uppercase tracking-[0.15em] text-black/55">
-          <Link to="/pricing" className="hover:text-black">
-            Pricing
-          </Link>
-          <Link to="/signup" className="hover:text-black">
-            Create account
-          </Link>
-          <Link to="/login" className="hover:text-black">
-            Log in
-          </Link>
-          <Link to="/models" className="hover:text-black">
-            Models
-          </Link>
-          <Link to="/science" className="hover:text-black">
-            Scientific Analysis
-          </Link>
-        </div>
-        <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.15em] text-black/40">
-          Serasona is a wellness product. It is not a medical device and does not diagnose, treat, prevent,
-          or cure any condition.
-        </p>
-      </div>
+      </footer>
     </div>
   );
 };
