@@ -41,22 +41,29 @@ function levelForScore(score: number) {
   return RUNG_SCALE.find((r) => r.key === key)!;
 }
 /**
- * Plots a small axis-framed trend line for a metric card's last three
- * readings. A missing reading breaks the line rather than plotting as zero,
- * since a dip to zero would read as a real bad reading rather than a gap.
- * Left/bottom padding is wider than top/right so there's room to draw an
- * actual Y axis and X axis rather than just floating points.
+ * Plots an axis-framed trend line for a metric card's last three readings.
+ * A missing reading breaks the line rather than plotting as zero, since a dip
+ * to zero would read as a real bad reading rather than a gap. The Y-axis
+ * numbers render outside the SVG (see member-metric-history-yaxis) so they
+ * never distort under the chart's non-uniform viewBox scaling; this just
+ * returns the gridline y-positions to match them against.
  */
-function sparkline(values: Array<number | null>, width = 150, height = 44) {
-  const padLeft = 14, padRight = 6, padTop = 6, padBottom = 10;
+function sparkline(values: Array<number | null>, width = 220, height = 104) {
+  const padLeft = 10, padRight = 8, padTop = 8, padBottom = 8;
   const innerW = width - padLeft - padRight;
   const innerH = height - padTop - padBottom;
   const step = values.length > 1 ? innerW / (values.length - 1) : 0;
   const points = values.map((v, i) => ({ x: padLeft + i * step, y: v == null ? null : padTop + (1 - v / 100) * innerH, value: v }));
   let path = "";
   points.forEach((p, i) => { if (p.y == null) return; path += points[i - 1]?.y != null ? ` L${p.x},${p.y}` : ` M${p.x},${p.y}`; });
-  return { points, path: path.trim(), width, height, padLeft, padTop, padBottom, axisY: height - padBottom, axisRight: width - padRight };
+  const gridY = (value: number) => padTop + (1 - value / 100) * innerH;
+  return { points, path: path.trim(), width, height, padLeft, padTop, padBottom, axisY: height - padBottom, axisRight: width - padRight, gridLines: [0, 50, 100].map((value) => ({ value, y: gridY(value) })) };
 }
+/** Share of the 0-100 range each RUNG_SCALE band covers, used to size the
+ * vertical scale segments beside each metric card so a dot at `{score}%`
+ * from the bottom always falls inside the segment that score is actually
+ * graded into (see levelForScore). */
+const SCALE_WEIGHT: Record<string, number> = { clean: 10, good: 23, steady: 33, focus: 34 };
 function hexToRgba(hex: string, alpha: number): string {
   const n = parseInt(hex.slice(1), 16);
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
@@ -145,21 +152,34 @@ export default function Dashboard() {
           <div className="member-metrics member-metrics-4">{metricCards.map((card) => {
             const level = card.value != null ? levelForScore(card.value) : null;
             const abnormal = level ? level.key === "focus" || level.key === "steady" : false;
-            const style = level ? { background: hexToRgba(level.color, 0.26), borderBottom: `3px solid ${level.colorLight}`, ["--glow-color" as string]: level.colorLight } : undefined;
+            // Background is the same solid rung color used for the LOW/MEDIUM/STRONG/OPTIMAL
+            // swatches below (RUNG_SCALE.color), not a washed-out tint, so a card's color
+            // always matches its level exactly rather than just sharing its hue.
+            const style = level ? { background: level.color, color: level.colorLight, borderBottom: `3px solid ${level.colorLight}`, ["--glow-color" as string]: level.colorLight } : undefined;
             const hist = [...card.history].reverse();
             const spark = sparkline(hist.map((h) => h.value));
             return <Link key={card.key} to={card.path} style={style} className={`member-metric ${card.key} ${abnormal ? "is-abnormal" : ""}`}>
-              <small>{card.label.toUpperCase()}</small>
-              <strong>{card.value ?? "Not read"}</strong>
-              <small>{card.bandLabel ?? (latest ? "No reading" : "Not read")}</small>
-              <div className="member-metric-history" aria-hidden="true">
-                <div className="member-metric-history-dates">{hist.map((h, i) => <small key={i}>{h.date ?? "—"}</small>)}</div>
-                <svg className="member-metric-history-svg" viewBox={`0 0 ${spark.width} ${spark.height}`} preserveAspectRatio="none">
-                  <line className="member-metric-history-axis" x1={spark.padLeft} y1={spark.padTop} x2={spark.padLeft} y2={spark.axisY} />
-                  <line className="member-metric-history-axis" x1={spark.padLeft} y1={spark.axisY} x2={spark.axisRight} y2={spark.axisY} />
-                  {spark.path && <path d={spark.path} fill="none" stroke="#B9B3A6" strokeWidth="1.5" />}
-                  {spark.points.map((p, i) => p.y == null ? null : <circle key={i} cx={p.x} cy={p.y} r="3.5" fill={levelForScore(p.value!).colorLight} stroke="#F2EFE9" strokeWidth="1" />)}
-                </svg>
+              <div className="member-metric-scale" aria-label="Scale: Low below 34, Medium 34 to 66, Strong 67 to 89, Optimal 90 and above">
+                {[...RUNG_SCALE].reverse().map((seg) => <span key={seg.key} className="member-metric-scale-seg" style={{ background: seg.color, flexGrow: SCALE_WEIGHT[seg.key] }} />)}
+                {card.value != null && <span className="member-metric-scale-dot" style={{ bottom: `${card.value}%`, background: level!.colorLight }} />}
+              </div>
+              <div className="member-metric-content">
+                <small>{card.label.toUpperCase()}</small>
+                <strong>{card.value ?? "Not read"}</strong>
+                <small>{card.bandLabel ?? (latest ? "No reading" : "Not read")}</small>
+                <div className="member-metric-history" aria-hidden="true">
+                  <div className="member-metric-history-dates">{hist.map((h, i) => <small key={i}>{h.date ?? "—"}</small>)}</div>
+                  <div className="member-metric-history-chart">
+                    <div className="member-metric-history-yaxis"><span>100</span><span>50</span><span>0</span></div>
+                    <svg className="member-metric-history-svg" viewBox={`0 0 ${spark.width} ${spark.height}`} preserveAspectRatio="none">
+                      {spark.gridLines.map((g) => <line key={g.value} className="member-metric-history-grid" x1={spark.padLeft} y1={g.y} x2={spark.axisRight} y2={g.y} />)}
+                      <line className="member-metric-history-axis" x1={spark.padLeft} y1={spark.padTop} x2={spark.padLeft} y2={spark.axisY} />
+                      <line className="member-metric-history-axis" x1={spark.padLeft} y1={spark.axisY} x2={spark.axisRight} y2={spark.axisY} />
+                      {spark.path && <path d={spark.path} fill="none" stroke={level ? level.colorLight : "#8F897D"} strokeWidth="2" />}
+                      {spark.points.map((p, i) => p.y == null ? null : <circle key={i} cx={p.x} cy={p.y} r="4" fill={levelForScore(p.value!).colorLight} stroke="#F2EFE9" strokeWidth="1.5" />)}
+                    </svg>
+                  </div>
+                </div>
               </div>
             </Link>;
           })}</div>
