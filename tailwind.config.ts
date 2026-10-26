@@ -14,9 +14,14 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Hanken Grotesk', 'system-ui', 'sans-serif'],
-        serif: ['Bricolage Grotesque', 'Georgia', 'serif'],
-        mono: ['DM Mono', 'monospace'],
+        // Every non-logo surface on the site now reads in Inter (the logo
+        // itself is always the SVG wordmark file, never live text, so it is
+        // untouched by this). The token names (sans/serif/mono) stayed as-is
+        // so no component had to change which utility class it reaches for;
+        // only what that utility resolves to changed.
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
