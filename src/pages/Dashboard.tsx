@@ -41,16 +41,21 @@ function levelForScore(score: number) {
   return RUNG_SCALE.find((r) => r.key === key)!;
 }
 /**
- * Plots a small trend line for a metric card's last three readings. A
- * missing reading breaks the line rather than plotting as zero, since a
- * dip to zero would read as a real bad reading rather than a gap.
+ * Plots a small axis-framed trend line for a metric card's last three
+ * readings. A missing reading breaks the line rather than plotting as zero,
+ * since a dip to zero would read as a real bad reading rather than a gap.
+ * Left/bottom padding is wider than top/right so there's room to draw an
+ * actual Y axis and X axis rather than just floating points.
  */
-function sparkline(values: Array<number | null>, width = 84, height = 26, pad = 4) {
-  const step = values.length > 1 ? (width - pad * 2) / (values.length - 1) : 0;
-  const points = values.map((v, i) => ({ x: pad + i * step, y: v == null ? null : pad + (1 - v / 100) * (height - pad * 2), value: v }));
+function sparkline(values: Array<number | null>, width = 150, height = 44) {
+  const padLeft = 14, padRight = 6, padTop = 6, padBottom = 10;
+  const innerW = width - padLeft - padRight;
+  const innerH = height - padTop - padBottom;
+  const step = values.length > 1 ? innerW / (values.length - 1) : 0;
+  const points = values.map((v, i) => ({ x: padLeft + i * step, y: v == null ? null : padTop + (1 - v / 100) * innerH, value: v }));
   let path = "";
   points.forEach((p, i) => { if (p.y == null) return; path += points[i - 1]?.y != null ? ` L${p.x},${p.y}` : ` M${p.x},${p.y}`; });
-  return { points, path: path.trim(), width, height };
+  return { points, path: path.trim(), width, height, padLeft, padTop, padBottom, axisY: height - padBottom, axisRight: width - padRight };
 }
 function hexToRgba(hex: string, alpha: number): string {
   const n = parseInt(hex.slice(1), 16);
@@ -150,8 +155,10 @@ export default function Dashboard() {
               <div className="member-metric-history" aria-hidden="true">
                 <div className="member-metric-history-dates">{hist.map((h, i) => <small key={i}>{h.date ?? "—"}</small>)}</div>
                 <svg className="member-metric-history-svg" viewBox={`0 0 ${spark.width} ${spark.height}`} preserveAspectRatio="none">
+                  <line className="member-metric-history-axis" x1={spark.padLeft} y1={spark.padTop} x2={spark.padLeft} y2={spark.axisY} />
+                  <line className="member-metric-history-axis" x1={spark.padLeft} y1={spark.axisY} x2={spark.axisRight} y2={spark.axisY} />
                   {spark.path && <path d={spark.path} fill="none" stroke="#B9B3A6" strokeWidth="1.5" />}
-                  {spark.points.map((p, i) => p.y == null ? null : <circle key={i} cx={p.x} cy={p.y} r="3" fill={levelForScore(p.value!).colorLight} />)}
+                  {spark.points.map((p, i) => p.y == null ? null : <circle key={i} cx={p.x} cy={p.y} r="3.5" fill={levelForScore(p.value!).colorLight} stroke="#F2EFE9" strokeWidth="1" />)}
                 </svg>
               </div>
             </Link>;
