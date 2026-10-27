@@ -161,7 +161,7 @@ export default function Dashboard() {
             return <Link key={card.key} to={card.path} style={style} className={`member-metric ${card.key} ${abnormal ? "is-abnormal" : ""}`}>
               <div className="member-metric-scale" aria-label="Scale: Low below 34, Medium 34 to 66, Strong 67 to 89, Optimal 90 and above">
                 {[...RUNG_SCALE].reverse().map((seg) => <span key={seg.key} className="member-metric-scale-seg" style={{ background: seg.color, flexGrow: SCALE_WEIGHT[seg.key] }} />)}
-                {card.value != null && <span className="member-metric-scale-dot" style={{ bottom: `${card.value}%`, background: level!.colorLight }} />}
+                {card.value != null && <span className="member-metric-scale-dot" style={{ bottom: `${card.value}%` }} />}
               </div>
               <div className="member-metric-content">
                 <small>{card.label.toUpperCase()}</small>
@@ -175,7 +175,7 @@ export default function Dashboard() {
                       {spark.gridLines.map((g) => <line key={g.value} className="member-metric-history-grid" x1={spark.padLeft} y1={g.y} x2={spark.axisRight} y2={g.y} />)}
                       <line className="member-metric-history-axis" x1={spark.padLeft} y1={spark.padTop} x2={spark.padLeft} y2={spark.axisY} />
                       <line className="member-metric-history-axis" x1={spark.padLeft} y1={spark.axisY} x2={spark.axisRight} y2={spark.axisY} />
-                      {spark.path && <path d={spark.path} fill="none" stroke={level ? level.colorLight : "#8F897D"} strokeWidth="2" />}
+                      {spark.path && <path d={spark.path} fill="none" stroke={level ? level.colorLight : "#8F897D"} strokeWidth="2" strokeDasharray="2 5" strokeLinecap="round" />}
                       {spark.points.map((p, i) => p.y == null ? null : <circle key={i} cx={p.x} cy={p.y} r="4" fill={levelForScore(p.value!).colorLight} stroke="#F2EFE9" strokeWidth="1.5" />)}
                     </svg>
                   </div>

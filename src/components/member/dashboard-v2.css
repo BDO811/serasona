@@ -82,10 +82,12 @@
    placed at `bottom:{score}%` always lands in the segment that score's own
    band actually occupies. */
 .member-metric-scale{position:relative;width:12px;border-radius:7px;overflow:visible;display:flex;flex-direction:column;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(17,17,17,.12)}
-.member-metric-scale-seg{display:block;width:100%}
+.member-metric-scale-seg{display:block;width:100%;box-shadow:inset 0 0 0 1px rgba(17,17,17,.65)}
 .member-metric-scale-seg:first-child{border-top-left-radius:7px;border-top-right-radius:7px}
 .member-metric-scale-seg:last-child{border-bottom-left-radius:7px;border-bottom-right-radius:7px}
-.member-metric-scale-dot{position:absolute;left:50%;width:16px;height:16px;border-radius:50%;border:3px solid #F2EFE9;box-shadow:0 1px 5px rgba(17,17,17,.4);transform:translate(-50%,50%);z-index:2}
+.member-metric-scale-dot{position:absolute;left:50%;width:16px;height:16px;border-radius:50%;background:#FFFFFF;border:2.5px solid #111111;box-shadow:0 1px 5px rgba(17,17,17,.4);transform:translate(-50%,50%);z-index:2;animation:dv-scale-dot-blink 1.4s steps(1,end) infinite}
+@keyframes dv-scale-dot-blink{0%,49%{opacity:1}50%,100%{opacity:.15}}
+@media(prefers-reduced-motion:reduce){.member-metric-scale-dot{animation:none}}
 .member-metric-content{display:flex;flex-direction:column;gap:9px;flex:1;min-width:0}
 .member-matrix-legend{display:flex;gap:16px;flex-wrap:wrap;margin:18px 0 10px;font:600 10px 'Inter',sans-serif;letter-spacing:.02em;color:#4A4741}
 .member-matrix-legend span{display:inline-flex;align-items:center;gap:6px}
