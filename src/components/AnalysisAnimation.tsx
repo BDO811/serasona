@@ -306,12 +306,8 @@ const generateGrid = (count: number, size: number) => {
 
 // Each of the 6 stages gets its own color and its own particle-mark shape,
 // so the graphic reads as 6 distinct moments rather than one repeating loop.
-// Bone neutrals only, darkest to lightest: color here marks progression
-// through the stages, not a status, so it stays out of the steady/info/alert
-// palette. The screen sits on the Serasona paper background #F2EFE9, and a
-// mid-tone or bright hue sinks into that background instead of reading
-// against it, which is what inkOnBeige below guards against.
-const STAGE_COLORS = ["#111111", "#2B2926", "#4A4741", "#6B675F", "#8F897D", "#B9B3A6"];
+// Distinct, dark hues keep each stage recognizable on the paper background.
+const STAGE_COLORS = ["#2563A6", "#9151B0", "#B14D68", "#AD611D", "#197B87", "#6354AA"];
 const STAGE_SHAPES: Array<"circle" | "star" | "triangle" | "square" | "diamond"> = [
   "circle",
   "star",
@@ -779,15 +775,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
   const archetypeRgb = useMemo(() => inkOnBeige(hexToRgb(selectedArchetype.color)), [selectedArchetype.color]);
   const stageColorRgb = useMemo(() => hexToRgb(STAGE_COLORS[stage] ?? STAGE_COLORS[0]), [stage]);
 
-  const stageRgb = useMemo(() => {
-    if (stage < 5) return stageColorRgb;
-    const t = stageProgress; // 0 to 1 over the final stage
-    return inkOnBeige({
-      r: Math.round(stageColorRgb.r + (archetypeRgb.r - stageColorRgb.r) * t),
-      g: Math.round(stageColorRgb.g + (archetypeRgb.g - stageColorRgb.g) * t),
-      b: Math.round(stageColorRgb.b + (archetypeRgb.b - stageColorRgb.b) * t),
-    });
-  }, [stage, stageProgress, archetypeRgb, stageColorRgb]);
+  const stageRgb = stageColorRgb;
 
   // Particles are drawn at full opacity. They used to sit at 0.6 alpha with a
   // brightness boost, which lifted them toward the beige and made the graphic
@@ -860,7 +848,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
 
       {/* Assessment Title - Top Center */}
       <motion.div
-        className="absolute top-3 md:top-8 left-1/2 -translate-x-1/2 max-w-[92%] font-mono text-[10px] md:text-[20px] uppercase tracking-[0.16em] md:tracking-[0.25em] text-center whitespace-nowrap"
+        className="absolute top-3 md:top-6 left-1/2 -translate-x-1/2 w-[92%] font-mono text-[10px] md:text-sm uppercase tracking-[0.16em] text-center"
         style={{ color: stageColorSoft }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.8 }}
@@ -873,7 +861,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
       <AnimatePresence mode="wait">
         <motion.div 
           key={`tl-${stage}`}
-          className="absolute top-12 md:top-8 left-3 md:left-8 font-mono text-[10px] md:text-[20px] leading-tight uppercase tracking-wider max-w-[45%] md:max-w-none"
+          className="absolute top-12 md:top-16 left-3 md:left-8 font-mono text-[10px] md:text-sm leading-relaxed uppercase tracking-wider max-w-[43%]"
           style={{ color: stageColor }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -889,7 +877,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
       <AnimatePresence mode="wait">
         <motion.div 
           key={`tr-${stage}`}
-          className="absolute top-12 md:top-8 right-3 md:right-8 text-right font-mono text-[10px] md:text-[20px] leading-tight uppercase tracking-wider max-w-[45%] md:max-w-none"
+          className="absolute top-12 md:top-16 right-3 md:right-8 text-right font-mono text-[10px] md:text-sm leading-relaxed uppercase tracking-wider max-w-[43%]"
           style={{ color: stageColor }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -905,7 +893,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
       <AnimatePresence mode="wait">
         <motion.div 
           key={`bl-${stage}`}
-          className="absolute bottom-14 md:bottom-24 left-3 md:left-8 font-mono text-[10px] md:text-[20px] leading-tight uppercase tracking-wider max-w-[45%] md:max-w-none"
+          className="absolute bottom-14 md:bottom-16 left-3 md:left-8 font-mono text-[10px] md:text-sm leading-relaxed uppercase tracking-wider max-w-[43%]"
           style={{ color: stageColor }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -921,7 +909,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
       <AnimatePresence mode="wait">
         <motion.div 
           key={`br-${stage}`}
-          className="absolute bottom-14 md:bottom-24 right-3 md:right-8 text-right font-mono text-[10px] md:text-[20px] leading-tight uppercase tracking-wider max-w-[45%] md:max-w-none"
+          className="absolute bottom-14 md:bottom-16 right-3 md:right-8 text-right font-mono text-[10px] md:text-sm leading-relaxed uppercase tracking-wider max-w-[43%]"
           style={{ color: stageColor }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -933,26 +921,25 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
         </motion.div>
       </AnimatePresence>
 
-      {/* Stage indicator — prominent, directly above the particle graphic, so progress is unmistakable */}
+      <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-5 md:gap-6" data-testid="analysis-stack">
+      {/* Keep the counter, graphic and copy in one flow so text cannot collide. */}
       <div
-        className="absolute left-1/2 flex items-center gap-2 rounded-full border font-mono text-lg md:text-2xl font-bold px-4 md:px-5 py-1.5 md:py-2"
+        className="flex items-center justify-center gap-2 rounded-full border font-mono text-lg md:text-2xl font-bold px-4 md:px-5 py-1.5 md:py-2 tabular-nums leading-none"
         style={{
-          top: '50%',
-          transform: `translate(-50%, ${L.pillOffset}px)`,
           borderColor: rgbaCss(stageRgb, 0.45),
           backgroundColor: rgbaCss(stageRgb, 0.12),
           color: stageColor,
         }}
       >
-        {stage + 1}<span className="opacity-50">/6</span>
+        <span>{stage + 1}</span><span className="opacity-50">/</span><span className="opacity-50">6</span>
       </div>
 
       {/* Central particle system */}
       <motion.div 
         className="relative"
         style={{ 
-          width: L.graphic,
-          height: L.graphic,
+          width: `min(${L.graphic}px, 32svh)`,
+          height: `min(${L.graphic}px, 32svh)`,
           transform: `scale(${pulseScale})`,
           transition: 'transform 0.3s ease-out',
         }}
@@ -961,7 +948,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
           width="300" 
           height="300" 
           viewBox="-150 -150 300 300"
-          className="overflow-visible"
+          className="overflow-visible h-full w-full"
         >
           {/* Glow gradient */}
           <defs>
@@ -1044,22 +1031,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
         DETAIL_ROTATE_MS and a 1.5s fade would still be running.
       */}
       <div
-        className="absolute left-1/2 w-full px-6 text-center pointer-events-none"
-        style={{
-          /*
-            The midpoint between the graphic's lower edge and the headline's top
-            edge, so the line sits evenly between the two rather than crowding
-            one of them.
-
-            Graphic is 300px tall centred on the viewport, so its bottom edge is
-            at 50% + 150px. The headline is anchored bottom-36 (144px) and runs
-            about 29px tall, putting its top edge at 100% - 173px. The midpoint
-            of those two is 75% - 11.5px, and it holds at any viewport height
-            rather than only the one it was eyeballed on.
-          */
-          top: L.detailTop,
-          transform: "translate(-50%, -50%)",
-        }}
+        className="w-full max-w-2xl px-2 text-center pointer-events-none min-h-[2.75em]"
       >
         <AnimatePresence mode="wait">
           <motion.div
@@ -1080,7 +1052,7 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
       <AnimatePresence mode="wait">
         <motion.div
           key={stage}
-          className="absolute bottom-28 md:bottom-36 left-0 right-0 px-5 md:px-6 text-center"
+          className="w-full max-w-3xl px-2 text-center min-h-[3em]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.2 } }}
@@ -1094,6 +1066,8 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
           </span>
         </motion.div>
       </AnimatePresence>
+
+      </div>
 
       {/* Progress dots - gentle breathing */}
       <div className="absolute bottom-6 md:bottom-12 left-1/2 -translate-x-1/2">
