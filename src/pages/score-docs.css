@@ -25,4 +25,11 @@
 .score-docs footer { border-top: 1px solid hsl(var(--border)); margin-top: 56px; padding-top: 24px; }
 .score-docs footer > a { display: inline-block; margin: 16px 24px 0 0; }
 .score-docs-brand { height: 32px; width: auto; margin-bottom: 28px; }
+.score-review { background: #F0EAE0; color: #1A1A1A; font-family: Georgia, serif; }
+.score-review h1, .score-review h2, .score-review h3 { font-family: Georgia, serif; color: #000000; }
+.score-review a, .score-review caption { color: #000000; }
+.score-review .score-docs-label, .score-review nav, .score-review thead th { font-family: "Courier New", monospace; letter-spacing: -0.3px; color: #2E2E2E; }
+.score-review .score-docs-formula { background: #E6DFD3; border-radius: 0; }
+.score-review [aria-current="page"] { font-weight: 700; text-decoration-thickness: 3px; }
+.score-review [hidden] { display: none; }
 @media (max-width: 480px) { .score-docs > article { padding: 32px 20px 64px; } .score-docs h2 { font-size: 26px; } .score-docs th, .score-docs td { padding: 10px 4px; font-size: 13px; } }

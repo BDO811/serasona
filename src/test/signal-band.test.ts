@@ -311,7 +311,7 @@ describe("bandLabelForSignal", () => {
   });
 
   it("leaves every other sign reading NORMAL", () => {
-    for (const name of ["anxiety", "stress", "cardiovascular-strain"]) {
+    for (const name of ["stress", "cardiovascular-strain"]) {
       expect(bandLabelForSignal(name, "NORMAL")).toBe("NORMAL");
     }
   });

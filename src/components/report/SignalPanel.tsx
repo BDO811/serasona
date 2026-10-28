@@ -29,8 +29,6 @@ interface SignalPanelProps {
  * probability, not a common one, so comparing it across rows invited a false
  * reading. See lib/signal-band.ts.
  */
-/** status.info, dark-ground step. Dark rows only, which is all of these. */
-const READOUT_BLUE = "#8FA9F5";
 
 export const SignalPanel = ({
   signals,
@@ -79,25 +77,9 @@ export const SignalPanel = ({
               >
                 {label}
               </span>
-              {/*
-                The band word only. The raw score used to sit beside it, and the
-                docs class score as internal use with `level` as the display
-                field, so printing three decimals invited a reader to compare
-                numbers that are calibrated per sign and not comparable across
-                rows.
-
-                Blue rather than white, so the readout separates from the sign
-                name on the left and does not compete with the lit cell below,
-                which already carries the band's own colour.
-              */}
-              <span
-                className={`font-mono flex-shrink-0 ${isSeniorMode ? "text-xs" : "text-[10px]"}`}
-                style={{ color: READOUT_BLUE }}
-              >
-                {bandWord}
-              </span>
             </div>
 
+            {band === "INCONCLUSIVE" && <p className="text-sm text-white">Inconclusive. This sign could not be scored.</p>}
             <OptionScale
               options={scale}
               activeKey={band === "INCONCLUSIVE" ? null : band}

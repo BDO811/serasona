@@ -275,7 +275,7 @@ export function bandForSignal(
  * The band itself stays NORMAL, so the flag count, the grade and the sentence
  * are unaffected. Only the label differs.
  */
-const NONE_INSTEAD_OF_NORMAL = new Set(["head-impact", "fatigue"]);
+const NONE_INSTEAD_OF_NORMAL = new Set(["head-impact", "fatigue", "dehydration", "mood-disruption", "anxiety"]);
 
 /**
  * Display names that replace the API's own label for a sign.

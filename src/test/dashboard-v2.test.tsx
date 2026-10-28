@@ -53,12 +53,27 @@ describe("selected live dashboard", () => {
     fireEvent.click(screen.getByRole("button", { name: "Assessment details" }));
     expect(screen.getByText("actual-saved-record")).toBeInTheDocument();
   });
-  it("keeps the requested sample chart separate from saved readings", () => {
+  it("shows one actual reading without inventing prior history", () => {
     mocks.sessions = [saved]; open();
-    expect(screen.getByText("SAMPLE DATA · 10 MEASUREMENTS")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "My results" }));
-    expect(screen.getByText("YOUR SAVED RESULTS · LAST 10")).toBeInTheDocument();
-    expect(screen.queryByText("SAMPLE DATA · 10 MEASUREMENTS")).not.toBeInTheDocument();
+    expect(screen.getByText("YOUR SAVED RESULTS · 1 RECORDING")).toBeInTheDocument();
+    expect(screen.getByText("Your first reading is saved. No prior measurements yet.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Sample preview" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: /Saved trend/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "What does your serasona score mean" })).toHaveAttribute("href", "/docs/serasona-score");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+  it("plots only actual comparable readings once another measurement exists", () => {
+    mocks.sessions = [saved, { ...saved, sessionId: "earlier-real", capturedAt: saved.capturedAt - 86400000 }];
+    open();
+    expect(screen.getByRole("img", { name: /Saved trend.*across 2 dated measurements/ })).toBeInTheDocument();
+    expect(screen.queryByText(/SAMPLE DATA/)).not.toBeInTheDocument();
+  });
+  it("keeps an unmeasured index unscored even with two saved recordings", () => {
+    mocks.sessions = [saved, { ...saved, sessionId: "earlier-real", capturedAt: saved.capturedAt - 86400000 }];
+    open();
+    fireEvent.change(screen.getByRole("combobox", { name: "Trend metric" }), { target: { value: "clarity" } });
+    expect(screen.queryByRole("img", { name: /Saved trend/ })).not.toBeInTheDocument();
+    expect(screen.getByText("No trend available for these indices.")).toBeInTheDocument();
   });
   it("does not insert sample results for an empty account", () => {
     mocks.entitled = false; open();

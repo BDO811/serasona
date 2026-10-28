@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import ScoreDocs from "@/pages/ScoreDocs";
 import GroupScoreDocs from "@/pages/GroupScoreDocs";
@@ -9,6 +9,18 @@ import { MEASUREMENT_EVIDENCE, SCORE_REFERENCES } from "@/lib/score-evidence";
 
 afterEach(cleanup);
 describe("score documentation coverage", () => {
+  it("navigates three review pages and opens reference deep links", () => {
+    render(<MemoryRouter><ScoreDocs /></MemoryRouter>);
+    expect(screen.getByText("PAGE 1 OF 3")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "A summary of this recording" })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "The weighting matrix" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("link", { name: "2. Weights and comparisons" })[0]);
+    expect(screen.getByText("PAGE 2 OF 3")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The weighting matrix" })).toBeVisible();
+    fireEvent.click(screen.getAllByRole("link", { name: "3. Evidence and references" })[0]);
+    expect(screen.getByText("PAGE 3 OF 3")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "References" })).toBeVisible();
+  });
   it("documents the exact Clarity weights and its minimum input requirement", () => {
     render(<MemoryRouter><GroupScoreDocs group="clarity" /></MemoryRouter>);
     expect(screen.getByText(/not a cognitive test or a diagnosis/)).toBeInTheDocument();
@@ -21,7 +33,7 @@ describe("score documentation coverage", () => {
   });
   it("documents every weighted sign and resolves its reference links", () => {
     expect(Object.keys(MEASUREMENT_EVIDENCE).sort()).toEqual(Object.keys(SIGN_DEFINITIONS).sort());
-    render(<MemoryRouter><ScoreDocs /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={["/docs/serasona-score?page=3"]}><ScoreDocs /></MemoryRouter>);
     expect(screen.getByRole("img", { name: "Serasona" })).toHaveAttribute("src", expect.stringContaining("serasona-logo-full.svg"));
     expect(screen.queryByRole("img", { name: /amplifier/i })).not.toBeInTheDocument();
     for (const [name, evidence] of Object.entries(MEASUREMENT_EVIDENCE)) {
