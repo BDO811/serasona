@@ -47,8 +47,28 @@ export function DashboardBodyMap({ session, zone, onZoneChange, loading, bodySex
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (moving) video.play()?.catch(() => {});
-    else video.pause();
+    // Prefer hardware decoded H.264 and retry when media becomes ready or
+    // the tab returns. A single mount-time play() can be rejected on Safari.
+    const syncPlayback = () => {
+      if (!moving || document.hidden) { video.pause(); return; }
+      video.muted = true;
+      video.defaultMuted = true;
+      void video.play()?.catch(() => {});
+    };
+    syncPlayback();
+    video.addEventListener("canplay", syncPlayback);
+    document.addEventListener("visibilitychange", syncPlayback);
+    window.addEventListener("pageshow", syncPlayback);
+    window.addEventListener("pointerdown", syncPlayback);
+    window.addEventListener("keydown", syncPlayback);
+    return () => {
+      video.removeEventListener("canplay", syncPlayback);
+      document.removeEventListener("visibilitychange", syncPlayback);
+      window.removeEventListener("pageshow", syncPlayback);
+      window.removeEventListener("pointerdown", syncPlayback);
+      window.removeEventListener("keydown", syncPlayback);
+      video.pause();
+    };
   }, [moving, figure]);
 
   const abnormal: Record<DashboardZone, boolean> = {
@@ -75,7 +95,7 @@ export function DashboardBodyMap({ session, zone, onZoneChange, loading, bodySex
     </div>
     <div className="dv-body-canvas">
       <div className="dv-body-figure">
-        <video key={figure} ref={videoRef} autoPlay={moving} muted loop playsInline aria-hidden="true"><source src={asset(`video/body-${figure}.webm`)} type="video/webm" /><source src={asset(`video/body-${figure}.mp4`)} type="video/mp4" /></video>
+        <video key={figure} ref={videoRef} autoPlay={moving} muted loop playsInline preload="auto" aria-hidden="true" style={{ filter: "none" }}><source src={asset(`video/body-${figure}.mp4`)} type="video/mp4" /><source src={asset(`video/body-${figure}.webm`)} type="video/webm" /></video>
         {available.map((z) => {
           const count = signals.filter((s) => dashboardZoneForSignal(s.name) === z).length;
           return <button key={z} style={{ ...POSITIONS[z], ["--dot-color" as string]: ZONE_COLOR[z] }} className={`dv-zone dv-dot dv-zone-${z} ${abnormal[z] ? "is-abnormal" : ""}`} aria-label={`Explore ${DASHBOARD_ZONE_LABEL[z]}: ${count} returned signs`} aria-pressed={activeZone === z} onClick={() => onZoneChange(zone === z ? null : z)} />;

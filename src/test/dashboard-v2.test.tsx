@@ -11,6 +11,16 @@ const saved = { sessionId: "actual-saved-record", capturedAt: Date.now(), source
 function open() { render(<MemoryRouter><Dashboard /></MemoryRouter>); }
 beforeEach(() => { cleanup(); mocks.sessions = []; mocks.loading = false; mocks.error = null; mocks.entitled = true; });
 describe("selected live dashboard", () => {
+  it("shows a Clarity value and history for a Pulse check-in with fatigue", () => {
+    mocks.sessions = [{ ...saved, signals: [...saved.signals, { name: "fatigue", label: "Fatigue", score: .5, level: "moderate", flagged: true }] }];
+    open();
+    const card = screen.getByRole("link", { name: /CLARITY INDEX/ });
+    expect(card.querySelector("strong")).toHaveTextContent("38");
+    expect(card).not.toHaveTextContent("Not read");
+    expect(card).toHaveAttribute("href", "/docs/clarity-score");
+    const row = screen.getByRole("row", { name: /^Clarity/ });
+    expect(within(row).getByText("38")).toBeInTheDocument();
+  });
   it("uses saved signs, links to real capture flows and filters the body map", () => {
     mocks.sessions = [saved]; open();
     expect(screen.getByRole("region", { name: "YOUR SERASONA SCORE" })).toHaveTextContent("45");
