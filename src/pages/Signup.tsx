@@ -56,15 +56,34 @@ const Signup = () => {
         biometricConsentAt: new Date().toISOString(),
         consentPolicyVersion: LEGAL_EFFECTIVE,
       });
-      if (selectedPlan && selectedPlan !== "free") {
-        await startCheckout(selectedPlan);
-        return; // startCheckout redirects the browser to Stripe
-      }
-      navigate(nextPath, { replace: true });
+
     } catch (error) {
-      toast.error("Couldn't create that account. Check your details and try again.");
+      const code = (error as { code?: string }).code;
+      const messages: Record<string, string> = {
+        "auth/email-already-in-use": "An account already exists for this email. Log in or reset your password.",
+        "auth/invalid-email": "Enter a valid email address.",
+        "auth/weak-password": "Choose a stronger password with at least 8 characters.",
+        "auth/password-does-not-meet-requirements": "Choose a stronger password with uppercase and lowercase letters, a number and a symbol.",
+        "auth/network-request-failed": "We couldn't connect. Check your connection and try again.",
+        "auth/too-many-requests": "Too many attempts. Wait a few minutes and try again.",
+        "auth/operation-not-allowed": "Account creation is temporarily unavailable. Please try again later.",
+        "permission-denied": "Your account was created, but we couldn't save your profile. Try again with the same email and password.",
+        "unavailable": "We couldn't save your profile right now. Try again with the same email and password.",
+      };
+      toast.error(messages[code ?? ""] ?? "We couldn't finish setting up your account. Try again with the same email and password.");
       setSubmitting(false);
+      return;
     }
+    if (selectedPlan && ["core", "plus", "executive"].includes(selectedPlan)) {
+      try {
+        await startCheckout(selectedPlan as Exclude<PlanId, "free">);
+      } catch {
+        toast.error("Your account is ready. Checkout couldn't open. Choose your plan from your account page.");
+        navigate("/account", { replace: true });
+      }
+      return;
+    }
+    navigate(nextPath, { replace: true });
   };
 
   return (

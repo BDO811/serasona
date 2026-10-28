@@ -8,7 +8,7 @@ import {
   updateProfile,
   onAuthStateChanged,
 } from "firebase/auth";
-import { doc, setDoc, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
 
 const NOT_CONFIGURED_ERROR = new Error("Accounts aren't set up yet. Check back soon.");
@@ -122,7 +122,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     consent?: ConsentRecord,
   ) => {
     if (!auth || !db) throw NOT_CONFIGURED_ERROR;
-    const credential = await createUserWithEmailAndPassword(auth, email, password);
+    email = email.trim();
+    fullName = fullName.trim();
+    let credential;
+    try {
+      credential = await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      if ((error as { code?: string }).code !== "auth/email-already-in-use") throw error;
+      // A failed profile write can leave a real Auth account behind. Prove
+      // ownership with the password before retrying that interrupted signup.
+      try {
+        credential = await signInWithEmailAndPassword(auth, email, password);
+      } catch {
+        throw error;
+      }
+      const existing = await getDoc(doc(db, "users", credential.user.uid));
+      if (existing.exists()) return; // Never overwrite existing consent or billing.
+    }
     await updateProfile(credential.user, { displayName: fullName });
     // No `subscription` field. The Firestore rules forbid the client from
     // writing one at all — that field is the entitlement, and it is only ever
