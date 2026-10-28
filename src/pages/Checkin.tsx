@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useVoiceHistory } from "@/hooks/use-voice-history";
@@ -30,20 +31,33 @@ const Checkin = () => {
   const { loading, sessions, error, refresh } = useVoiceHistory();
 
   const unlimited = isEntitled("core");
+  const [admittedUid, setAdmittedUid] = useState<string | null>(null);
+  const admitted = Boolean(user && admittedUid === user.uid);
+
+  // History is an entry gate, not a live condition on an active recording.
+  // Its hook reloads when pathway/jobId changes. Hiding Index on those
+  // reloads remounts it with initialState=capture and clears the completed
+  // result, so a successful analysis starts recording again for free users.
+  useEffect(() => {
+    if (!user) { setAdmittedUid(null); return; }
+    if (!loading && !error && sessions.length === 0) setAdmittedUid(user.uid);
+  }, [user?.uid, loading, error, sessions.length]);
+
+  // Admission is scoped to this account and this mounted /checkin visit.
+  // A later visit still checks whether the free reading has been used.
+  if (!user) return <Navigate to="/login" replace />;
 
   // Don't decide anything while history is still loading, or a paid-looking
   // free user gets bounced on a race.
-  if (!unlimited && loading) return null;
+  if (!unlimited && !admitted && loading) return null;
 
-  if (!unlimited && error) return <main className="p-8"><p role="alert">{error}</p><button onClick={refresh}>Retry loading history</button></main>;
+  if (!unlimited && !admitted && error) return <main className="p-8"><p role="alert">{error}</p><button onClick={refresh}>Retry loading history</button></main>;
 
-  if (!unlimited && sessions.length > 0) {
+  if (!unlimited && !admitted && sessions.length > 0) {
     return <Navigate to="/pricing" replace />;
   }
 
-  // ProtectedRoute already guarantees this; belt and braces, since Index itself
-  // has no idea the route requires anyone to be signed in.
-  if (!user) return <Navigate to="/login" replace />;
+  if (!unlimited && !admitted) return null;
 
   return <Index initialState="capture" presetPathway="WELLNESS" exitTo="/dashboard" />;
 };
