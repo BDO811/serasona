@@ -45,10 +45,8 @@ describe("completed analysis to live dashboard history", () => {
   Object.defineProperty(navigator,"mediaDevices",{configurable:true,value:{getUserMedia:vi.fn(async () => ({getAudioTracks:() => [track],getTracks:() => [track]}))}});
   render(<MemoryRouter initialEntries={["/checkin"]}><AssessmentProvider><Routes><Route path="/checkin" element={<Index initialState="capture" presetPathway="WELLNESS" exitTo="/dashboard" />} /><Route path="/dashboard" element={<Dashboard />} /></Routes></AssessmentProvider></MemoryRouter>);
   await act(async () => { await vi.advanceTimersByTimeAsync(500); });
-  for (let question=0;question<2;question++) {
-    fireEvent.click(screen.getByRole("button", { name: /^START$/ }));
-    for (let second=0;second<21;second++) await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
-  }
+  fireEvent.click(screen.getByRole("button", { name: /^START$/ }));
+  for (let second=0;second<21;second++) await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
   expect(screen.getByRole("button", { name: "Finish analysis" })).toBeEnabled();
   fireEvent.click(screen.getByRole("button", { name: "Finish analysis" }));
   vi.useRealTimers();

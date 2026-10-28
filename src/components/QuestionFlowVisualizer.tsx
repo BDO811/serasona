@@ -35,6 +35,8 @@ const RECORDING_DURATION_SECONDS = 20;
 // "N of M" label — derives from this, so changing it here changes all of them.
 const QUESTION_COUNT = 2;
 const MIN_SPEECH_SECONDS = 10;
+// Match try.amplifierhealth.com: a sufficient first take goes straight to analysis.
+const SUFFICIENT_SPEECH_SECONDS = 15;
 const SPEECH_GAIN_THRESHOLD = 0.15;
 const QUESTION_BACKGROUNDS = [
   asset("images/talk-laugh-outdoors.jpg"),
@@ -227,6 +229,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
   // Audio refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioStreamRef = useRef<MediaStream | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   
   // Per-question accumulated audio buffers, one slot per asked question.
@@ -279,11 +282,11 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
   }, []);
 
   // Process audio analysis
-  const processAudioAnalysis = useCallback(async (audioBlob: Blob, format?: string, extension?: string, mimeType?: string) => {
+  const processAudioAnalysis = useCallback(async (audioBlob: Blob, format?: string, extension?: string, mimeType?: string): Promise<boolean> => {
     if (!isAssessmentPathwayEnabled(pathway)) {
       console.warn(`[QuestionFlowVisualizer] Pathway ${pathway} is disabled`);
       setApiStatus("failed");
-      return;
+      return false;
     }
 
     setApiStatus("pending");
@@ -320,7 +323,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
               jobDetail.result
             );
             setApiStatus("failed");
-            return;
+            return false;
           }
 
           const visualized = transformV2ResultToVisualization(
@@ -333,16 +336,40 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
         } catch (transformError) {
           console.error("[QuestionFlowVisualizer] Transformation failed:", transformError);
           setApiStatus("failed");
-          return;
+          return false;
         }
       }
       
       setApiStatus("done");
+      return true;
     } catch (apiError) {
       console.error("[QuestionFlowVisualizer] Analysis failed:", apiError);
       setApiStatus("failed");
+      return false;
     }
   }, [pathway, userProfile, setApiStatus, setApiResult, setVisualizedResult]);
+
+  // Encode a set of per-question audio buffers and run them through analysis.
+  // Shared by the single-sample attempt after Q1 and the final merge after
+  // whichever question actually ends up being the last one.
+  const finishWithBuffers = useCallback(async (buffers: AudioBuffer[]): Promise<boolean> => {
+    if (buffers.length === 0) {
+      console.error("[QuestionFlowVisualizer] No audio recorded");
+      setApiStatus("failed");
+      return false;
+    }
+    try {
+      const merged = mergeAudioBuffers(buffers);
+      const { blob, format, extension, mimeType } = await convertAudioBufferToBlob(merged);
+      setAudioBlob(blob);
+      console.log(`[QuestionFlowVisualizer] Audio (${format}):`, blob.size, "bytes");
+      return await processAudioAnalysis(blob, format, extension, mimeType);
+    } catch (error) {
+      console.error("[QuestionFlowVisualizer] Error processing audio:", error);
+      setApiStatus("failed");
+      return false;
+    }
+  }, [processAudioAnalysis, setAudioBlob, setApiStatus]);
 
   // Initialize audio recording
   useEffect(() => {
@@ -422,10 +449,17 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
       if (audioStreamRef.current) {
         audioStreamRef.current.getTracks().forEach((track) => track.stop());
       }
+      const context = audioContextRef.current;
+      audioContextRef.current = null;
+      if (context && context.state !== "closed") void context.close().catch(() => {});
     };
   }, [navigate]);
 
-  // Recording auto-stops after a fixed 15 seconds
+  // Recording auto-stops after a fixed RECORDING_DURATION_SECONDS. For Q1,
+  // once SUFFICIENT_SPEECH_SECONDS have elapsed it also re-checks every
+  // second after that - 15s, 16s, 17s... - and stops the moment the speech
+  // captured so far clears the bar, rather than always forcing the full
+  // window even when the answer was already long enough.
   useEffect(() => {
     if (!isRecording) {
       setRecordingSecondsLeft(RECORDING_DURATION_SECONDS);
@@ -434,16 +468,26 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
 
     const interval = window.setInterval(() => {
       setRecordingSecondsLeft((prev) => {
-        if (prev <= 1) {
+        const next = prev - 1;
+        if (next <= 0) {
           stopRecording();
           return 0;
         }
-        return prev - 1;
+        const elapsedSeconds = RECORDING_DURATION_SECONDS - next;
+        if (
+          currentQuestion === 0 &&
+          elapsedSeconds >= SUFFICIENT_SPEECH_SECONDS &&
+          speechSecondsRef.current > SUFFICIENT_SPEECH_SECONDS
+        ) {
+          stopRecording();
+          return 0;
+        }
+        return next;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isRecording]);
+  }, [isRecording, currentQuestion]);
 
   // Live mic waveform ring — analyser + adaptive noise-floor gain gating,
   // ported from amplifier-demo-sites/generator/template_try.html so the bars
@@ -453,7 +497,8 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
 
     const stream = audioStreamRef.current;
     const AudioContextCtor = window.AudioContext || (window as any).webkitAudioContext;
-    const audioCtx = new AudioContextCtor();
+    const audioCtx = audioContextRef.current ?? new AudioContextCtor();
+    audioContextRef.current = audioCtx;
 
     // A context created without a qualifying user gesture in THIS document
     // starts suspended, and a suspended context pulls nothing through the
@@ -566,7 +611,8 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
       if (waveformRafRef.current) cancelAnimationFrame(waveformRafRef.current);
       try {
         GESTURES.forEach((g) => window.removeEventListener(g, onGesture));
-        audioCtx.close();
+        if (audioContextRef.current === audioCtx) audioContextRef.current = null;
+        if (audioCtx.state !== "closed") void audioCtx.close().catch(() => {});
       } catch {
         // ignore
       }
@@ -574,48 +620,39 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
   }, [isRecording, recorderReady]);
 
   // Advance to next question or complete
-  const advanceToNextQuestion = useCallback(async () => {
+  const advanceToNextQuestion = useCallback(() => {
     if (currentQuestion >= QUESTIONS.length - 1) {
-      // All questions complete - merge all audio and send for analysis
+      // Last question answered - merge all audio recorded so far and send for
+      // analysis. Not awaited: processAudioAnalysis sets apiStatus to
+      // processing synchronously before its first await, so the analysis
+      // screen has the state it needs the moment it mounts. The wait here
+      // only covers the button fading out; it used to be 800ms on top of the
+      // encode, which left the finished capture screen sitting there.
       setIsComplete(true);
-      
-      try {
-        // Flatten all question audio buffers
-        const allBuffers = questionAudioBuffersRef.current.flat();
-        if (allBuffers.length === 0) {
-          console.error("[QuestionFlowVisualizer] No audio recorded");
-          setApiStatus("failed");
-          return;
-        }
-
-        const merged = mergeAudioBuffers(allBuffers);
-        const { blob, format, extension, mimeType } = await convertAudioBufferToBlob(merged);
-        
-        setAudioBlob(blob);
-        console.log(`[QuestionFlowVisualizer] Final audio (${format}):`, blob.size, "bytes");
-        
-        // processAudioAnalysis sets apiStatus to processing synchronously before
-        // its first await, so the analysis screen has the state it needs the
-        // moment it mounts. The wait here only covers the button fading out;
-        // it used to be 800ms on top of the encode, which left the finished
-        // capture screen sitting there.
-        processAudioAnalysis(blob, format, extension, mimeType);
-
-        setTimeout(onComplete, 200);
-      } catch (error) {
-        console.error("[QuestionFlowVisualizer] Error processing final audio:", error);
-        setApiStatus("failed");
-      }
+      finishWithBuffers(questionAudioBuffersRef.current.flat());
+      setTimeout(onComplete, 200);
     } else {
       // Move to next question
       setCurrentQuestion(prev => prev + 1);
       setHasRecordedCurrentQuestion(false);
     }
-  }, [currentQuestion, setAudioBlob, processAudioAnalysis, onComplete, setApiStatus]);
+  }, [currentQuestion, QUESTIONS.length, finishWithBuffers, onComplete]);
 
   // Start recording
   const startRecording = useCallback(() => {
-    if (isComplete) return;
+    if (isComplete || !recorderReady || !mediaRecorderRef.current || mediaRecorderRef.current.state !== "inactive") return;
+
+    // /checkin can be opened directly. Unlock Web Audio inside this click,
+    // before React effects run, so the speech gate can hear the microphone.
+    try {
+      const AudioContextCtor = window.AudioContext || (window as any).webkitAudioContext;
+      const context = audioContextRef.current ?? new AudioContextCtor();
+      audioContextRef.current = context;
+      if (context.state === "suspended") void context.resume().catch(() => {});
+    } catch {
+      setInsufficientSpeechWarning("The microphone could not start. Please try again.");
+      return;
+    }
     
     // Run health check on first recording
     if (!healthCheckDoneRef.current) {
@@ -631,7 +668,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
 
     setInsufficientSpeechWarning(null);
     setIsRecording(true);
-  }, [isComplete]);
+  }, [isComplete, recorderReady]);
 
   // Stop recording
   const stopRecording = useCallback(async () => {
@@ -642,8 +679,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
     
     // Stop media recorder and process audio
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
-      mediaRecorderRef.current.stop();
-      
+      // Install the handler before stop so the final chunk cannot be missed.
       mediaRecorderRef.current.onstop = async () => {
         try {
           const spokeSeconds = speechSecondsRef.current;
@@ -695,6 +731,14 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
           questionAudioBuffersRef.current[currentQuestion].push(decoded);
           console.log(`[QuestionFlowVisualizer] Q${currentQuestion + 1} segment recorded`);
 
+          // The reference workflow decides locally, without a separate API call.
+          if (currentQuestion === 0 && spokeSeconds > SUFFICIENT_SPEECH_SECONDS) {
+            setIsComplete(true);
+            void finishWithBuffers(questionAudioBuffersRef.current[0]);
+            setTimeout(onComplete, 200);
+            return;
+          }
+
           // Move straight to the next question, no countdown
           advanceToNextQuestion();
         } catch (error) {
@@ -703,8 +747,9 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
           setInsufficientSpeechWarning("This recording could not be read. Please record this answer again.");
         }
       };
+      mediaRecorderRef.current.stop();
     }
-  }, [isRecording, currentQuestion, advanceToNextQuestion, getNextPoolQuestion]);
+  }, [isRecording, currentQuestion, advanceToNextQuestion, getNextPoolQuestion, finishWithBuffers, onComplete]);
 
   // Click to start recording immediately, or stop if already recording
   const handleRecordClick = useCallback(() => {
@@ -1007,6 +1052,7 @@ export const QuestionFlowVisualizer = ({ onComplete }: QuestionFlowVisualizerPro
             pointerEvents: isComplete ? 'none' : 'auto',
           }}
           onClick={handleRecordClick}
+          aria-label={isRecording ? "Stop recording" : undefined}
           whileTap={{ scale: 0.98 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{
