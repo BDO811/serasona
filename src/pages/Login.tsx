@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
-import { toast } from "sonner";
 import { redirectToMemberDashboard } from "@/lib/member-navigation";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -14,6 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const redirecting = useRef(false);
   useEffect(() => {
     if (user && !submitting && !redirecting.current) {
@@ -26,16 +26,33 @@ const Login = () => {
   // signup destination only for the create-account link below.
   const nextParam = new URLSearchParams(location.search).get("next");
   const safeNext = nextParam && /^\/[^/]/.test(nextParam) ? nextParam : null;
+  const signupPath = safeNext ? `/signup?next=${encodeURIComponent(safeNext)}` : "/signup";
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setLoginError(null);
     setSubmitting(true);
     try {
       await logIn(email, password);
       redirecting.current = true;
       redirectToMemberDashboard();
     } catch (error) {
-      toast.error("That email and password didn't match. Try again.");
+      const code = (error as { code?: string })?.code;
+      setLoginError(
+        code === "auth/user-not-found"
+          ? "That account doesn't exist. Sign up for a new Serasona account."
+          : code === "auth/invalid-credential" || code === "auth/invalid-login-credentials"
+            // Firebase may intentionally combine unknown email and incorrect
+            // password. Do not claim a known account is missing in that case.
+            ? "We couldn't find an account matching those details. Check your email and password, or sign up for a new account."
+            : code === "auth/wrong-password"
+              ? "That password didn't match. Try again or reset your password."
+              : code === "auth/too-many-requests"
+                ? "Too many login attempts. Please wait a moment and try again."
+                : code === "auth/network-request-failed"
+                  ? "We couldn't connect. Check your connection and try again."
+                  : "We couldn't log you in. Check your email and password and try again."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -84,12 +101,16 @@ const Login = () => {
           <Button type="submit" className="w-full" disabled={submitting || redirecting.current}>
             {submitting ? "Logging in…" : "Log in"}
           </Button>
+          {loginError && <div role="alert" className="space-y-2 text-sm text-foreground">
+            <p>{loginError}</p>
+            <Link to={signupPath} className="underline underline-offset-4">Sign up for a new account</Link>
+          </div>}
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
           New to Serasona?{" "}
           <Link
-            to={safeNext ? `/signup?next=${encodeURIComponent(safeNext)}` : "/signup"}
+            to={signupPath}
             className="text-foreground underline underline-offset-4"
           >
             Create an account
