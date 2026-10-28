@@ -34,6 +34,15 @@ describe("member login destination", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("That password didn't match.");
     expect(screen.getByRole("alert")).not.toHaveTextContent("account doesn't exist");
   });
+  it.each([{ search: "?next=/admin" }, { state: { from: "/admin/" } }])("returns administrator login to admin: %j", async (destination) => {
+    cleanup(); redirect.mockClear(); signedIn.value = false;
+    render(<MemoryRouter initialEntries={[{ pathname: "/login", ...destination }]}><Routes><Route path="/login" element={<Login />} /><Route path="/admin" element={<h1>Administration</h1>} /></Routes></MemoryRouter>);
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "admin@example.invalid" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "test-only-password" } });
+    fireEvent.click(screen.getByRole("button", { name: "Log in" }));
+    await screen.findByRole("heading", { name: "Administration" });
+    expect(redirect).not.toHaveBeenCalled();
+  });
   it("always lands on the live dashboard, including an older account redirect", async () => {
     cleanup(); redirect.mockClear();
     render(<MemoryRouter initialEntries={[{ pathname: "/login", search: "?next=/checkin", state: { from: "/account" } }]}><Routes><Route path="/login" element={<Login />} /><Route path="/dashboard" element={<h1>Live member dashboard</h1>} /></Routes></MemoryRouter>);

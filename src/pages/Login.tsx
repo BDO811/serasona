@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, FormEvent } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,9 @@ import { SiteHeader } from "@/components/SiteHeader";
 const Login = () => {
   const { logIn, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const adminDestination = location.state?.from?.replace(/\/$/, "") === "/admin" ||
+    new URLSearchParams(location.search).get("next")?.replace(/\/$/, "") === "/admin";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -18,9 +21,10 @@ const Login = () => {
   useEffect(() => {
     if (user && !submitting && !redirecting.current) {
       redirecting.current = true;
-      redirectToMemberDashboard();
+      if (adminDestination) navigate("/admin", { replace: true });
+      else redirectToMemberDashboard();
     }
-  }, [user, submitting]);
+  }, [user, submitting, adminDestination, navigate]);
 
   // Successful login always opens the member dashboard. Preserve the same-site
   // signup destination only for the create-account link below.
@@ -35,7 +39,8 @@ const Login = () => {
     try {
       await logIn(email, password);
       redirecting.current = true;
-      redirectToMemberDashboard();
+      if (adminDestination) navigate("/admin", { replace: true });
+      else redirectToMemberDashboard();
     } catch (error) {
       const code = (error as { code?: string })?.code;
       setLoginError(

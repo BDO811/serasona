@@ -48,20 +48,35 @@ const Admin = () => {
   const [me, setMe] = useState<AdminMe | null>(null);
   const [checking, setChecking] = useState(true);
   const [forbidden, setForbidden] = useState(false);
+  const [accessError, setAccessError] = useState<string | null>(null);
   const [elevated, setElevated] = useState(() => Boolean(storedElevation()));
 
   useEffect(() => {
     if (loading || !user) return;
     adminMe()
       .then(setMe)
-      .catch((e: AdminError) => { if (e.status === 403 || e.status === 401) setForbidden(true); })
+      .catch((e: AdminError) => {
+        if (e.status === 403) setForbidden(true);
+        else setAccessError(e.message || "Could not check administrator access. Try again.");
+      })
       .finally(() => setChecking(false));
   }, [loading, user]);
 
   if (loading || checking) return null;
   if (!user) return <Navigate to="/login?next=/admin" replace />;
-  // A non-admin is sent home rather than told this page exists.
-  if (forbidden || !me) return <Navigate to="/" replace />;
+  if (forbidden) return (
+    <Shell title="Administrator access required">
+      <p className="text-sm text-foreground">Signed in as {user.email}. This account does not have administrator access.</p>
+      <p className="text-sm text-foreground">Sign out from your account page, then sign in with your administrator account and return here.</p>
+      <Button asChild><a href="/account">Open account</a></Button>
+    </Shell>
+  );
+  if (accessError || !me) return (
+    <Shell title="Could not open administration">
+      <p role="alert" className="text-sm text-foreground">{accessError || "Administrator access could not be verified."}</p>
+      <Button onClick={() => window.location.reload()}>Try again</Button>
+    </Shell>
+  );
   if (!me.enrolled) return <Enroll onDone={() => setMe({ ...me, enrolled: true })} />;
   if (!elevated) return <Elevate onDone={() => setElevated(true)} />;
 
