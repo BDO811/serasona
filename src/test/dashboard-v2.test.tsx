@@ -11,6 +11,13 @@ const saved = { sessionId: "actual-saved-record", capturedAt: Date.now(), source
 function open() { render(<MemoryRouter><Dashboard /></MemoryRouter>); }
 beforeEach(() => { cleanup(); mocks.sessions = []; mocks.loading = false; mocks.error = null; mocks.entitled = true; });
 describe("selected live dashboard", () => {
+  it("exposes a control to pause and resume the rotating graphic", () => {
+    open();
+    fireEvent.click(screen.getByRole("button", { name: "Pause animations" }));
+    expect(screen.getByRole("button", { name: "Play animations" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Play animations" }));
+    expect(screen.getByRole("button", { name: "Pause animations" })).toBeInTheDocument();
+  });
   it("shows a Clarity value and history for a Pulse check-in with fatigue", () => {
     mocks.sessions = [{ ...saved, signals: [...saved.signals, { name: "fatigue", label: "Fatigue", score: .5, level: "moderate", flagged: true }] }];
     open();

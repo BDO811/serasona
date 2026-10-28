@@ -126,7 +126,7 @@ export default function Dashboard() {
   ];
 
 
-  return <MemberShell>
+  return <MemberShell motionControl>
     <main className="dashboard-v2 dv-priority">
       <section className="dv-score-banner" aria-labelledby="serasona-score-title">
         <ScoreBannerVideo />
