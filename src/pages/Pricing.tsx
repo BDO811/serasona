@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Lock } from "lucide-react";
+import { motion, useInView, useReducedMotion, animate } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -10,6 +11,7 @@ import { DemoModeBanner } from "@/components/DemoModeBanner";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { PlanId } from "@/context/AuthContext";
+import { MODELS, ADDON_MODELS, type VoiceModel } from "@/lib/models";
 
 type Interval = "monthly" | "annual";
 
@@ -101,6 +103,12 @@ const annualSavingsPct = (tier: Tier) => {
  * before that are locked. Static and representative, not wired to any
  * account's actual data — the same "show the goods" role as a product
  * screenshot, just drawn instead of captured.
+ *
+ * The reveal is a one-shot "camera lands, line draws, number counts up"
+ * sequence rather than a static chart, so the free tier's trend actually
+ * looks like something worth keeping. It fires once, the way Reveal in
+ * motion-primitives.tsx does, and collapses to the plain final state under
+ * prefers-reduced-motion — nothing here is required to read the chart.
  */
 const TrendPreview = () => {
   const days = [0.52, 0.58, 0.49, 0.61, 0.55, 0.64, 0.6];
@@ -111,41 +119,203 @@ const TrendPreview = () => {
   const padY = 20;
   const stepX = (w - padX * 2) / (days.length - 1);
   const y = (v: number) => h - padY - v * (h - padY * 2);
-  const points = days.map((v, i) => `${padX + i * stepX},${y(v)}`).join(" ");
+  const coords = days.map((v, i) => [padX + i * stepX, y(v)] as const);
+  const pathD = coords.map(([cx, cy], i) => `${i === 0 ? "M" : "L"} ${cx},${cy}`).join(" ");
   const lockBoundaryX = padX + (lockedCount - 0.5) * stepX;
+  const [lastX, lastY] = coords[coords.length - 1];
+  const todayScore = Math.round(days[days.length - 1] * 100);
+
+  const reduce = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(containerRef, { once: true, margin: "-10% 0px -10% 0px" });
+  const [escaped, setEscaped] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setEscaped(true), 1200);
+    return () => window.clearTimeout(t);
+  }, []);
+  const play = Boolean(reduce || inView || escaped);
+
+  const [scoreDisplay, setScoreDisplay] = useState(reduce ? todayScore : 0);
+  useEffect(() => {
+    if (!play) return;
+    if (reduce) { setScoreDisplay(todayScore); return; }
+    const controls = animate(0, todayScore, {
+      duration: 0.9,
+      delay: 0.75,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => setScoreDisplay(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [play, reduce, todayScore]);
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6">
+    <motion.div
+      ref={containerRef}
+      initial={reduce ? false : { opacity: 0, scale: 1.08, x: 22, filter: "blur(10px)" }}
+      animate={play ? { opacity: 1, scale: 1, x: 0, filter: "blur(0px)" } : undefined}
+      transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+      className="rounded-2xl border border-border bg-card p-6 overflow-hidden"
+    >
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Your stress trend</p>
           <p className="text-sm text-muted-foreground mt-1">This is what seven days of check-ins looks like.</p>
         </div>
-        <span className="font-mono text-xs text-muted-foreground hidden sm:inline">illustrative example</span>
+        <div className="text-right">
+          <div className="font-serif text-2xl text-foreground tabular-nums leading-none">{scoreDisplay}</div>
+          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">today, illustrative</span>
+        </div>
       </div>
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" role="img" aria-label="Example seven day trend, with the oldest days locked on the free plan">
-        <rect x={padX} y={padY} width={lockBoundaryX - padX} height={h - padY * 2} fill="currentColor" className="text-muted-foreground" opacity={0.06} />
-        <polyline points={points} fill="none" stroke="currentColor" strokeWidth={2} className="text-primary" opacity={0.9} />
-        {days.map((v, i) => (
-          <circle
-            key={i}
-            cx={padX + i * stepX}
-            cy={y(v)}
-            r={4}
-            fill="currentColor"
-            className={i < lockedCount ? "text-muted-foreground" : "text-primary"}
-            opacity={i < lockedCount ? 0.4 : 1}
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto overflow-visible" role="img" aria-label="Example seven day trend, with the oldest days locked on the free plan">
+        <motion.rect
+          x={padX}
+          y={padY}
+          width={lockBoundaryX - padX}
+          height={h - padY * 2}
+          fill="currentColor"
+          className="text-muted-foreground"
+          opacity={0.06}
+          style={{ transformOrigin: `${padX}px ${padY}px` }}
+          initial={reduce ? false : { scaleX: 0 }}
+          animate={play ? { scaleX: 1 } : undefined}
+          transition={{ duration: 0.3, delay: 0.15, ease: "easeOut" }}
+        />
+        <motion.line
+          x1={lockBoundaryX}
+          y1={padY}
+          x2={lockBoundaryX}
+          y2={h - padY}
+          stroke="currentColor"
+          strokeWidth={1}
+          strokeDasharray="3 3"
+          className="text-border"
+          initial={reduce ? false : { opacity: 0 }}
+          animate={play ? { opacity: 1 } : undefined}
+          transition={{ duration: 0.2, delay: 0.4 }}
+        />
+        <motion.path
+          d={pathD}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          className="text-primary"
+          opacity={0.9}
+          initial={reduce ? false : { pathLength: 0 }}
+          animate={play ? { pathLength: 1 } : undefined}
+          transition={{ duration: 1, delay: 0.35, ease: [0.65, 0, 0.35, 1] }}
+        />
+        {coords.map(([cx, cy], i) => {
+          const locked = i < lockedCount;
+          const isToday = i === coords.length - 1;
+          return (
+            <motion.circle
+              key={i}
+              cx={cx}
+              cy={cy}
+              r={isToday ? 5 : 4}
+              fill="currentColor"
+              className={locked ? "text-muted-foreground" : isToday ? "text-accent" : "text-primary"}
+              opacity={locked ? 0.4 : 1}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+              initial={reduce ? false : { scale: 0 }}
+              animate={play ? { scale: 1 } : undefined}
+              transition={{ type: "spring", stiffness: 420, damping: 18, delay: 0.4 + i * 0.09 }}
+            />
+          );
+        })}
+        {!reduce && (
+          <motion.circle
+            cx={lastX}
+            cy={lastY}
+            r={5}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            className="text-accent"
+            style={{ transformOrigin: `${lastX}px ${lastY}px` }}
+            initial={{ opacity: 0, scale: 1 }}
+            animate={play ? { opacity: [0, 0.55, 0], scale: [1, 2.3, 2.7] } : undefined}
+            transition={{ duration: 2.2, delay: 1.5, repeat: Infinity, ease: "easeOut" }}
           />
-        ))}
-        <line x1={lockBoundaryX} y1={padY} x2={lockBoundaryX} y2={h - padY} stroke="currentColor" strokeWidth={1} strokeDasharray="3 3" className="text-border" />
+        )}
       </svg>
       <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground">
         <Lock className="w-3 h-3" />
         <span>On the free plan, the oldest 3 days fade out. Core keeps all of it.</span>
       </div>
-    </div>
+    </motion.div>
   );
 };
+
+/**
+ * What each tier actually reads from the recording, not just how much it
+ * costs. Built directly off the model catalogue in lib/models.ts so this can
+ * never drift from what Models.tsx and the API actually report — free and
+ * core read the same single model (Pulse), Plus adds any three of the seven
+ * add-ons, and Executive carries the whole catalogue.
+ */
+const PULSE_MODEL = MODELS.find((m) => m.included)!;
+const ALL_UNIQUE_SIGNALS = Array.from(new Set(MODELS.flatMap((m) => m.signs)));
+
+function modelsForPlan(planId: PlanId): VoiceModel[] {
+  if (planId === "plus") return [PULSE_MODEL, ...ADDON_MODELS.slice(0, 3)];
+  if (planId === "executive") return [PULSE_MODEL, ...ADDON_MODELS];
+  return [PULSE_MODEL];
+}
+
+const MEASUREMENT_NOTE: Partial<Record<PlanId, string>> = {
+  plus: `Any 3 of ${ADDON_MODELS.length} add-ons — shown here as an example basket`,
+  executive: "The entire catalogue, every add-on included",
+};
+
+const MeasurementComparison = () => (
+  <div className="mt-12">
+    <div className="text-center space-y-2 mb-6">
+      <h2 className="font-serif text-2xl text-foreground">What each plan actually measures</h2>
+      <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+        Every plan reads the same twenty-second recording. The difference is how much of it gets reported back to you.
+      </p>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+      {TIERS.map((tier) => {
+        const models = modelsForPlan(tier.id);
+        const signals = Array.from(new Set(models.flatMap((m) => m.signs)));
+        const pct = Math.round((signals.length / ALL_UNIQUE_SIGNALS.length) * 100);
+        return (
+          <div key={tier.id} className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
+            <div className="flex flex-wrap gap-1.5">
+              {models.map((m) => (
+                <span
+                  key={m.id}
+                  className="rounded-full px-2.5 py-1 text-[11px] font-medium"
+                  style={{ background: `${m.tone}1a`, color: m.tone }}
+                >
+                  {m.name}
+                </span>
+              ))}
+            </div>
+            <div>
+              <span className="font-serif text-2xl text-foreground">{signals.length}</span>
+              <span className="text-sm text-muted-foreground"> signals tracked</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+              <motion.div
+                className="h-full rounded-full bg-accent"
+                initial={{ width: 0 }}
+                whileInView={{ width: `${pct}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {MEASUREMENT_NOTE[tier.id] ?? `${models.length} model${models.length === 1 ? "" : "s"}, the baseline every plan starts with`}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+);
 
 const Pricing = () => {
   const { user, subscription } = useAuth();
@@ -306,6 +476,8 @@ const Pricing = () => {
             );
           })}
         </div>
+
+        <MeasurementComparison />
 
         <p className="text-center text-xs text-muted-foreground mt-10 max-w-md mx-auto">
           Secure checkout via Stripe. Serasona is a wellness product. It is not a medical device and does not
