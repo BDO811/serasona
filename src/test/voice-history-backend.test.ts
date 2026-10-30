@@ -79,13 +79,15 @@ describe("authenticated voice history and phone recovery", () => {
     expect((await s.run({ action: "trackPhone", phoneSessionId: "call_12345678" }, "b")).status).toBe(403);
     expect((await s.run({}, "a", "GET")).data.sessions).toHaveLength(1);
   });
-  it("makes browser retries idempotent without spending a second free check-in", async () => {
+  it("makes browser retries idempotent, and enforces the free tier's daily limit rather than a lifetime one", async () => {
     const s = service();
-    const body = { jobId: "job-one", source: "browser", model: "pulse", signals: [signal] };
-    expect((await s.run(body, "free")).status).toBe(200);
-    expect((await s.run(body, "free")).status).toBe(200);
-    expect((await s.run({ ...body, jobId: "job-two" }, "free")).status).toBe(402);
-    expect((await s.run({}, "free", "GET")).data.sessions).toHaveLength(1);
+    const body = (jobId: string) => ({ jobId, source: "browser", model: "pulse", signals: [signal] });
+    expect((await s.run(body("job-one"), "free")).status).toBe(200);
+    expect((await s.run(body("job-one"), "free")).status).toBe(200); // retry of the same jobId, not a second check-in
+    expect((await s.run(body("job-two"), "free")).status).toBe(200);
+    expect((await s.run(body("job-three"), "free")).status).toBe(200);
+    expect((await s.run(body("job-four"), "free")).status).toBe(402);
+    expect((await s.run({}, "free", "GET")).data.sessions).toHaveLength(3);
   });
   it("stores failed quality as an unscored attempt, never as a healthy reading", async () => {
     const s = service(); s.plus("a");

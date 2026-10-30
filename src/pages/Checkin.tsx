@@ -4,6 +4,10 @@ import { useAuth } from "@/context/AuthContext";
 import { useVoiceHistory } from "@/hooks/use-voice-history";
 import Index from "@/pages/Index";
 
+/** Mirrors FREE_CHECKIN_DAILY_LIMIT in gcp-functions/voice-history. */
+const FREE_CHECKIN_DAILY_LIMIT = 3;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 /**
  * The signed-in entry point: skips the marketing home, language picker, and
  * triage (an account already carries consent and an identity) and opens
@@ -11,26 +15,28 @@ import Index from "@/pages/Index";
  *
  * Entitlement, which is subtler than it looks:
  *
- *   free   one check-in, ever. Pricing sells this as "Try it — one 20-second
- *          check-in, your seven signals, this time only, no history or trend".
+ *   free   three check-ins a day. Pricing sells this as "Try it — three
+ *          check-ins a day, a week of your own trend".
  *   core+  unlimited.
  *
  * This used to require Core, which bounced every free account straight to
  * /pricing and made the free tier unreachable despite being sold on the
  * pricing page. Now the gate is an ACCOUNT, and free accounts are stopped by
- * having already used their one rather than by their plan.
+ * having already used today's three rather than by their plan.
  *
  * The count comes from stored history, which is the same record the trend view
  * reads. It is a product gate, not a security boundary: history is append-only
- * per the Firestore rules, but anyone determined could still burn a second
- * check-in by other means. Enforce for real server-side before this costs
- * money at volume.
+ * per the Firestore rules, but anyone determined could still burn an extra
+ * check-in by other means. The real limit is enforced server-side in
+ * gcp-functions/voice-history; this is a courtesy that avoids the round trip.
  */
 const Checkin = () => {
   const { user, isEntitled } = useAuth();
   const { loading, sessions, error, refresh } = useVoiceHistory();
 
   const unlimited = isEntitled("core");
+  const usedToday = sessions.filter((session) => Date.now() - session.capturedAt < DAY_MS).length;
+  const underLimit = usedToday < FREE_CHECKIN_DAILY_LIMIT;
   const [admittedUid, setAdmittedUid] = useState<string | null>(null);
   const admitted = Boolean(user && admittedUid === user.uid);
 
@@ -40,11 +46,11 @@ const Checkin = () => {
   // result, so a successful analysis starts recording again for free users.
   useEffect(() => {
     if (!user) { setAdmittedUid(null); return; }
-    if (!loading && !error && sessions.length === 0) setAdmittedUid(user.uid);
-  }, [user?.uid, loading, error, sessions.length]);
+    if (!loading && !error && underLimit) setAdmittedUid(user.uid);
+  }, [user?.uid, loading, error, underLimit]);
 
   // Admission is scoped to this account and this mounted /checkin visit.
-  // A later visit still checks whether the free reading has been used.
+  // A later visit still checks whether today's free check-ins are used up.
   if (!user) return <Navigate to="/login" replace />;
 
   // Don't decide anything while history is still loading, or a paid-looking
@@ -53,7 +59,7 @@ const Checkin = () => {
 
   if (!unlimited && !admitted && error) return <main className="p-8"><p role="alert">{error}</p><button onClick={refresh}>Retry loading history</button></main>;
 
-  if (!unlimited && !admitted && sessions.length > 0) {
+  if (!unlimited && !admitted && !underLimit) {
     return <Navigate to="/pricing" replace />;
   }
 

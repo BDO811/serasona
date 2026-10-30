@@ -8,10 +8,15 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
 // Reverse of create-checkout-session's PLAN_PRICE_IDS, so a Stripe subscription
 // object (which only knows its price id) can be written back as a plan id.
+// Monthly and annual prices for the same plan both map to the same plan id:
+// entitlement only cares which tier, never which interval.
 const PRICE_ID_TO_PLAN = {
   [process.env.STRIPE_PRICE_CORE]: "core",
   [process.env.STRIPE_PRICE_PLUS]: "plus",
   [process.env.STRIPE_PRICE_EXECUTIVE]: "executive",
+  [process.env.STRIPE_PRICE_CORE_ANNUAL]: "core",
+  [process.env.STRIPE_PRICE_PLUS_ANNUAL]: "plus",
+  [process.env.STRIPE_PRICE_EXECUTIVE_ANNUAL]: "executive",
 };
 
 async function resolveFirebaseUID(subscription) {

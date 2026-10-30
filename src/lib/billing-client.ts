@@ -37,10 +37,11 @@ async function authedFetch(url: string, body: Record<string, unknown>) {
 
 // One-time and subscription prices both run through Stripe Checkout; the
 // Cloud Function decides mode ("payment" vs "subscription") from the plan id.
-export async function startCheckout(planId: Exclude<PlanId, "free">) {
+export async function startCheckout(planId: Exclude<PlanId, "free">, interval: "monthly" | "annual" = "monthly") {
   if (!CREATE_CHECKOUT_SESSION_URL) throw new Error(BILLING_NOT_READY);
   const { url } = await authedFetch(CREATE_CHECKOUT_SESSION_URL, {
     planId,
+    interval,
     successUrl: `${window.location.origin}/account?checkout=success`,
     cancelUrl: `${window.location.origin}/pricing?checkout=canceled`,
   });

@@ -40,12 +40,14 @@ const MAX_SIGNALS_PER_SESSION = 64;
 const MAX_BODY_BYTES = 64 * 1024;
 
 /**
- * How many check-ins an account with no paid plan may ever store. Pricing sells
- * the free tier as "one 20-second check-in, your seven signals, this time only,
- * no history or trend", so the limit is one for the lifetime of the account,
- * not one per day.
+ * How many check-ins an account with no paid plan may record per rolling day,
+ * and how far back its history reaches. Pricing sells the free tier as "three
+ * check-ins a day, a week of your own trend" — enough to feel the habit and
+ * see a real trend line, not enough to replace Core's full history.
  */
-const FREE_CHECKIN_LIMIT = 1;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const FREE_CHECKIN_DAILY_LIMIT = 3;
+const FREE_HISTORY_WINDOW_MS = 7 * DAY_MS;
 
 /** Plans ranked the way a subscriber would upgrade. Mirrors src/context/AuthContext.tsx. */
 const PLAN_RANK = { free: 0, core: 1, plus: 2, executive: 3 };
@@ -74,15 +76,22 @@ async function hasUnlimitedCheckins(uid) {
   return (PLAN_RANK[subscription.planId] ?? 0) >= PLAN_RANK.core;
 }
 
-/** How many sessions this user already has. Capped, since we only compare to a small limit. */
-async function countSessions(userKey) {
+/**
+ * How many of this user's sessions were captured in the last rolling day.
+ *
+ * Equality filter only, same reason as handleFetch below: a second range
+ * filter on capturedAt would need a composite index. A free account has at
+ * most a handful of sessions, so filtering the small result set in memory
+ * costs nothing extra.
+ */
+async function countSessionsToday(userKey) {
   const snapshot = await firestore
     .collection(COLLECTION)
     .where("userKey", "==", userKey)
-    .limit(FREE_CHECKIN_LIMIT + 1)
-    .count()
+    .limit(100)
     .get();
-  return snapshot.data().count;
+  const cutoff = Date.now() - DAY_MS;
+  return snapshot.docs.filter((doc) => (doc.data().capturedAt ?? 0) >= cutoff).length;
 }
 
 function getCorsOrigin(requestOrigin) {
@@ -351,7 +360,8 @@ async function handleSave(req, res) {
     : firestore.collection(COLLECTION).doc();
   if ((await sessionRef.get()).exists) return res.status(200).json({ sessionId: sessionRef.id, alreadySaved: true });
 
-  // The free tier's one check-in, enforced here rather than only in the UI.
+  // The free tier's daily check-in allowance, enforced here rather than only
+  // in the UI.
   //
   // Scoped to account mode on purpose. The anonymous email path belongs to the
   // original try-it demo, which has no accounts and no entitlements, and
@@ -361,15 +371,15 @@ async function handleSave(req, res) {
   if (identity.mode === "account") {
     const uid = identity.userKey.slice("uid:".length);
     if (!(await hasUnlimitedCheckins(uid))) {
-      const used = await countSessions(identity.userKey);
-      if (used >= FREE_CHECKIN_LIMIT) {
-        console.log(`[voice-history] Free limit reached for ${identity.userKey} (${used} stored)`);
+      const usedToday = await countSessionsToday(identity.userKey);
+      if (usedToday >= FREE_CHECKIN_DAILY_LIMIT) {
+        console.log(`[voice-history] Free daily limit reached for ${identity.userKey} (${usedToday} today)`);
         // 402 rather than 403: the request is well-formed and the caller is
         // who they say they are. What is missing is a plan.
         res.status(402).json({
-          error: "Your free check-in has been used.",
+          error: "You've used your free check-ins for today. More tomorrow, or upgrade for unlimited and your full history.",
           code: "free_limit_reached",
-          limit: FREE_CHECKIN_LIMIT,
+          limit: FREE_CHECKIN_DAILY_LIMIT,
         });
         return;
       }
@@ -412,7 +422,7 @@ async function handleFetch(req, res) {
     .limit(MAX_SESSIONS_RETURNED)
     .get();
 
-  const sessions = snapshot.docs
+  let sessions = snapshot.docs
     .map((doc) => {
       const data = doc.data();
       return {
@@ -430,6 +440,17 @@ async function handleFetch(req, res) {
       };
     })
     .sort((a, b) => a.capturedAt - b.capturedAt);
+
+  // Free accounts see a rolling week; Core and up see everything. This is the
+  // real difference between "try it" and "track it" — not a different model,
+  // a different amount of your own history.
+  if (identity.mode === "account") {
+    const uid = identity.userKey.slice("uid:".length);
+    if (!(await hasUnlimitedCheckins(uid))) {
+      const cutoff = Date.now() - FREE_HISTORY_WINDOW_MS;
+      sessions = sessions.filter((s) => s.capturedAt >= cutoff);
+    }
+  }
 
   console.log(`[voice-history] Returned ${sessions.length} sessions`);
   res.status(200).json({ sessions });

@@ -34,12 +34,15 @@ const LIVE = KEY.startsWith("sk_live_");
 
 // Must match PLAN_PRICE_IDS in gcp-functions/create-checkout-session and the
 // reverse map in stripe-webhook, and the tiers on src/pages/Pricing.tsx.
+// Amounts in cents. Kept in sync by hand with the live prices (see
+// docs/SETUP_BILLING.md's "Live price ids" note) so a re-run matches the
+// existing prices instead of creating a second, wrongly-priced set.
 const PLANS = [
-  { id: "core", name: "Serasona Core", amount: 1450, env: "STRIPE_PRICE_CORE",
+  { id: "core", name: "Serasona Core", amount: 799, env: "STRIPE_PRICE_CORE",
     description: "Daily check-ins in the app, compared to your own 30-day baseline." },
-  { id: "plus", name: "Serasona Plus", amount: 2450, env: "STRIPE_PRICE_PLUS",
+  { id: "plus", name: "Serasona Plus", amount: 1499, env: "STRIPE_PRICE_PLUS",
     description: "Everything in Core, plus Serasona calls you, on any phone." },
-  { id: "executive", name: "Serasona Executive", amount: 7450, env: "STRIPE_PRICE_EXECUTIVE",
+  { id: "executive", name: "Serasona Executive", amount: 1999, env: "STRIPE_PRICE_EXECUTIVE",
     description: "Daily phone check-ins for people who want the closest watch." },
 ];
 

@@ -17,13 +17,34 @@ until the steps below are done — they need real accounts and credentials this 
 > `stripe-secret-key-test` / `stripe-webhook-secret-test`.
 >
 > Live price ids (set as env vars on the functions, not in this repo):
-> core `price_1UOU1C0nqIp1IKiBpaC3whW4`,
-> plus `price_1UOU1D0nqIp1IKiBGYL67ncK`,
-> executive `price_1UOU1E0nqIp1IKiB87xrFSn7`.
+> core `price_1UQB6o0nqIp1IKiBtLIdDpkQ` ($7.99/mo),
+> plus `price_1UQB6p0nqIp1IKiBgYtt82of` ($14.99/mo),
+> executive `price_1UQB6p0nqIp1IKiBVIHDv9eq` ($19.99/mo).
+> These replaced an earlier $29/$49/$149 set and then the ids just above this
+> note; prices are immutable in Stripe, so each repricing is a new price
+> object on the same product, with the old one archived.
+>
+> **Annual prices, added 2026-10-29**, same products, same env var pattern
+> with an `_ANNUAL` suffix:
+> `STRIPE_PRICE_CORE_ANNUAL=price_1UW5ga0nqIp1IKiBUbToilth` ($59.99/yr),
+> `STRIPE_PRICE_PLUS_ANNUAL=price_1UW5ga0nqIp1IKiBCaq6VFnK` ($119/yr),
+> `STRIPE_PRICE_EXECUTIVE_ANNUAL=price_1UW5ga0nqIp1IKiBeLvOME8l` ($179/yr).
+> `createCheckoutSession` picks monthly vs annual from the `interval` field in
+> the request body; `stripeWebhook` maps both the monthly and annual price id
+> for a plan back to the same plan id, since entitlement doesn't care about
+> billing interval. Core also carries a 7 day trial on checkout
+> (`TRIAL_DAYS` in `create-checkout-session/index.js`), on either interval.
+>
+> **Free tier, revised 2026-10-29**: 3 check-ins a day (was 1, lifetime) and a
+> rolling 7-day history (was none), enforced in `gcp-functions/voice-history`
+> (`FREE_CHECKIN_DAILY_LIMIT`, `FREE_HISTORY_WINDOW_MS`) and mirrored as a
+> client-side courtesy check in `src/pages/Checkin.tsx`.
 >
 > To go back to test mode, redeploy the three functions with the test price ids
 > and the `-test` secrets. `scripts/setup-stripe.mjs` is re-runnable against
-> either mode and will reuse what already exists rather than duplicating it.
+> either mode and will reuse what already exists rather than duplicating it
+> (it does not yet create the annual prices; that was done ad hoc against the
+> live key — see the annual ids above).
 >
 > Worth hardening later: the functions use a full-access secret key. A
 > restricted key limited to customers, checkout sessions, billing portal
@@ -141,6 +162,13 @@ gcloud functions deploy stripeWebhook \
   --trigger-http --allow-unauthenticated --entry-point=stripeWebhook \
   --set-env-vars STRIPE_SECRET_KEY=sk_test_...,STRIPE_PRICE_CORE=price_...,STRIPE_PRICE_PLUS=price_...,STRIPE_PRICE_EXECUTIVE=price_...,STRIPE_WEBHOOK_SECRET=whsec_...
 ```
+
+As of 2026-10-29, `createCheckoutSession` and `stripeWebhook` also need
+`STRIPE_PRICE_CORE_ANNUAL`, `STRIPE_PRICE_PLUS_ANNUAL` and
+`STRIPE_PRICE_EXECUTIVE_ANNUAL` alongside the three monthly ones above (see
+the live ids in the note at the top of this file). Add them with
+`--update-env-vars` on an existing deployment rather than `--set-env-vars`,
+which replaces the whole environment-variable set.
 
 `--allow-unauthenticated` is safe here the same way it already is for `analyze-audio` and `notify-lead`: each
 function checks the Firebase ID token or the Stripe signature itself rather than relying on GCP's own IAM

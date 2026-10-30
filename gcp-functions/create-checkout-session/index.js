@@ -5,13 +5,26 @@ if (!admin.apps.length) admin.initializeApp();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
-// Plan id -> Stripe Price id. Prices are created once in the Stripe dashboard
-// (see docs/SETUP_BILLING.md) and never hardcoded here.
+// Plan id -> Stripe Price id, one map per billing interval. Prices are
+// created once in the Stripe dashboard (see docs/SETUP_BILLING.md) and never
+// hardcoded here.
 const PLAN_PRICE_IDS = {
-  core: process.env.STRIPE_PRICE_CORE,
-  plus: process.env.STRIPE_PRICE_PLUS,
-  executive: process.env.STRIPE_PRICE_EXECUTIVE,
+  monthly: {
+    core: process.env.STRIPE_PRICE_CORE,
+    plus: process.env.STRIPE_PRICE_PLUS,
+    executive: process.env.STRIPE_PRICE_EXECUTIVE,
+  },
+  annual: {
+    core: process.env.STRIPE_PRICE_CORE_ANNUAL,
+    plus: process.env.STRIPE_PRICE_PLUS_ANNUAL,
+    executive: process.env.STRIPE_PRICE_EXECUTIVE_ANNUAL,
+  },
 };
+
+// Core is the only plan sold with a trial: it's the cheapest way in, and the
+// thing it needs to prove, a trend built on your own history, only shows up
+// after a few days of daily check-ins.
+const TRIAL_DAYS = { core: 7 };
 
 function getCorsOrigin(requestOrigin) {
   const fallback = "https://serasona.com";
@@ -57,7 +70,8 @@ exports.createCheckoutSession = async (req, res) => {
     const decoded = await admin.auth().verifyIdToken(idToken);
 
     const planId = typeof req.body?.planId === "string" ? req.body.planId : null;
-    const priceId = planId ? PLAN_PRICE_IDS[planId] : null;
+    const interval = req.body?.interval === "annual" ? "annual" : "monthly";
+    const priceId = planId ? PLAN_PRICE_IDS[interval]?.[planId] : null;
     if (!priceId) return res.status(400).json({ error: "Unknown plan." });
 
     const successUrl = typeof req.body?.successUrl === "string" ? req.body.successUrl : "https://serasona.com/account";
@@ -65,12 +79,16 @@ exports.createCheckoutSession = async (req, res) => {
 
     const customerId = await getOrCreateStripeCustomer(decoded.uid, decoded.email);
 
+    const trialDays = TRIAL_DAYS[planId];
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer: customerId,
       client_reference_id: decoded.uid,
       line_items: [{ price: priceId, quantity: 1 }],
-      subscription_data: { metadata: { firebaseUID: decoded.uid, planId } },
+      subscription_data: {
+        metadata: { firebaseUID: decoded.uid, planId },
+        ...(trialDays ? { trial_period_days: trialDays } : {}),
+      },
       success_url: successUrl,
       cancel_url: cancelUrl,
       allow_promotion_codes: true,
