@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Lock } from "lucide-react";
-import { motion, useInView, useReducedMotion, animate } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { PlanId } from "@/context/AuthContext";
 import { MODELS, ADDON_MODELS, type VoiceModel } from "@/lib/models";
+import { asset } from "@/lib/asset";
 
 type Interval = "monthly" | "annual";
 
@@ -25,6 +26,11 @@ interface Tier {
   features: string[];
   trialDays?: number;
   highlighted?: boolean;
+  /** One accent per tier (reused from the model catalogue's own tones), so the
+   * card that reads Pulse-only, the one that adds three models and the one
+   * that carries the whole catalogue each read as a distinct colour, not
+   * three identical black-on-cream boxes. */
+  accent: string;
 }
 
 const TIERS: Tier[] = [
@@ -34,6 +40,7 @@ const TIERS: Tier[] = [
     monthlyPrice: 0,
     description: "Three check-ins a day. No card required.",
     upgradeReason: "A real daily habit, not a one-off demo.",
+    accent: "#177A4B",
     features: [
       "3 check-ins a day, the Pulse model",
       "A real 7-day trend of your own voice",
@@ -48,6 +55,7 @@ const TIERS: Tier[] = [
     description: "One check-in a day on the Pulse model, tracked against your own history.",
     upgradeReason: "See your full history, not just a week.",
     trialDays: 7,
+    accent: "#2F5BEA",
     features: [
       "Unlimited daily check-ins",
       "The Pulse model: mood, anxiety, stress, fatigue, hydration, blood pressure",
@@ -63,6 +71,7 @@ const TIERS: Tier[] = [
     annualPrice: 119,
     description: "Everything in Core, plus three models of your choice and a daily call.",
     upgradeReason: "Add a daily phone call, no app required.",
+    accent: "#A8201C",
     features: [
       "Everything in Core",
       "Any three models included, worth $14.97 on their own",
@@ -77,6 +86,7 @@ const TIERS: Tier[] = [
     annualPrice: 179,
     description: "Every model Serasona has, read from the same twenty seconds.",
     upgradeReason: "Every model, from the same twenty seconds.",
+    accent: "#7F1D1D",
     features: [
       "Everything in Plus",
       "All seven models included, worth $34.93 on their own",
@@ -98,34 +108,39 @@ const annualSavingsPct = (tier: Tier) => {
 };
 
 /**
- * An illustrative preview of what a week of real check-ins looks like, and
- * what happens to it on the free tier: the last four days read, the three
- * before that are locked. Static and representative, not wired to any
- * account's actual data — the same "show the goods" role as a product
- * screenshot, just drawn instead of captured.
+ * An illustrative preview of a week of real check-ins, and what happens to
+ * it on the free tier. Static and representative, not wired to any account's
+ * actual data — the same "show the goods" role as a product screenshot.
  *
- * The reveal is a one-shot "camera lands, line draws, number counts up"
- * sequence rather than a static chart, so the free tier's trend actually
- * looks like something worth keeping. It fires once, the way Reveal in
- * motion-primitives.tsx does, and collapses to the plain final state under
- * prefers-reduced-motion — nothing here is required to read the chart.
+ * This is a rendered clip rather than a hand-drawn SVG: a comet draws the
+ * trend curve, keyframes pop on it, it folds down into a giant "60" that
+ * lands with echo rings and a light burst — built with Anthropic's
+ * scenario-kinetic-film skill (its Graph block), not approximated with
+ * framer-motion springs, so the motion blur, bloom and film grain are real,
+ * not faked. Source spec and render pipeline: see the skill's own folder;
+ * the 960x450 H.264/VP9 pair + poster live in public/video/trend-loop.*.
+ *
+ * Muted, looping, autoplaying background footage: same accessibility
+ * contract as AmbientVideo.tsx (poster for prefers-reduced-motion and a
+ * metered connection, aria-hidden on the video itself, a screen-reader-only
+ * paragraph carries the same information as text).
  */
 const TrendPreview = () => {
-  const days = [0.52, 0.58, 0.49, 0.61, 0.55, 0.64, 0.6];
-  const lockedCount = 3;
-  const w = 560;
-  const h = 140;
-  const padX = 24;
-  const padY = 20;
-  const stepX = (w - padX * 2) / (days.length - 1);
-  const y = (v: number) => h - padY - v * (h - padY * 2);
-  const coords = days.map((v, i) => [padX + i * stepX, y(v)] as const);
-  const pathD = coords.map(([cx, cy], i) => `${i === 0 ? "M" : "L"} ${cx},${cy}`).join(" ");
-  const lockBoundaryX = padX + (lockedCount - 0.5) * stepX;
-  const [lastX, lastY] = coords[coords.length - 1];
-  const todayScore = Math.round(days[days.length - 1] * 100);
-
   const reduce = useReducedMotion();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playable, setPlayable] = useState(false);
+
+  useEffect(() => {
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const metered = conn?.saveData === true || /^(slow-)?2g$/.test(conn?.effectiveType || "");
+    setPlayable(!reduce && !metered);
+  }, [reduce]);
+
+  useEffect(() => {
+    if (!playable) return;
+    void videoRef.current?.play().catch(() => {});
+  }, [playable]);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(containerRef, { once: true, margin: "-10% 0px -10% 0px" });
   const [escaped, setEscaped] = useState(false);
@@ -135,111 +150,37 @@ const TrendPreview = () => {
   }, []);
   const play = Boolean(reduce || inView || escaped);
 
-  const [scoreDisplay, setScoreDisplay] = useState(reduce ? todayScore : 0);
-  useEffect(() => {
-    if (!play) return;
-    if (reduce) { setScoreDisplay(todayScore); return; }
-    const controls = animate(0, todayScore, {
-      duration: 0.9,
-      delay: 0.75,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (v) => setScoreDisplay(Math.round(v)),
-    });
-    return () => controls.stop();
-  }, [play, reduce, todayScore]);
-
   return (
     <motion.div
       ref={containerRef}
       initial={reduce ? false : { opacity: 0, scale: 1.08, x: 22, filter: "blur(10px)" }}
       animate={play ? { opacity: 1, scale: 1, x: 0, filter: "blur(0px)" } : undefined}
       transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-      className="rounded-2xl border border-border bg-card p-6 overflow-hidden"
+      className="rounded-2xl border border-border bg-card p-3 overflow-hidden"
     >
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Your stress trend</p>
-          <p className="text-sm text-muted-foreground mt-1">This is what seven days of check-ins looks like.</p>
-        </div>
-        <div className="text-right">
-          <div className="font-serif text-2xl text-foreground tabular-nums leading-none">{scoreDisplay}</div>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">today, illustrative</span>
-        </div>
-      </div>
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto overflow-visible" role="img" aria-label="Example seven day trend, with the oldest days locked on the free plan">
-        <motion.rect
-          x={padX}
-          y={padY}
-          width={lockBoundaryX - padX}
-          height={h - padY * 2}
-          fill="currentColor"
-          className="text-muted-foreground"
-          opacity={0.06}
-          style={{ transformOrigin: `${padX}px ${padY}px` }}
-          initial={reduce ? false : { scaleX: 0 }}
-          animate={play ? { scaleX: 1 } : undefined}
-          transition={{ duration: 0.3, delay: 0.15, ease: "easeOut" }}
-        />
-        <motion.line
-          x1={lockBoundaryX}
-          y1={padY}
-          x2={lockBoundaryX}
-          y2={h - padY}
-          stroke="currentColor"
-          strokeWidth={1}
-          strokeDasharray="3 3"
-          className="text-border"
-          initial={reduce ? false : { opacity: 0 }}
-          animate={play ? { opacity: 1 } : undefined}
-          transition={{ duration: 0.2, delay: 0.4 }}
-        />
-        <motion.path
-          d={pathD}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          className="text-primary"
-          opacity={0.9}
-          initial={reduce ? false : { pathLength: 0 }}
-          animate={play ? { pathLength: 1 } : undefined}
-          transition={{ duration: 1, delay: 0.35, ease: [0.65, 0, 0.35, 1] }}
-        />
-        {coords.map(([cx, cy], i) => {
-          const locked = i < lockedCount;
-          const isToday = i === coords.length - 1;
-          return (
-            <motion.circle
-              key={i}
-              cx={cx}
-              cy={cy}
-              r={isToday ? 5 : 4}
-              fill="currentColor"
-              className={locked ? "text-muted-foreground" : isToday ? "text-accent" : "text-primary"}
-              opacity={locked ? 0.4 : 1}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-              initial={reduce ? false : { scale: 0 }}
-              animate={play ? { scale: 1 } : undefined}
-              transition={{ type: "spring", stiffness: 420, damping: 18, delay: 0.4 + i * 0.09 }}
-            />
-          );
-        })}
-        {!reduce && (
-          <motion.circle
-            cx={lastX}
-            cy={lastY}
-            r={5}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            className="text-accent"
-            style={{ transformOrigin: `${lastX}px ${lastY}px` }}
-            initial={{ opacity: 0, scale: 1 }}
-            animate={play ? { opacity: [0, 0.55, 0], scale: [1, 2.3, 2.7] } : undefined}
-            transition={{ duration: 2.2, delay: 1.5, repeat: Infinity, ease: "easeOut" }}
-          />
+      <p className="sr-only">
+        Your stress trend: this is what seven days of check-ins looks like, today at 60. On the free plan,
+        the oldest 3 days fade out. Core keeps all of it.
+      </p>
+      <div className="w-full aspect-[32/15] rounded-xl overflow-hidden bg-card" aria-hidden="true">
+        {playable ? (
+          <video
+            ref={videoRef}
+            className="h-full w-full object-cover"
+            poster={asset("video/trend-loop-poster.jpg")}
+            muted
+            loop
+            playsInline
+            preload="auto"
+          >
+            <source src={asset("video/trend-loop.webm")} type="video/webm" />
+            <source src={asset("video/trend-loop.mp4")} type="video/mp4" />
+          </video>
+        ) : (
+          <img src={asset("video/trend-loop-poster.jpg")} alt="" className="h-full w-full object-cover" />
         )}
-      </svg>
-      <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground">
+      </div>
+      <div className="flex items-center gap-2 mt-3 px-3 pb-1 text-xs text-muted-foreground">
         <Lock className="w-3 h-3" />
         <span>On the free plan, the oldest 3 days fade out. Core keeps all of it.</span>
       </div>
@@ -295,12 +236,13 @@ const MeasurementComparison = () => (
               ))}
             </div>
             <div>
-              <span className="font-serif text-2xl text-foreground">{signals.length}</span>
+              <span className="font-serif text-2xl" style={{ color: tier.accent }}>{signals.length}</span>
               <span className="text-sm text-muted-foreground"> signals tracked</span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
               <motion.div
-                className="h-full rounded-full bg-accent"
+                className="h-full rounded-full"
+                style={{ background: tier.accent }}
                 initial={{ width: 0 }}
                 whileInView={{ width: `${pct}%` }}
                 viewport={{ once: true }}
@@ -394,7 +336,17 @@ const Pricing = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+        {/*
+          Each card is a 6-item subgrid (badge, header, price, reason,
+          features, button) row-spanned onto the outer grid's 6 explicit row
+          tracks. A description that wraps to 3 lines on one tier no longer
+          pushes just that tier's price down — the row track itself grows for
+          every column, so the $ amounts, the reason line and the buttons all
+          land on the same baseline regardless of copy length. The badge slot
+          always renders (empty when a tier has none) so every card contributes
+          exactly 6 children and the row mapping stays 1:1.
+        */}
+        <div className="grid grid-cols-1 md:grid-cols-4 md:[grid-template-rows:repeat(6,auto)] gap-5">
           {TIERS.map((tier) => {
             // A signed-out visitor has no plan, so the free tier must read as an
             // invitation rather than "your current plan" — which also disabled
@@ -418,16 +370,21 @@ const Pricing = () => {
             return (
               <div
                 key={tier.id}
-                className={cn(
-                  "rounded-2xl border p-6 flex flex-col gap-4 bg-card",
-                  tier.highlighted ? "border-primary shadow-[0_0_0_1px_hsl(var(--primary))]" : "border-border"
-                )}
+                className="rounded-2xl border p-6 bg-card flex flex-col gap-4 md:grid md:[grid-template-rows:subgrid] md:row-span-6 md:gap-4"
+                style={{
+                  borderColor: tier.highlighted ? tier.accent : "hsl(var(--border))",
+                  boxShadow: tier.highlighted ? `0 0 0 1px ${tier.accent}` : undefined,
+                }}
               >
-                {tier.highlighted && (
-                  <span className="text-xs font-mono tracking-wider uppercase text-primary">Most popular</span>
-                )}
+                <div className="h-5 flex items-center">
+                  {tier.highlighted && (
+                    <span className="text-xs font-mono tracking-wider uppercase" style={{ color: tier.accent }}>
+                      Most popular
+                    </span>
+                  )}
+                </div>
                 <div>
-                  <h2 className="font-serif text-2xl text-foreground">{tier.name}</h2>
+                  <h2 className="font-serif text-2xl" style={{ color: tier.accent }}>{tier.name}</h2>
                   <p className="text-sm text-muted-foreground mt-1">{tier.description}</p>
                 </div>
                 <div>
@@ -446,20 +403,24 @@ const Pricing = () => {
                     </p>
                   )}
                   {tier.trialDays && !showAnnual && (
-                    <p className="text-xs text-primary mt-0.5">{tier.trialDays}-day free trial, then {formatPrice(tier.monthlyPrice)}/month</p>
+                    <p className="text-xs font-medium mt-0.5" style={{ color: tier.accent }}>
+                      {tier.trialDays}-day free trial, then {formatPrice(tier.monthlyPrice)}/month
+                    </p>
                   )}
                   {tier.trialDays && showAnnual && (
-                    <p className="text-xs text-primary mt-0.5">{tier.trialDays}-day free trial, then billed annually</p>
+                    <p className="text-xs font-medium mt-0.5" style={{ color: tier.accent }}>
+                      {tier.trialDays}-day free trial, then billed annually
+                    </p>
                   )}
                   {tier.id !== "free" && (
                     <p className="text-xs text-muted-foreground mt-0.5">Cancel any time, right from your account</p>
                   )}
                 </div>
-                <p className="text-sm font-medium text-foreground">{tier.upgradeReason}</p>
+                <p className="text-sm font-medium" style={{ color: tier.accent }}>{tier.upgradeReason}</p>
                 <ul className="space-y-2 flex-1">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2 text-sm text-foreground/90">
-                      <Check className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
+                      <Check className="w-4 h-4 mt-0.5 shrink-0" style={{ color: tier.accent }} />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -468,7 +429,8 @@ const Pricing = () => {
                   onClick={() => handleSelect(tier.id)}
                   disabled={loadingPlan === tier.id || isCurrentPlan}
                   variant={tier.highlighted ? "default" : "outline"}
-                  className="w-full"
+                  className="w-full self-end"
+                  style={tier.highlighted ? { background: tier.accent } : { color: tier.accent, borderColor: tier.accent }}
                 >
                   {ctaLabel}
                 </Button>
