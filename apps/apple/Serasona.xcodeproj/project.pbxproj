@@ -1,0 +1,1292 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01508E931C9ACF7464648AD5 /* TakeMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77C718D4EBDDE4EB157056A /* TakeMerger.swift */; };
+		019AE7A2DF9ADA8AF363BA2F /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE91DF7B9EB9A39D089E731 /* Waveform.swift */; };
+		01C2022B4E6355C141545425 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1BC147BCF1429863AFC4D9 /* Theme.swift */; };
+		01EF0CB2CBE06CAC56DE526A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5CC03487270BC43F38B3A942 /* PrivacyInfo.xcprivacy */; };
+		03EA660EA321F2DEB71B7DAB /* CheckInQuestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26A8274B5781DEBB1EAEB7 /* CheckInQuestions.swift */; };
+		042F9B94AC82772A7255CCF1 /* Hanken-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6CC23060AEA95255B5EBE09F /* Hanken-400.ttf */; };
+		04D7E6C451BE42BC936ABEDE /* Hanken-650.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E38DA45B78FAE6332FED6436 /* Hanken-650.ttf */; };
+		064C537F9669C1A1B073A88D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1BC147BCF1429863AFC4D9 /* Theme.swift */; };
+		0A1878315D822A332E73A505 /* AssessmentScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A6A15E408F1D304BC6331 /* AssessmentScale.swift */; };
+		0CE3FBD20A2E94FCD6C55CC9 /* Products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = EAAF10551CE09AE8E08E57CB /* Products.storekit */; };
+		0E5CCB5BC33CD769489AE26C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 85C09C09313B1DD32FDC87E3 /* FirebaseAuth */; };
+		0E631BA94B41725DBD238056 /* Hanken-700.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 652DBC007CE9D377E4EC9FA5 /* Hanken-700.ttf */; };
+		1008B38B749852696E201741 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5CC03487270BC43F38B3A942 /* PrivacyInfo.xcprivacy */; };
+		1170419CA9D6166067607623 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CAA34D32F009444A9F63C2 /* HistoryView.swift */; };
+		12DE4CC5566A85927FC41ACA /* ScoreDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D813C68442AF3C45052BA1 /* ScoreDial.swift */; };
+		16C263F46B9F4E5274163620 /* UIHarness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ADF370E92B54AD072B9125 /* UIHarness.swift */; };
+		18BF3873A03A8B1386D6E09E /* SerasonaScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BEE41C46152B7E9582E7D5 /* SerasonaScore.swift */; };
+		1D83827C6AF881B21B5CC0DC /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0595D48D35DEA097028B810 /* SharedStore.swift */; };
+		1D932E3D3A97D3A349ACC335 /* SerasonaScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BEE41C46152B7E9582E7D5 /* SerasonaScore.swift */; };
+		1E6C9F2AC8C95FF746CA8CBB /* SerasonaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F815D5BB15E04FF3A2EA1B9F /* SerasonaApp.swift */; };
+		1F202806D7B1371D19E1F7C6 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9850DD7474557A89A535CB00 /* Typography.swift */; };
+		1F94BF026A354AA3BB3439AF /* AssessmentScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A6A15E408F1D304BC6331 /* AssessmentScale.swift */; };
+		2154669F9D00EF29CA4A6371 /* Hanken-500.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9A03181367BC9A1F56209EDD /* Hanken-500.ttf */; };
+		21E80004E12D148828431B7F /* SerasonaIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988842687BAD671BE21199A /* SerasonaIdentity.swift */; };
+		234B70430133285BE04482D1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5CC03487270BC43F38B3A942 /* PrivacyInfo.xcprivacy */; };
+		26910A343EA26E2170BEC02D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEE9DDBFFCA7B7B183D1FA39 /* Assets.xcassets */; };
+		26971B9F53D1BF7F77068C26 /* SerasonaScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BEE41C46152B7E9582E7D5 /* SerasonaScore.swift */; };
+		27C63BB2F711DA2DBDAA9794 /* SleepScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CD3A0B4E1BEDFF45C9E9CE /* SleepScore.swift */; };
+		27CA0006C545052B8957CAB2 /* SerasonaScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BEE41C46152B7E9582E7D5 /* SerasonaScore.swift */; };
+		2D92BC9DEB61CE000C58537E /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE91DF7B9EB9A39D089E731 /* Waveform.swift */; };
+		2F18CBC343AA6D26993C16DB /* CheckInQuestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26A8274B5781DEBB1EAEB7 /* CheckInQuestions.swift */; };
+		32FD9E5E9B3A3F579B9D016B /* SleepScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CD3A0B4E1BEDFF45C9E9CE /* SleepScore.swift */; };
+		330F1C0B8451239D5C0B9B5F /* SerasonaLegal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E388340BB79F22B22A86B7AE /* SerasonaLegal.swift */; };
+		38C601C3C87C40B361029AAE /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F80B841FABC3F9A54E88F94 /* AudioRecorder.swift */; };
+		39B0239D9AB7A634632442BF /* SignalBand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E673ED4D649267B4CB4781 /* SignalBand.swift */; };
+		39C2B1B8E424DDBB7FB0C98C /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582DECDE081E1318446353CE /* Fonts.swift */; };
+		3B780A67783E5D029A7BA713 /* WatchAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91E9BF91B057CE4164B120B /* WatchAuthService.swift */; };
+		40167218A7AB153EA588401A /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9850DD7474557A89A535CB00 /* Typography.swift */; };
+		4079542C70DA42EB1B7003BA /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 26322FA50515F9563A109630 /* FirebaseCore */; };
+		4258CEB363E64A72933F0F2A /* SerasonaAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7DA01C3728ACF056E9E5BA /* SerasonaAPI.swift */; };
+		43C1613F068A27092D684F3D /* Bricolage-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA91C55FCC8760311160A65C /* Bricolage-400.ttf */; };
+		4687920A67893FF4BBF92F33 /* AuthTokenCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F28C6D01ACF8374FFA365AFF /* AuthTokenCache.swift */; };
+		4776F68A3016981A78D9D40D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5CC03487270BC43F38B3A942 /* PrivacyInfo.xcprivacy */; };
+		47BF5DB93534821F29285A8B /* AssessmentScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A6A15E408F1D304BC6331 /* AssessmentScale.swift */; };
+		49587A942B94D8B6D1196D00 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F80B841FABC3F9A54E88F94 /* AudioRecorder.swift */; };
+		4B76801D1D37C94A515AEE76 /* AuthTokenCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F28C6D01ACF8374FFA365AFF /* AuthTokenCache.swift */; };
+		4C6A9AF9F72B366FBF1E7801 /* Hanken-700.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 03BA64F14A15938F00712C12 /* Hanken-700.ttf */; };
+		4E4E4543083EAF773AB029CA /* SerasonaIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988842687BAD671BE21199A /* SerasonaIdentity.swift */; };
+		505E5324C92B509A27C61915 /* SerasonaLegal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E388340BB79F22B22A86B7AE /* SerasonaLegal.swift */; };
+		518E0326158CE23546E340C1 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582DECDE081E1318446353CE /* Fonts.swift */; };
+		5231B5FF6A8A63A8EA337FE4 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF838E05B65EE0ED086D68A /* Models.swift */; };
+		53D6997B187DEA92581325F9 /* SignalBand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E673ED4D649267B4CB4781 /* SignalBand.swift */; };
+		55316A0815319D19E5128582 /* Hanken-500.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51CE11F802309E24161AA54C /* Hanken-500.ttf */; };
+		55DFA1A2001DF644E144033F /* Hanken-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CA02E797C8D8F1F89D7F938F /* Hanken-400.ttf */; };
+		5CC0319F322378F818403636 /* HistoryTrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807CF3D2A328CD12B0612E3B /* HistoryTrendView.swift */; };
+		608060A9CEE9B3500F52F248 /* ProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85170AC24F7EB6A4BB78BCA8 /* ProcessingView.swift */; };
+		61CDEC89F90B20EF67E4B1FA /* Hanken-650.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9687BE10F01175F22C3A4498 /* Hanken-650.ttf */; };
+		621A0A626C6B18FFA54A24EE /* SerasonaWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D93BF9E450C98E67ED5826 /* SerasonaWatchApp.swift */; };
+		6610888AEBE0D1569C465BA4 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1BC147BCF1429863AFC4D9 /* Theme.swift */; };
+		67D563723AEB4D0A1FD3F51D /* CheckInReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB7AA34DFEAB0A7A9B8B018 /* CheckInReminders.swift */; };
+		696DBBE704659A5623475780 /* SerasonaWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72D6F16DD05C47BD2B96C71 /* SerasonaWidget.swift */; };
+		699E46CB793318B41DCE56F3 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9850DD7474557A89A535CB00 /* Typography.swift */; };
+		6A35BD9B1659AA74ADD28FBE /* CheckInQuestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26A8274B5781DEBB1EAEB7 /* CheckInQuestions.swift */; };
+		6EFFE0B82E8AEADBCE45767D /* Bricolage-700.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 398F3CE5ED9EBB54003EF651 /* Bricolage-700.ttf */; };
+		6FDA88763B39CDB5F68253E7 /* DMMono-500.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7BFD7117FDBA3FD3E3FA089C /* DMMono-500.ttf */; };
+		71DF7AB0E947CB0A2B95F11A /* Hanken-500.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF465F6994CB0F6223315272 /* Hanken-500.ttf */; };
+		72C3A9C3C164CB0CC3A21E4A /* Hanken-700.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3EB57D5BD87A279F49689D1D /* Hanken-700.ttf */; };
+		75372BA48BB6EA1EBEE39F7F /* SignalBand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E673ED4D649267B4CB4781 /* SignalBand.swift */; };
+		770768460452E02AD98A84D0 /* WatchCheckInFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71F6DD7528DD316B5034BC0 /* WatchCheckInFlow.swift */; };
+		7C07F6EE922EE4E25A47CDE4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90E9B81194503395BAD394D1 /* Assets.xcassets */; };
+		7C0CCA63BD44F79294477F03 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A6F5B7FCEE1A4FE9F90D8B /* SettingsView.swift */; };
+		7D3EAE13BD1975481B2EA456 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582DECDE081E1318446353CE /* Fonts.swift */; };
+		7DF903588A2E9E9888ABD5BC /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE91DF7B9EB9A39D089E731 /* Waveform.swift */; };
+		7F5FFF4F0664EE9FB5569745 /* CheckInHistoryMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = F376B3E439C46DC83212F3F8 /* CheckInHistoryMath.swift */; };
+		81E619673BD68EA234E85F77 /* MetricTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718995C1A8EA46BC4D80E545 /* MetricTile.swift */; };
+		8318C6015472C1F0C55FFAA4 /* SerasonaLegal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E388340BB79F22B22A86B7AE /* SerasonaLegal.swift */; };
+		852CAA861243F0E5711B86DE /* SerasonaAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7DA01C3728ACF056E9E5BA /* SerasonaAPI.swift */; };
+		871241A595D7194A81FAA721 /* SerasonaComplication.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 923DBBE0E15857FE6B8AC16C /* SerasonaComplication.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8B2E743FDF34AD31C6B83CD4 /* Bricolage-700.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1A18545B91CEEFA92B5DC39 /* Bricolage-700.ttf */; };
+		8BD490E5B35507736D897C97 /* Bricolage-650.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A3926A32F7325EABC372A05A /* Bricolage-650.ttf */; };
+		8C38CEC2AC74F9F8D83EE663 /* Bricolage-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A158D0A59E471713507F489 /* Bricolage-400.ttf */; };
+		9096402849B2AFCF4818ADE2 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582DECDE081E1318446353CE /* Fonts.swift */; };
+		94D7B9931FB57A7A98179B84 /* DashboardResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522C5CB6D39412EA3A3EDABB /* DashboardResultView.swift */; };
+		94D9B747F83E9B64A1FCE314 /* WatchUploadQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094F3025754E9D2B57877A5F /* WatchUploadQueue.swift */; };
+		992662E8DC0B3D4D33E98E49 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36649966E9F64535B59FA3F /* OnboardingView.swift */; };
+		9D85B68C96ACEADE7765CB49 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC226E5A082AE06F7433D00F /* ResultView.swift */; };
+		A0CFC016A21F05C426E45427 /* SerasonaWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 68FEF48C7106A0F129D6BA5E /* SerasonaWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A430F2F2EAAD41125F065319 /* SerasonaComplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB121F9209CD69D82AC2787 /* SerasonaComplication.swift */; };
+		A66BA9919CEB9868CED11004 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF838E05B65EE0ED086D68A /* Models.swift */; };
+		A7A4488C3DA1DFA7F2A32944 /* DMMono-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 313B98B62ABD50B2D0B25467 /* DMMono-400.ttf */; };
+		A7B94CED486CF58113AECCA2 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 512064F62A94583F5F025CBF /* FirebaseFirestore */; };
+		AA677078C9D40117DB47E031 /* CheckInHistoryMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = F376B3E439C46DC83212F3F8 /* CheckInHistoryMath.swift */; };
+		AC060D68DEC3F448ADE7CF98 /* SerasonaAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7DA01C3728ACF056E9E5BA /* SerasonaAPI.swift */; };
+		ADE4A530B7CF608EDDAFB616 /* DMMono-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D5F056DD0A4441ED5A93D6AE /* DMMono-400.ttf */; };
+		B61AEEAE334B6E96D833B47B /* CheckInReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB7AA34DFEAB0A7A9B8B018 /* CheckInReminders.swift */; };
+		B6A15EACC4E831E370C58DEB /* Hanken-650.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 225370650083B47398B1654E /* Hanken-650.ttf */; };
+		B7311ABC486A0CFAC88614C4 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0595D48D35DEA097028B810 /* SharedStore.swift */; };
+		B878503FC22B9C0311D52699 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12407B9A6846CEB863FAE2FB /* PaywallView.swift */; };
+		B902BC156DE5EF9DC4B280DD /* SleepScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CD3A0B4E1BEDFF45C9E9CE /* SleepScore.swift */; };
+		BB6D156430FE66A809CBE770 /* WatchSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E508DEC0CB51CE9AED0D2B5 /* WatchSignInView.swift */; };
+		BD13C9C61A09E7645D1C82F3 /* Bricolage-700.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB1A04D7EEF872AF49C58B7B /* Bricolage-700.ttf */; };
+		C03F61CD36872ECC7079F65F /* GroupTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C0EE2700AFC94505DD1A5A /* GroupTile.swift */; };
+		C043204D63B2EC70BF4387E7 /* SerasonaIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988842687BAD671BE21199A /* SerasonaIdentity.swift */; };
+		C06FCFC3865F702E6E84DC6D /* CheckInReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB7AA34DFEAB0A7A9B8B018 /* CheckInReminders.swift */; };
+		C13D1599C276EC603E4431D3 /* DMMono-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB446410AB74423A44CF36A0 /* DMMono-400.ttf */; };
+		C667ECADABF6F05692A040E0 /* Bricolage-650.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AC6791D6AE0902822C915F4A /* Bricolage-650.ttf */; };
+		C67F7E856AA17E5C6567298D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8E6F927153D51AF9166CCB6 /* Assets.xcassets */; };
+		C81DC6A3F57384321E53363A /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9850DD7474557A89A535CB00 /* Typography.swift */; };
+		CE2213F9E5D1D749D446D0BF /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0595D48D35DEA097028B810 /* SharedStore.swift */; };
+		D0D581F5B67F6611DDB7C1F6 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81E34F1F902E3D4BC3FA9C9 /* RootView.swift */; };
+		D2F655640BCA1B8F556EDE51 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F80B841FABC3F9A54E88F94 /* AudioRecorder.swift */; };
+		D327B9DD6D599D41005357E7 /* SignalBand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E673ED4D649267B4CB4781 /* SignalBand.swift */; };
+		D3D564516125311E4B80F488 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1BC147BCF1429863AFC4D9 /* Theme.swift */; };
+		D6884705D6907A6946C29CCF /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA44FCFF53D7D260D1DA529 /* StoreManager.swift */; };
+		D73AF512B0EB275359B3643D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF838E05B65EE0ED086D68A /* Models.swift */; };
+		D880ACA69EF6625C417F1E6C /* DMMono-500.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 43A972559AB10B41C83B4C37 /* DMMono-500.ttf */; };
+		D8F515FCB19753ED2C1951CF /* CheckInHistoryMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = F376B3E439C46DC83212F3F8 /* CheckInHistoryMath.swift */; };
+		D9BA95B6A3C019B788E0D28A /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0595D48D35DEA097028B810 /* SharedStore.swift */; };
+		D9BAB2731BEC5CDA999DE6F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF03B69C8D57F54B163A476F /* Assets.xcassets */; };
+		DA11FF1F27A4B33A93307468 /* Bricolage-650.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B60A5A336EDC78FD05E16185 /* Bricolage-650.ttf */; };
+		DA3656DE323B44B635DC1155 /* SleepScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CD3A0B4E1BEDFF45C9E9CE /* SleepScore.swift */; };
+		DB3A16A1F3E9DF7690EF4807 /* CaptureFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00A3A807663F29627688460 /* CaptureFlowView.swift */; };
+		DD6A35B9AB691BBA4BA2E359 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 547419009B34258A77510EFA /* GoogleService-Info.plist */; };
+		E245DEF2CFB4FCA7C7B45E88 /* DMMono-500.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DF564F797EFB466B1F5D6ED8 /* DMMono-500.ttf */; };
+		E58CBB8F7C1FCC945357CD2B /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF838E05B65EE0ED086D68A /* Models.swift */; };
+		E66EF76C3EFF3396ABD5F021 /* SerasonaAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7DA01C3728ACF056E9E5BA /* SerasonaAPI.swift */; };
+		E7788ECE1231D7DB4A336829 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 547419009B34258A77510EFA /* GoogleService-Info.plist */; };
+		ED37A4C6A1A75C71E7BDFD0C /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE91DF7B9EB9A39D089E731 /* Waveform.swift */; };
+		ED736F04D723CD5DF96EFF69 /* AuthTokenCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F28C6D01ACF8374FFA365AFF /* AuthTokenCache.swift */; };
+		F1B43A57AA82F171D147BDB4 /* AuthTokenCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F28C6D01ACF8374FFA365AFF /* AuthTokenCache.swift */; };
+		F33BA2E14E7414AC70F21F92 /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71BC6B588AC462C38D97C05 /* DeleteAccountView.swift */; };
+		F361549E49E16ED09C15BB7B /* SerasonaWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 3025FE264FA6E13CBAC9AE6B /* SerasonaWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F366D55F9E5DA99318C8CE57 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F80B841FABC3F9A54E88F94 /* AudioRecorder.swift */; };
+		F6BF71FFD34D5F993981856C /* AssessmentScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A6A15E408F1D304BC6331 /* AssessmentScale.swift */; };
+		F868BA6B621EBA3F78776658 /* CheckInHistoryMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = F376B3E439C46DC83212F3F8 /* CheckInHistoryMath.swift */; };
+		F9D44CAD3234DADAAB4BF87F /* CheckInQuestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26A8274B5781DEBB1EAEB7 /* CheckInQuestions.swift */; };
+		FAC4382690C5A4606C1D2D9A /* Bricolage-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3373B123F7FC37ACF28DDE45 /* Bricolage-400.ttf */; };
+		FBDE5042B1ADFE002F2FA4D2 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB430F8E7820652D5986389 /* FirebaseAuthService.swift */; };
+		FC0743D23046929B459D4459 /* SerasonaIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4988842687BAD671BE21199A /* SerasonaIdentity.swift */; };
+		FEFFEB210956083045D0C7CB /* Hanken-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F221A1847AC70B3331667D1 /* Hanken-400.ttf */; };
+		FF12D71F3F64FBAD7472D1E7 /* SerasonaLegal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E388340BB79F22B22A86B7AE /* SerasonaLegal.swift */; };
+		FF6BAFC21432A4F1F157CA7E /* CheckInReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB7AA34DFEAB0A7A9B8B018 /* CheckInReminders.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		58EDA9525E6A89FF57DCF449 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D081E7B98EEE01BBE2460E8C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 272121132A1E34B8B03A4B5A;
+			remoteInfo = SerasonaWatch;
+		};
+		EAF0732F628EDA74F38C707A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D081E7B98EEE01BBE2460E8C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2E1BE73A53CE7E7CABED70D2;
+			remoteInfo = SerasonaWidget;
+		};
+		ECE70D4E3D203CC36785EA0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D081E7B98EEE01BBE2460E8C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 28273DA0B534EB3FFB57D22F;
+			remoteInfo = SerasonaComplication;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5837D51E415C0A313249F934 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				F361549E49E16ED09C15BB7B /* SerasonaWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84EB61E78A90422C08F54318 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A0CFC016A21F05C426E45427 /* SerasonaWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D26E89E29AB7EB0AD5C6DB4F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				871241A595D7194A81FAA721 /* SerasonaComplication.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		03BA64F14A15938F00712C12 /* Hanken-700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-700.ttf"; sourceTree = "<group>"; };
+		094F3025754E9D2B57877A5F /* WatchUploadQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchUploadQueue.swift; sourceTree = "<group>"; };
+		0EE91DF7B9EB9A39D089E731 /* Waveform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Waveform.swift; sourceTree = "<group>"; };
+		0F80B841FABC3F9A54E88F94 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		12407B9A6846CEB863FAE2FB /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		12D93BF9E450C98E67ED5826 /* SerasonaWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerasonaWatchApp.swift; sourceTree = "<group>"; };
+		17D813C68442AF3C45052BA1 /* ScoreDial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreDial.swift; sourceTree = "<group>"; };
+		1DB7AA34DFEAB0A7A9B8B018 /* CheckInReminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInReminders.swift; sourceTree = "<group>"; };
+		20E673ED4D649267B4CB4781 /* SignalBand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalBand.swift; sourceTree = "<group>"; };
+		225370650083B47398B1654E /* Hanken-650.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-650.ttf"; sourceTree = "<group>"; };
+		25CD3A0B4E1BEDFF45C9E9CE /* SleepScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepScore.swift; sourceTree = "<group>"; };
+		26534DB2D5BBC4DD074BC149 /* Serasona.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Serasona.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E508DEC0CB51CE9AED0D2B5 /* WatchSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSignInView.swift; sourceTree = "<group>"; };
+		3025FE264FA6E13CBAC9AE6B /* SerasonaWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SerasonaWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		313B98B62ABD50B2D0B25467 /* DMMono-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMMono-400.ttf"; sourceTree = "<group>"; };
+		3373B123F7FC37ACF28DDE45 /* Bricolage-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bricolage-400.ttf"; sourceTree = "<group>"; };
+		37A6F5B7FCEE1A4FE9F90D8B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		398F3CE5ED9EBB54003EF651 /* Bricolage-700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bricolage-700.ttf"; sourceTree = "<group>"; };
+		3EB57D5BD87A279F49689D1D /* Hanken-700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-700.ttf"; sourceTree = "<group>"; };
+		3F221A1847AC70B3331667D1 /* Hanken-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-400.ttf"; sourceTree = "<group>"; };
+		3FB430F8E7820652D5986389 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
+		43A972559AB10B41C83B4C37 /* DMMono-500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMMono-500.ttf"; sourceTree = "<group>"; };
+		45C0EE2700AFC94505DD1A5A /* GroupTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTile.swift; sourceTree = "<group>"; };
+		4988842687BAD671BE21199A /* SerasonaIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerasonaIdentity.swift; sourceTree = "<group>"; };
+		4A158D0A59E471713507F489 /* Bricolage-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bricolage-400.ttf"; sourceTree = "<group>"; };
+		51CE11F802309E24161AA54C /* Hanken-500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-500.ttf"; sourceTree = "<group>"; };
+		522C5CB6D39412EA3A3EDABB /* DashboardResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardResultView.swift; sourceTree = "<group>"; };
+		547419009B34258A77510EFA /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		582DECDE081E1318446353CE /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
+		5CC03487270BC43F38B3A942 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		62ADF370E92B54AD072B9125 /* UIHarness.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHarness.swift; sourceTree = "<group>"; };
+		652DBC007CE9D377E4EC9FA5 /* Hanken-700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-700.ttf"; sourceTree = "<group>"; };
+		68FEF48C7106A0F129D6BA5E /* SerasonaWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = SerasonaWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6CC23060AEA95255B5EBE09F /* Hanken-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-400.ttf"; sourceTree = "<group>"; };
+		718995C1A8EA46BC4D80E545 /* MetricTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricTile.swift; sourceTree = "<group>"; };
+		7BFD7117FDBA3FD3E3FA089C /* DMMono-500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMMono-500.ttf"; sourceTree = "<group>"; };
+		7CA44FCFF53D7D260D1DA529 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
+		7F26A8274B5781DEBB1EAEB7 /* CheckInQuestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInQuestions.swift; sourceTree = "<group>"; };
+		807CF3D2A328CD12B0612E3B /* HistoryTrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTrendView.swift; sourceTree = "<group>"; };
+		85170AC24F7EB6A4BB78BCA8 /* ProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingView.swift; sourceTree = "<group>"; };
+		8B1BC147BCF1429863AFC4D9 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		90E9B81194503395BAD394D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		91CAA34D32F009444A9F63C2 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		923DBBE0E15857FE6B8AC16C /* SerasonaComplication.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SerasonaComplication.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		956A6A15E408F1D304BC6331 /* AssessmentScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentScale.swift; sourceTree = "<group>"; };
+		9687BE10F01175F22C3A4498 /* Hanken-650.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-650.ttf"; sourceTree = "<group>"; };
+		9850DD7474557A89A535CB00 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		9A03181367BC9A1F56209EDD /* Hanken-500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-500.ttf"; sourceTree = "<group>"; };
+		A3926A32F7325EABC372A05A /* Bricolage-650.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bricolage-650.ttf"; sourceTree = "<group>"; };
+		A71BC6B588AC462C38D97C05 /* DeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountView.swift; sourceTree = "<group>"; };
+		A91E9BF91B057CE4164B120B /* WatchAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchAuthService.swift; sourceTree = "<group>"; };
+		AC6791D6AE0902822C915F4A /* Bricolage-650.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bricolage-650.ttf"; sourceTree = "<group>"; };
+		AFB121F9209CD69D82AC2787 /* SerasonaComplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerasonaComplication.swift; sourceTree = "<group>"; };
+		B1A18545B91CEEFA92B5DC39 /* Bricolage-700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bricolage-700.ttf"; sourceTree = "<group>"; };
+		B60A5A336EDC78FD05E16185 /* Bricolage-650.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bricolage-650.ttf"; sourceTree = "<group>"; };
+		B8E6F927153D51AF9166CCB6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BB1A04D7EEF872AF49C58B7B /* Bricolage-700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bricolage-700.ttf"; sourceTree = "<group>"; };
+		BB446410AB74423A44CF36A0 /* DMMono-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMMono-400.ttf"; sourceTree = "<group>"; };
+		BC7DA01C3728ACF056E9E5BA /* SerasonaAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerasonaAPI.swift; sourceTree = "<group>"; };
+		C00A3A807663F29627688460 /* CaptureFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureFlowView.swift; sourceTree = "<group>"; };
+		C0595D48D35DEA097028B810 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
+		CA02E797C8D8F1F89D7F938F /* Hanken-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-400.ttf"; sourceTree = "<group>"; };
+		CAF838E05B65EE0ED086D68A /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		CEE9DDBFFCA7B7B183D1FA39 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D36649966E9F64535B59FA3F /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		D5F056DD0A4441ED5A93D6AE /* DMMono-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMMono-400.ttf"; sourceTree = "<group>"; };
+		D71F6DD7528DD316B5034BC0 /* WatchCheckInFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchCheckInFlow.swift; sourceTree = "<group>"; };
+		D77C718D4EBDDE4EB157056A /* TakeMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TakeMerger.swift; sourceTree = "<group>"; };
+		D81E34F1F902E3D4BC3FA9C9 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		DC226E5A082AE06F7433D00F /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		DF03B69C8D57F54B163A476F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DF564F797EFB466B1F5D6ED8 /* DMMono-500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMMono-500.ttf"; sourceTree = "<group>"; };
+		E388340BB79F22B22A86B7AE /* SerasonaLegal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerasonaLegal.swift; sourceTree = "<group>"; };
+		E38DA45B78FAE6332FED6436 /* Hanken-650.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-650.ttf"; sourceTree = "<group>"; };
+		E9BEE41C46152B7E9582E7D5 /* SerasonaScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerasonaScore.swift; sourceTree = "<group>"; };
+		EAAF10551CE09AE8E08E57CB /* Products.storekit */ = {isa = PBXFileReference; path = Products.storekit; sourceTree = "<group>"; };
+		F28C6D01ACF8374FFA365AFF /* AuthTokenCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTokenCache.swift; sourceTree = "<group>"; };
+		F376B3E439C46DC83212F3F8 /* CheckInHistoryMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInHistoryMath.swift; sourceTree = "<group>"; };
+		F72D6F16DD05C47BD2B96C71 /* SerasonaWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerasonaWidget.swift; sourceTree = "<group>"; };
+		F815D5BB15E04FF3A2EA1B9F /* SerasonaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerasonaApp.swift; sourceTree = "<group>"; };
+		FA91C55FCC8760311160A65C /* Bricolage-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bricolage-400.ttf"; sourceTree = "<group>"; };
+		FF465F6994CB0F6223315272 /* Hanken-500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hanken-500.ttf"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9D5C7AB4FEF560EFF8E32F82 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0E5CCB5BC33CD769489AE26C /* FirebaseAuth in Frameworks */,
+				4079542C70DA42EB1B7003BA /* FirebaseCore in Frameworks */,
+				A7B94CED486CF58113AECCA2 /* FirebaseFirestore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0801E49C5765AA84C311D206 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				3FB430F8E7820652D5986389 /* FirebaseAuthService.swift */,
+				D81E34F1F902E3D4BC3FA9C9 /* RootView.swift */,
+				F815D5BB15E04FF3A2EA1B9F /* SerasonaApp.swift */,
+				62ADF370E92B54AD072B9125 /* UIHarness.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		16880E0D7B6776C66739D3E8 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				4A158D0A59E471713507F489 /* Bricolage-400.ttf */,
+				A3926A32F7325EABC372A05A /* Bricolage-650.ttf */,
+				398F3CE5ED9EBB54003EF651 /* Bricolage-700.ttf */,
+				313B98B62ABD50B2D0B25467 /* DMMono-400.ttf */,
+				DF564F797EFB466B1F5D6ED8 /* DMMono-500.ttf */,
+				6CC23060AEA95255B5EBE09F /* Hanken-400.ttf */,
+				FF465F6994CB0F6223315272 /* Hanken-500.ttf */,
+				9687BE10F01175F22C3A4498 /* Hanken-650.ttf */,
+				652DBC007CE9D377E4EC9FA5 /* Hanken-700.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		1CF0F7F6CB411953D2F6DB2C /* Paywall */ = {
+			isa = PBXGroup;
+			children = (
+				12407B9A6846CEB863FAE2FB /* PaywallView.swift */,
+				7CA44FCFF53D7D260D1DA529 /* StoreManager.swift */,
+			);
+			path = Paywall;
+			sourceTree = "<group>";
+		};
+		20B4AB5CC06A80578E5B9EA4 /* Capture */ = {
+			isa = PBXGroup;
+			children = (
+				C00A3A807663F29627688460 /* CaptureFlowView.swift */,
+				D77C718D4EBDDE4EB157056A /* TakeMerger.swift */,
+			);
+			path = Capture;
+			sourceTree = "<group>";
+		};
+		2B5F809BA090B9CC92EBF7E4 /* Result */ = {
+			isa = PBXGroup;
+			children = (
+				522C5CB6D39412EA3A3EDABB /* DashboardResultView.swift */,
+				45C0EE2700AFC94505DD1A5A /* GroupTile.swift */,
+				718995C1A8EA46BC4D80E545 /* MetricTile.swift */,
+				DC226E5A082AE06F7433D00F /* ResultView.swift */,
+				17D813C68442AF3C45052BA1 /* ScoreDial.swift */,
+			);
+			path = Result;
+			sourceTree = "<group>";
+		};
+		34636FF048C7E1FC77FCA381 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CEE9DDBFFCA7B7B183D1FA39 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		36874EFF4A4155BA2F250C77 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				DF03B69C8D57F54B163A476F /* Assets.xcassets */,
+				16880E0D7B6776C66739D3E8 /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5A402ED2E148A35DE10E3D06 = {
+			isa = PBXGroup;
+			children = (
+				D6A9D51BEE0C93937ACA4245 /* Serasona */,
+				E6B458796645B22071CC9A32 /* SerasonaComplication */,
+				78DB1F81B1C9EF078051E324 /* SerasonaWatch */,
+				BCEDD87934BAEA24AEFE3AEF /* SerasonaWidget */,
+				89C06E95217EF71C03F121F7 /* Shared */,
+				F2D989A5F4AED80AA9DC4AC7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		618496F9087952ED93DA9171 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				20B4AB5CC06A80578E5B9EA4 /* Capture */,
+				6EA6BB7094804F3D9698FF4E /* History */,
+				9271B6B0811D92432A1068D7 /* Onboarding */,
+				1CF0F7F6CB411953D2F6DB2C /* Paywall */,
+				9C12EDB74598464788CE5545 /* Processing */,
+				2B5F809BA090B9CC92EBF7E4 /* Result */,
+				87A870A72975DC8FA9A73E11 /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		6EA6BB7094804F3D9698FF4E /* History */ = {
+			isa = PBXGroup;
+			children = (
+				807CF3D2A328CD12B0612E3B /* HistoryTrendView.swift */,
+				91CAA34D32F009444A9F63C2 /* HistoryView.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		78DB1F81B1C9EF078051E324 /* SerasonaWatch */ = {
+			isa = PBXGroup;
+			children = (
+				BE33584F48522EDE28F4CAC8 /* App */,
+				82BA10F03FCC99ABD448DB62 /* Features */,
+				36874EFF4A4155BA2F250C77 /* Resources */,
+			);
+			path = SerasonaWatch;
+			sourceTree = "<group>";
+		};
+		82BA10F03FCC99ABD448DB62 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				D71F6DD7528DD316B5034BC0 /* WatchCheckInFlow.swift */,
+				2E508DEC0CB51CE9AED0D2B5 /* WatchSignInView.swift */,
+				094F3025754E9D2B57877A5F /* WatchUploadQueue.swift */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		87A870A72975DC8FA9A73E11 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A71BC6B588AC462C38D97C05 /* DeleteAccountView.swift */,
+				37A6F5B7FCEE1A4FE9F90D8B /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		89C06E95217EF71C03F121F7 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				956A6A15E408F1D304BC6331 /* AssessmentScale.swift */,
+				0F80B841FABC3F9A54E88F94 /* AudioRecorder.swift */,
+				F28C6D01ACF8374FFA365AFF /* AuthTokenCache.swift */,
+				F376B3E439C46DC83212F3F8 /* CheckInHistoryMath.swift */,
+				7F26A8274B5781DEBB1EAEB7 /* CheckInQuestions.swift */,
+				1DB7AA34DFEAB0A7A9B8B018 /* CheckInReminders.swift */,
+				582DECDE081E1318446353CE /* Fonts.swift */,
+				CAF838E05B65EE0ED086D68A /* Models.swift */,
+				5CC03487270BC43F38B3A942 /* PrivacyInfo.xcprivacy */,
+				BC7DA01C3728ACF056E9E5BA /* SerasonaAPI.swift */,
+				4988842687BAD671BE21199A /* SerasonaIdentity.swift */,
+				E388340BB79F22B22A86B7AE /* SerasonaLegal.swift */,
+				E9BEE41C46152B7E9582E7D5 /* SerasonaScore.swift */,
+				C0595D48D35DEA097028B810 /* SharedStore.swift */,
+				20E673ED4D649267B4CB4781 /* SignalBand.swift */,
+				25CD3A0B4E1BEDFF45C9E9CE /* SleepScore.swift */,
+				8B1BC147BCF1429863AFC4D9 /* Theme.swift */,
+				9850DD7474557A89A535CB00 /* Typography.swift */,
+				0EE91DF7B9EB9A39D089E731 /* Waveform.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		8E7FE06EA80ABF246310D119 /* StoreKit */ = {
+			isa = PBXGroup;
+			children = (
+				EAAF10551CE09AE8E08E57CB /* Products.storekit */,
+			);
+			path = StoreKit;
+			sourceTree = "<group>";
+		};
+		9271B6B0811D92432A1068D7 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				D36649966E9F64535B59FA3F /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		9C12EDB74598464788CE5545 /* Processing */ = {
+			isa = PBXGroup;
+			children = (
+				85170AC24F7EB6A4BB78BCA8 /* ProcessingView.swift */,
+			);
+			path = Processing;
+			sourceTree = "<group>";
+		};
+		BCEDD87934BAEA24AEFE3AEF /* SerasonaWidget */ = {
+			isa = PBXGroup;
+			children = (
+				F72D6F16DD05C47BD2B96C71 /* SerasonaWidget.swift */,
+				E8CCB0B5D5B84D66EDB39EAE /* Resources */,
+			);
+			path = SerasonaWidget;
+			sourceTree = "<group>";
+		};
+		BE33584F48522EDE28F4CAC8 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				12D93BF9E450C98E67ED5826 /* SerasonaWatchApp.swift */,
+				A91E9BF91B057CE4164B120B /* WatchAuthService.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D40AB1201C18303CE9EDE348 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				3373B123F7FC37ACF28DDE45 /* Bricolage-400.ttf */,
+				AC6791D6AE0902822C915F4A /* Bricolage-650.ttf */,
+				B1A18545B91CEEFA92B5DC39 /* Bricolage-700.ttf */,
+				D5F056DD0A4441ED5A93D6AE /* DMMono-400.ttf */,
+				43A972559AB10B41C83B4C37 /* DMMono-500.ttf */,
+				3F221A1847AC70B3331667D1 /* Hanken-400.ttf */,
+				9A03181367BC9A1F56209EDD /* Hanken-500.ttf */,
+				225370650083B47398B1654E /* Hanken-650.ttf */,
+				3EB57D5BD87A279F49689D1D /* Hanken-700.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		D6A9D51BEE0C93937ACA4245 /* Serasona */ = {
+			isa = PBXGroup;
+			children = (
+				0801E49C5765AA84C311D206 /* App */,
+				618496F9087952ED93DA9171 /* Features */,
+				E55C3847D7F453533517A8F8 /* Resources */,
+				8E7FE06EA80ABF246310D119 /* StoreKit */,
+			);
+			path = Serasona;
+			sourceTree = "<group>";
+		};
+		E55C3847D7F453533517A8F8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B8E6F927153D51AF9166CCB6 /* Assets.xcassets */,
+				547419009B34258A77510EFA /* GoogleService-Info.plist */,
+				D40AB1201C18303CE9EDE348 /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E6B458796645B22071CC9A32 /* SerasonaComplication */ = {
+			isa = PBXGroup;
+			children = (
+				AFB121F9209CD69D82AC2787 /* SerasonaComplication.swift */,
+				34636FF048C7E1FC77FCA381 /* Resources */,
+			);
+			path = SerasonaComplication;
+			sourceTree = "<group>";
+		};
+		E8CCB0B5D5B84D66EDB39EAE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				90E9B81194503395BAD394D1 /* Assets.xcassets */,
+				FBE93BA6FA7C85D18E34C279 /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		F2D989A5F4AED80AA9DC4AC7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				26534DB2D5BBC4DD074BC149 /* Serasona.app */,
+				923DBBE0E15857FE6B8AC16C /* SerasonaComplication.appex */,
+				3025FE264FA6E13CBAC9AE6B /* SerasonaWatch.app */,
+				68FEF48C7106A0F129D6BA5E /* SerasonaWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FBE93BA6FA7C85D18E34C279 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				FA91C55FCC8760311160A65C /* Bricolage-400.ttf */,
+				B60A5A336EDC78FD05E16185 /* Bricolage-650.ttf */,
+				BB1A04D7EEF872AF49C58B7B /* Bricolage-700.ttf */,
+				BB446410AB74423A44CF36A0 /* DMMono-400.ttf */,
+				7BFD7117FDBA3FD3E3FA089C /* DMMono-500.ttf */,
+				CA02E797C8D8F1F89D7F938F /* Hanken-400.ttf */,
+				51CE11F802309E24161AA54C /* Hanken-500.ttf */,
+				E38DA45B78FAE6332FED6436 /* Hanken-650.ttf */,
+				03BA64F14A15938F00712C12 /* Hanken-700.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		272121132A1E34B8B03A4B5A /* SerasonaWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 98D19B8FE6C4ED85D0B26595 /* Build configuration list for PBXNativeTarget "SerasonaWatch" */;
+			buildPhases = (
+				0BCDFFD43D397410A723DC07 /* Sources */,
+				D4D46A3C28749DD515A21888 /* Resources */,
+				D26E89E29AB7EB0AD5C6DB4F /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2607C9B509061CC0EDC3611F /* PBXTargetDependency */,
+			);
+			name = SerasonaWatch;
+			packageProductDependencies = (
+			);
+			productName = SerasonaWatch;
+			productReference = 3025FE264FA6E13CBAC9AE6B /* SerasonaWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		28273DA0B534EB3FFB57D22F /* SerasonaComplication */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B56BEE3ECC1AB19B12CCA6F /* Build configuration list for PBXNativeTarget "SerasonaComplication" */;
+			buildPhases = (
+				EC2D4AC116D629E7AE4C8B2C /* Sources */,
+				ECB85629B5EDD30B7E31B315 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SerasonaComplication;
+			packageProductDependencies = (
+			);
+			productName = SerasonaComplication;
+			productReference = 923DBBE0E15857FE6B8AC16C /* SerasonaComplication.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		2E1BE73A53CE7E7CABED70D2 /* SerasonaWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DF4C522A6D0BAFC6B547AA5 /* Build configuration list for PBXNativeTarget "SerasonaWidget" */;
+			buildPhases = (
+				1AC7035F26EB39192112E18C /* Sources */,
+				CC61B7D3FD3301A848A0D612 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SerasonaWidget;
+			packageProductDependencies = (
+			);
+			productName = SerasonaWidget;
+			productReference = 68FEF48C7106A0F129D6BA5E /* SerasonaWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		CDA0BC57818E78DD154649B4 /* Serasona */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8CFC7B79358AF477DDA422FE /* Build configuration list for PBXNativeTarget "Serasona" */;
+			buildPhases = (
+				C90E2A8CB8E76BA05804D90E /* Sources */,
+				6C6ADB78152EAA4524BBA204 /* Resources */,
+				9D5C7AB4FEF560EFF8E32F82 /* Frameworks */,
+				84EB61E78A90422C08F54318 /* Embed Foundation Extensions */,
+				5837D51E415C0A313249F934 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CF9793C8C7FDF209336BB5E0 /* PBXTargetDependency */,
+				0D3B488E71529BDAB4CC6FB2 /* PBXTargetDependency */,
+			);
+			name = Serasona;
+			packageProductDependencies = (
+				85C09C09313B1DD32FDC87E3 /* FirebaseAuth */,
+				26322FA50515F9563A109630 /* FirebaseCore */,
+				512064F62A94583F5F025CBF /* FirebaseFirestore */,
+			);
+			productName = Serasona;
+			productReference = 26534DB2D5BBC4DD074BC149 /* Serasona.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D081E7B98EEE01BBE2460E8C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					272121132A1E34B8B03A4B5A = {
+						DevelopmentTeam = JC874B66JG;
+						ProvisioningStyle = Automatic;
+					};
+					28273DA0B534EB3FFB57D22F = {
+						DevelopmentTeam = JC874B66JG;
+						ProvisioningStyle = Automatic;
+					};
+					2E1BE73A53CE7E7CABED70D2 = {
+						DevelopmentTeam = JC874B66JG;
+						ProvisioningStyle = Automatic;
+					};
+					CDA0BC57818E78DD154649B4 = {
+						DevelopmentTeam = JC874B66JG;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 5AAE533A52A0876520B1C2FE /* Build configuration list for PBXProject "Serasona" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 5A402ED2E148A35DE10E3D06;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A170CB569CB2A85DF4FDB832 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F2D989A5F4AED80AA9DC4AC7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CDA0BC57818E78DD154649B4 /* Serasona */,
+				272121132A1E34B8B03A4B5A /* SerasonaWatch */,
+				28273DA0B534EB3FFB57D22F /* SerasonaComplication */,
+				2E1BE73A53CE7E7CABED70D2 /* SerasonaWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6C6ADB78152EAA4524BBA204 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C67F7E856AA17E5C6567298D /* Assets.xcassets in Resources */,
+				FAC4382690C5A4606C1D2D9A /* Bricolage-400.ttf in Resources */,
+				C667ECADABF6F05692A040E0 /* Bricolage-650.ttf in Resources */,
+				8B2E743FDF34AD31C6B83CD4 /* Bricolage-700.ttf in Resources */,
+				ADE4A530B7CF608EDDAFB616 /* DMMono-400.ttf in Resources */,
+				D880ACA69EF6625C417F1E6C /* DMMono-500.ttf in Resources */,
+				DD6A35B9AB691BBA4BA2E359 /* GoogleService-Info.plist in Resources */,
+				FEFFEB210956083045D0C7CB /* Hanken-400.ttf in Resources */,
+				2154669F9D00EF29CA4A6371 /* Hanken-500.ttf in Resources */,
+				B6A15EACC4E831E370C58DEB /* Hanken-650.ttf in Resources */,
+				72C3A9C3C164CB0CC3A21E4A /* Hanken-700.ttf in Resources */,
+				01EF0CB2CBE06CAC56DE526A /* PrivacyInfo.xcprivacy in Resources */,
+				0CE3FBD20A2E94FCD6C55CC9 /* Products.storekit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC61B7D3FD3301A848A0D612 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7C07F6EE922EE4E25A47CDE4 /* Assets.xcassets in Resources */,
+				43C1613F068A27092D684F3D /* Bricolage-400.ttf in Resources */,
+				DA11FF1F27A4B33A93307468 /* Bricolage-650.ttf in Resources */,
+				BD13C9C61A09E7645D1C82F3 /* Bricolage-700.ttf in Resources */,
+				C13D1599C276EC603E4431D3 /* DMMono-400.ttf in Resources */,
+				6FDA88763B39CDB5F68253E7 /* DMMono-500.ttf in Resources */,
+				55DFA1A2001DF644E144033F /* Hanken-400.ttf in Resources */,
+				55316A0815319D19E5128582 /* Hanken-500.ttf in Resources */,
+				04D7E6C451BE42BC936ABEDE /* Hanken-650.ttf in Resources */,
+				4C6A9AF9F72B366FBF1E7801 /* Hanken-700.ttf in Resources */,
+				4776F68A3016981A78D9D40D /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D4D46A3C28749DD515A21888 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9BAB2731BEC5CDA999DE6F5 /* Assets.xcassets in Resources */,
+				8C38CEC2AC74F9F8D83EE663 /* Bricolage-400.ttf in Resources */,
+				8BD490E5B35507736D897C97 /* Bricolage-650.ttf in Resources */,
+				6EFFE0B82E8AEADBCE45767D /* Bricolage-700.ttf in Resources */,
+				A7A4488C3DA1DFA7F2A32944 /* DMMono-400.ttf in Resources */,
+				E245DEF2CFB4FCA7C7B45E88 /* DMMono-500.ttf in Resources */,
+				E7788ECE1231D7DB4A336829 /* GoogleService-Info.plist in Resources */,
+				042F9B94AC82772A7255CCF1 /* Hanken-400.ttf in Resources */,
+				71DF7AB0E947CB0A2B95F11A /* Hanken-500.ttf in Resources */,
+				61CDEC89F90B20EF67E4B1FA /* Hanken-650.ttf in Resources */,
+				0E631BA94B41725DBD238056 /* Hanken-700.ttf in Resources */,
+				1008B38B749852696E201741 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ECB85629B5EDD30B7E31B315 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26910A343EA26E2170BEC02D /* Assets.xcassets in Resources */,
+				234B70430133285BE04482D1 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0BCDFFD43D397410A723DC07 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6BF71FFD34D5F993981856C /* AssessmentScale.swift in Sources */,
+				49587A942B94D8B6D1196D00 /* AudioRecorder.swift in Sources */,
+				ED736F04D723CD5DF96EFF69 /* AuthTokenCache.swift in Sources */,
+				AA677078C9D40117DB47E031 /* CheckInHistoryMath.swift in Sources */,
+				6A35BD9B1659AA74ADD28FBE /* CheckInQuestions.swift in Sources */,
+				C06FCFC3865F702E6E84DC6D /* CheckInReminders.swift in Sources */,
+				7D3EAE13BD1975481B2EA456 /* Fonts.swift in Sources */,
+				D73AF512B0EB275359B3643D /* Models.swift in Sources */,
+				AC060D68DEC3F448ADE7CF98 /* SerasonaAPI.swift in Sources */,
+				21E80004E12D148828431B7F /* SerasonaIdentity.swift in Sources */,
+				8318C6015472C1F0C55FFAA4 /* SerasonaLegal.swift in Sources */,
+				18BF3873A03A8B1386D6E09E /* SerasonaScore.swift in Sources */,
+				621A0A626C6B18FFA54A24EE /* SerasonaWatchApp.swift in Sources */,
+				CE2213F9E5D1D749D446D0BF /* SharedStore.swift in Sources */,
+				39B0239D9AB7A634632442BF /* SignalBand.swift in Sources */,
+				32FD9E5E9B3A3F579B9D016B /* SleepScore.swift in Sources */,
+				D3D564516125311E4B80F488 /* Theme.swift in Sources */,
+				1F202806D7B1371D19E1F7C6 /* Typography.swift in Sources */,
+				3B780A67783E5D029A7BA713 /* WatchAuthService.swift in Sources */,
+				770768460452E02AD98A84D0 /* WatchCheckInFlow.swift in Sources */,
+				BB6D156430FE66A809CBE770 /* WatchSignInView.swift in Sources */,
+				94D9B747F83E9B64A1FCE314 /* WatchUploadQueue.swift in Sources */,
+				7DF903588A2E9E9888ABD5BC /* Waveform.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AC7035F26EB39192112E18C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1F94BF026A354AA3BB3439AF /* AssessmentScale.swift in Sources */,
+				38C601C3C87C40B361029AAE /* AudioRecorder.swift in Sources */,
+				4687920A67893FF4BBF92F33 /* AuthTokenCache.swift in Sources */,
+				D8F515FCB19753ED2C1951CF /* CheckInHistoryMath.swift in Sources */,
+				F9D44CAD3234DADAAB4BF87F /* CheckInQuestions.swift in Sources */,
+				FF6BAFC21432A4F1F157CA7E /* CheckInReminders.swift in Sources */,
+				518E0326158CE23546E340C1 /* Fonts.swift in Sources */,
+				5231B5FF6A8A63A8EA337FE4 /* Models.swift in Sources */,
+				852CAA861243F0E5711B86DE /* SerasonaAPI.swift in Sources */,
+				4E4E4543083EAF773AB029CA /* SerasonaIdentity.swift in Sources */,
+				FF12D71F3F64FBAD7472D1E7 /* SerasonaLegal.swift in Sources */,
+				27CA0006C545052B8957CAB2 /* SerasonaScore.swift in Sources */,
+				696DBBE704659A5623475780 /* SerasonaWidget.swift in Sources */,
+				1D83827C6AF881B21B5CC0DC /* SharedStore.swift in Sources */,
+				75372BA48BB6EA1EBEE39F7F /* SignalBand.swift in Sources */,
+				B902BC156DE5EF9DC4B280DD /* SleepScore.swift in Sources */,
+				01C2022B4E6355C141545425 /* Theme.swift in Sources */,
+				C81DC6A3F57384321E53363A /* Typography.swift in Sources */,
+				2D92BC9DEB61CE000C58537E /* Waveform.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C90E2A8CB8E76BA05804D90E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				47BF5DB93534821F29285A8B /* AssessmentScale.swift in Sources */,
+				D2F655640BCA1B8F556EDE51 /* AudioRecorder.swift in Sources */,
+				4B76801D1D37C94A515AEE76 /* AuthTokenCache.swift in Sources */,
+				DB3A16A1F3E9DF7690EF4807 /* CaptureFlowView.swift in Sources */,
+				7F5FFF4F0664EE9FB5569745 /* CheckInHistoryMath.swift in Sources */,
+				2F18CBC343AA6D26993C16DB /* CheckInQuestions.swift in Sources */,
+				B61AEEAE334B6E96D833B47B /* CheckInReminders.swift in Sources */,
+				94D7B9931FB57A7A98179B84 /* DashboardResultView.swift in Sources */,
+				F33BA2E14E7414AC70F21F92 /* DeleteAccountView.swift in Sources */,
+				FBDE5042B1ADFE002F2FA4D2 /* FirebaseAuthService.swift in Sources */,
+				9096402849B2AFCF4818ADE2 /* Fonts.swift in Sources */,
+				C03F61CD36872ECC7079F65F /* GroupTile.swift in Sources */,
+				5CC0319F322378F818403636 /* HistoryTrendView.swift in Sources */,
+				1170419CA9D6166067607623 /* HistoryView.swift in Sources */,
+				81E619673BD68EA234E85F77 /* MetricTile.swift in Sources */,
+				E58CBB8F7C1FCC945357CD2B /* Models.swift in Sources */,
+				992662E8DC0B3D4D33E98E49 /* OnboardingView.swift in Sources */,
+				B878503FC22B9C0311D52699 /* PaywallView.swift in Sources */,
+				608060A9CEE9B3500F52F248 /* ProcessingView.swift in Sources */,
+				9D85B68C96ACEADE7765CB49 /* ResultView.swift in Sources */,
+				D0D581F5B67F6611DDB7C1F6 /* RootView.swift in Sources */,
+				12DE4CC5566A85927FC41ACA /* ScoreDial.swift in Sources */,
+				E66EF76C3EFF3396ABD5F021 /* SerasonaAPI.swift in Sources */,
+				1E6C9F2AC8C95FF746CA8CBB /* SerasonaApp.swift in Sources */,
+				FC0743D23046929B459D4459 /* SerasonaIdentity.swift in Sources */,
+				330F1C0B8451239D5C0B9B5F /* SerasonaLegal.swift in Sources */,
+				1D932E3D3A97D3A349ACC335 /* SerasonaScore.swift in Sources */,
+				7C0CCA63BD44F79294477F03 /* SettingsView.swift in Sources */,
+				D9BA95B6A3C019B788E0D28A /* SharedStore.swift in Sources */,
+				D327B9DD6D599D41005357E7 /* SignalBand.swift in Sources */,
+				27C63BB2F711DA2DBDAA9794 /* SleepScore.swift in Sources */,
+				D6884705D6907A6946C29CCF /* StoreManager.swift in Sources */,
+				01508E931C9ACF7464648AD5 /* TakeMerger.swift in Sources */,
+				6610888AEBE0D1569C465BA4 /* Theme.swift in Sources */,
+				40167218A7AB153EA588401A /* Typography.swift in Sources */,
+				16C263F46B9F4E5274163620 /* UIHarness.swift in Sources */,
+				019AE7A2DF9ADA8AF363BA2F /* Waveform.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC2D4AC116D629E7AE4C8B2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A1878315D822A332E73A505 /* AssessmentScale.swift in Sources */,
+				F366D55F9E5DA99318C8CE57 /* AudioRecorder.swift in Sources */,
+				F1B43A57AA82F171D147BDB4 /* AuthTokenCache.swift in Sources */,
+				F868BA6B621EBA3F78776658 /* CheckInHistoryMath.swift in Sources */,
+				03EA660EA321F2DEB71B7DAB /* CheckInQuestions.swift in Sources */,
+				67D563723AEB4D0A1FD3F51D /* CheckInReminders.swift in Sources */,
+				39C2B1B8E424DDBB7FB0C98C /* Fonts.swift in Sources */,
+				A66BA9919CEB9868CED11004 /* Models.swift in Sources */,
+				4258CEB363E64A72933F0F2A /* SerasonaAPI.swift in Sources */,
+				A430F2F2EAAD41125F065319 /* SerasonaComplication.swift in Sources */,
+				C043204D63B2EC70BF4387E7 /* SerasonaIdentity.swift in Sources */,
+				505E5324C92B509A27C61915 /* SerasonaLegal.swift in Sources */,
+				26971B9F53D1BF7F77068C26 /* SerasonaScore.swift in Sources */,
+				B7311ABC486A0CFAC88614C4 /* SharedStore.swift in Sources */,
+				53D6997B187DEA92581325F9 /* SignalBand.swift in Sources */,
+				DA3656DE323B44B635DC1155 /* SleepScore.swift in Sources */,
+				064C537F9669C1A1B073A88D /* Theme.swift in Sources */,
+				699E46CB793318B41DCE56F3 /* Typography.swift in Sources */,
+				ED37A4C6A1A75C71E7BDFD0C /* Waveform.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0D3B488E71529BDAB4CC6FB2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2E1BE73A53CE7E7CABED70D2 /* SerasonaWidget */;
+			targetProxy = EAF0732F628EDA74F38C707A /* PBXContainerItemProxy */;
+		};
+		2607C9B509061CC0EDC3611F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 28273DA0B534EB3FFB57D22F /* SerasonaComplication */;
+			targetProxy = ECE70D4E3D203CC36785EA0C /* PBXContainerItemProxy */;
+		};
+		CF9793C8C7FDF209336BB5E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 272121132A1E34B8B03A4B5A /* SerasonaWatch */;
+			targetProxy = 58EDA9525E6A89FF57DCF449 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0B3F8C406497D78A780072BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = JC874B66JG;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.10;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		22F28CA9E6AB5924C10E41A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Generated/SerasonaWatch.entitlements;
+				INFOPLIST_FILE = "Generated/SerasonaWatch-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = NO;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
+		};
+		4517BC5BC2BF3FED7035B1F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = JC874B66JG;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.10;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		5E53DA30B74EF4E05758F4FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Generated/SerasonaWatch.entitlements;
+				INFOPLIST_FILE = "Generated/SerasonaWatch-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = NO;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		85BFE85A348D916E055AF2C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Generated/SerasonaComplication.entitlements;
+				INFOPLIST_FILE = "Generated/SerasonaComplication-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp.complication;
+				SDKROOT = watchos;
+				SKIP_INSTALL = NO;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
+		};
+		8721EFFD39967DC4B036291F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Generated/Serasona.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "Generated/Serasona-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		91AB253F0CC22C57B30EEBA8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Generated/SerasonaWidget.entitlements;
+				INFOPLIST_FILE = "Generated/SerasonaWidget-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.widget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		C7084604E1825F2C92581527 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Generated/SerasonaWidget.entitlements;
+				INFOPLIST_FILE = "Generated/SerasonaWidget-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.widget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		CAEBB17B1D1EB09BBCCCF3AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Generated/SerasonaComplication.entitlements;
+				INFOPLIST_FILE = "Generated/SerasonaComplication-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp.complication;
+				SDKROOT = watchos;
+				SKIP_INSTALL = NO;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		F75E027EA5D8255B05604ED4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Generated/Serasona.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "Generated/Serasona-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1B56BEE3ECC1AB19B12CCA6F /* Build configuration list for PBXNativeTarget "SerasonaComplication" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAEBB17B1D1EB09BBCCCF3AE /* Debug */,
+				85BFE85A348D916E055AF2C8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1DF4C522A6D0BAFC6B547AA5 /* Build configuration list for PBXNativeTarget "SerasonaWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C7084604E1825F2C92581527 /* Debug */,
+				91AB253F0CC22C57B30EEBA8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5AAE533A52A0876520B1C2FE /* Build configuration list for PBXProject "Serasona" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B3F8C406497D78A780072BF /* Debug */,
+				4517BC5BC2BF3FED7035B1F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8CFC7B79358AF477DDA422FE /* Build configuration list for PBXNativeTarget "Serasona" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F75E027EA5D8255B05604ED4 /* Debug */,
+				8721EFFD39967DC4B036291F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		98D19B8FE6C4ED85D0B26595 /* Build configuration list for PBXNativeTarget "SerasonaWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E53DA30B74EF4E05758F4FA /* Debug */,
+				22F28CA9E6AB5924C10E41A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A170CB569CB2A85DF4FDB832 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		26322FA50515F9563A109630 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A170CB569CB2A85DF4FDB832 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		512064F62A94583F5F025CBF /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A170CB569CB2A85DF4FDB832 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		85C09C09313B1DD32FDC87E3 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A170CB569CB2A85DF4FDB832 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D081E7B98EEE01BBE2460E8C /* Project object */;
+}

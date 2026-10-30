@@ -39,3 +39,10 @@ ios/DerivedData
 ios/**/*.xcuserstate
 ios/**/xcuserdata/
 
+# Consolidated Apple client and local build products
+.build/
+apps/apple/build/
+apps/apple/**/*.xcuserstate
+apps/apple/**/xcuserdata/
+apps/apple/TEST_ACCOUNT.local.md
+

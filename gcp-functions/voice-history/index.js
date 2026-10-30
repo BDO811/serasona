@@ -111,7 +111,7 @@ function getCorsOrigin(requestOrigin) {
 
 function setCorsHeaders(req, res) {
   res.set("Access-Control-Allow-Origin", getCorsOrigin(req.headers.origin));
-  res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
   res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 
@@ -456,6 +456,31 @@ async function handleFetch(req, res) {
   res.status(200).json({ sessions });
 }
 
+async function handleDelete(req, res) {
+  const header = req.headers.authorization || "";
+  if (!header.startsWith("Bearer ") || !header.slice(7)) {
+    return res.status(401).json({ error: "Sign in to delete your readings." });
+  }
+  let decoded;
+  try { decoded = await admin.auth().verifyIdToken(header.slice(7), true); }
+  catch { return res.status(401).json({ error: "Sign in again to delete your readings." }); }
+  const userKey = `uid:${decoded.uid}`;
+  let deleted = 0;
+  // Batch at most 400 writes; keep querying until every owned row is gone.
+  // Query parameters never determine ownership.
+  for (const name of [COLLECTION, PHONE_REQUESTS]) {
+    for (;;) {
+      const snapshot = await firestore.collection(name).where("userKey", "==", userKey).limit(400).get();
+      if (snapshot.empty) break;
+      const batch = firestore.batch();
+      for (const doc of snapshot.docs) batch.delete(doc.ref);
+      await batch.commit();
+      deleted += snapshot.size;
+    }
+  }
+  return res.status(200).json({ deleted });
+}
+
 exports.voiceHistory = async (req, res) => {
   setCorsHeaders(req, res);
 
@@ -465,6 +490,10 @@ exports.voiceHistory = async (req, res) => {
   }
 
   try {
+    if (req.method === "DELETE") {
+      await handleDelete(req, res);
+      return;
+    }
     if (req.method === "POST") {
       await handleSave(req, res);
       return;
