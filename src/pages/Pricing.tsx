@@ -108,17 +108,19 @@ const annualSavingsPct = (tier: Tier) => {
 };
 
 /**
- * An illustrative preview of a week of real check-ins, and what happens to
- * it on the free tier. Static and representative, not wired to any account's
- * actual data — the same "show the goods" role as a product screenshot.
+ * An illustrative month of stress check-ins: not a counter climbing from
+ * zero, a real day-by-day line across thirty days that rises into the high
+ * range and eases back down, same as a real stretch of a demanding month
+ * would read. Static and representative, not wired to any account's actual
+ * data — the same "show the goods" role as a product screenshot.
  *
- * This is a rendered clip rather than a hand-drawn SVG: a comet draws the
- * trend curve, keyframes pop on it, it folds down into a giant "60" that
- * lands with echo rings and a light burst — built with Anthropic's
- * scenario-kinetic-film skill (its Graph block), not approximated with
- * framer-motion springs, so the motion blur, bloom and film grain are real,
- * not faked. Source spec and render pipeline: see the skill's own folder;
- * the 960x450 H.264/VP9 pair + poster live in public/video/trend-loop.*.
+ * A genuine kinetic-film render (Anthropic's scenario-kinetic-film skill): a
+ * quick kinetic-type cold open ("KNOW YOUR / STRESS, / SLEEP, / AND
+ * CLARITY. / DAILY.") hard-cuts into a custom Graph block that comets a real
+ * 30-day series instead of a fixed curve — calm in ink, hot red past 50,
+ * a ring wherever it crosses, keyframes popping as the line passes them —
+ * then folds and lands on the month's peak with a portal zoom. Real motion
+ * blur, bloom and film grain from the render pipeline, not CSS approximation.
  *
  * Muted, looping, autoplaying background footage: same accessibility
  * contract as AmbientVideo.tsx (poster for prefers-reduced-motion and a
@@ -158,13 +160,18 @@ const TrendPreview = () => {
       transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
     >
       <p className="sr-only">
-        Your stress trend: this is what seven days of check-ins looks like, today at 60. On the free plan,
-        the oldest 3 days fade out. Core keeps all of it.
+        Know your stress, sleep and clarity every day: this is what a month of check-ins can look like,
+        starting around 30, climbing into the high range past day ten, then easing back down by day
+        thirty, peaking at 68. On the free plan, the oldest 3 days fade out. Core keeps all of it.
       </p>
+      <div className="px-1 mb-2" aria-hidden="true">
+        <span className="text-xs font-mono tracking-wider uppercase text-muted-foreground">
+          Know your stress, sleep and clarity every day.
+        </span>
+      </div>
       {/* The clip's own "paper" ground is rendered at the exact hex of the page
-          background, and nothing here adds a card border or a second fill
-          color behind it, so the settled frame reads as the page itself
-          rather than a lighter box sitting on a cream page. */}
+          background, so the settled frame reads as the page itself rather
+          than a lighter box sitting on a cream page. */}
       <div className="w-full aspect-[32/15] rounded-2xl overflow-hidden" aria-hidden="true">
         {playable ? (
           <video
