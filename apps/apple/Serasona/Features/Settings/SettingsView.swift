@@ -110,6 +110,7 @@ struct SettingsView: View {
                         Link("Terms of service", destination: SerasonaLegal.terms)
                         Link("Manage Apple subscription", destination: SerasonaLegal.subscriptions)
                     }
+                    .tint(SerasonaColor.tide)
 
                   }
                   .frame(maxWidth: .infinity, alignment: .leading)

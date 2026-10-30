@@ -1,0 +1,25 @@
+{
+  "description": "Bone and Signal. Native semantic aliases. Green is retired and replaced by Bone and black. Orange and teal belong to the superseded app palette.",
+  "light": {
+    "surfaceCanvas": "F2EFE9", "surfaceRaised": "FFFFFF", "surfaceSunken": "E8E4DA", "surfaceInverse": "111111",
+    "surfaceEmberSoft": "E8E4DA", "surfaceTideSoft": "EEF2FE", "overlayScrim": "111111",
+    "borderHairline": "DDD8CE", "borderStrong": "8F897D",
+    "inkStrong": "111111", "inkBody": "4A4741", "inkMuted": "6B675F", "inkInverse": "FFFFFF", "inkOnEmber": "FFFFFF", "inkOnTide": "FFFFFF",
+    "ember": "111111", "emberHover": "2B2926", "emberPress": "4A4741", "tide": "2347C2", "tideHover": "1E3A8A",
+    "metricFatigue": "4A4741", "metricFatigueSoft": "E8E4DA", "metricStress": "A8201C", "metricStressSoft": "F8D8D6", "metricHydration": "2347C2", "metricHydrationSoft": "DCE5FB",
+    "stateWatch": "2347C2", "stateWatchSoft": "DCE5FB", "stateStrained": "A8201C", "stateStrainedSoft": "F8D8D6",
+    "bandNormal": "111111", "bandLow": "2347C2", "bandModerate": "A8201C", "bandElevated": "7F1D1D", "bandInconclusive": "6B675F",
+    "waveformIdle": "B9B3A6", "chartBand": "E8E4DA"
+  },
+  "dark": {
+    "surfaceCanvas": "000000", "surfaceRaised": "2B2926", "surfaceSunken": "111111", "surfaceInverse": "F2EFE9",
+    "surfaceEmberSoft": "2B2926", "surfaceTideSoft": "14245A", "overlayScrim": "000000",
+    "borderHairline": "4A4741", "borderStrong": "8F897D",
+    "inkStrong": "F2EFE9", "inkBody": "E8E4DA", "inkMuted": "B9B3A6", "inkInverse": "111111", "inkOnEmber": "111111", "inkOnTide": "111111",
+    "ember": "F2EFE9", "emberHover": "FAF8F4", "emberPress": "DDD8CE", "tide": "8FA9F5", "tideHover": "DCE5FB",
+    "metricFatigue": "E8E4DA", "metricFatigueSoft": "2B2926", "metricStress": "EE8E8A", "metricStressSoft": "4A1010", "metricHydration": "8FA9F5", "metricHydrationSoft": "14245A",
+    "stateWatch": "8FA9F5", "stateWatchSoft": "14245A", "stateStrained": "EE8E8A", "stateStrainedSoft": "4A1010",
+    "bandNormal": "F2EFE9", "bandLow": "8FA9F5", "bandModerate": "F8D8D6", "bandElevated": "EE8E8A", "bandInconclusive": "B9B3A6",
+    "waveformIdle": "6B675F", "chartBand": "2B2926"
+  }
+}

@@ -9,7 +9,7 @@ import { formatSigned } from "@/lib/longitudinal";
 
 const TAN = "#6B675F";
 const AMBER = "#1E3A8A";
-const GREEN = "#0F5132";
+const GREEN = "#111111";
 
 /**
  * Longitudinal analysis: the user's own history per signal, rather than a

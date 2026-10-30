@@ -29,11 +29,12 @@ enum Serasona {
         static let b900 = Color(hex: 0x111111)
     }
 
+    // Compatibility names only. Green was retired by Amit.
     enum Green {
-        static let g100 = Color(hex: 0xD5EBDD)
-        static let g300 = Color(hex: 0x7CC49A)
-        static let g500 = Color(hex: 0x177A4B)
-        static let g700 = Color(hex: 0x0F5132)
+        static let g100 = Bone.b200
+        static let g300 = Bone.b400
+        static let g500 = Bone.b900
+        static let g700 = Bone.b900
     }
 
     enum Blue {
@@ -75,7 +76,7 @@ enum Serasona {
         static let textMuted = Bone.b400
         static let actionFill = Bone.b100
         static let actionText = Bone.b900
-        static let steady = Green.g300
+        static let steady = Bone.b100
         static let info = Blue.b300
         static let alert = Red.r300
     }

@@ -24,7 +24,7 @@ struct ScoreDial: View {
             if score != nil {
               Circle()
                 .trim(from: 0, to: max(0, min(1, progress)))
-                .stroke(state.color, style: StrokeStyle(lineWidth: 12, lineCap: .round))
+                .stroke(score.map { AssessmentRung.of($0).color } ?? state.color, style: StrokeStyle(lineWidth: 12, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(.easeOut(duration: 0.6), value: progress)
             }

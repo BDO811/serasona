@@ -31,7 +31,7 @@ enum ScoreGroup: String, CaseIterable, Identifiable {
         switch self {
         case .stress: return "Tension read from pitch, pause length and vocal strain."
         case .wellness: return "Fatigue, cardiovascular and general-health signs, read together."
-        case .clarity: return "Cognitive signs: attention, mental load and head impact."
+        case .clarity: return "Mental readiness from fatigue, cognitive signs, stress and mood."
         }
     }
 }

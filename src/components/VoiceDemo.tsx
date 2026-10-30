@@ -23,9 +23,9 @@ type Phase = "speaking" | "analysing" | "result";
 
 const SIGNALS = [
   { name: "Stress", level: "Moderate", pct: 0.58, tone: "#2F5BEA" },
-  { name: "Energy", level: "Steady", pct: 0.71, tone: "#177A4B" },
+  { name: "Energy", level: "Steady", pct: 0.71, tone: "#111111" },
   { name: "Mental fatigue", level: "Elevated", pct: 0.64, tone: "#D12B26" },
-  { name: "Focus", level: "Clear", pct: 0.79, tone: "#177A4B" },
+  { name: "Focus", level: "Clear", pct: 0.79, tone: "#111111" },
 ];
 
 // Bar heights for the idle waveform. Fixed rather than random so the shape is

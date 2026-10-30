@@ -75,12 +75,13 @@ struct DashboardResultView: View {
     private var comparable: [CheckIn] { CheckInHistoryMath.comparable(visible, to: visible.last) }
 
     var body: some View {
+      ScrollViewReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: SerasonaSpace.s8) {
                 scoreBanner
                 captureRow
                 signalsPanel
-                indexCards
+                indexCards.id("score-indices")
                 summaryStrip
                 tabBar
 
@@ -104,10 +105,16 @@ struct DashboardResultView: View {
             .padding(.top, SerasonaSpace.s6)
         }
         .background(SerasonaColor.surfaceCanvas.ignoresSafeArea())
-        .task(id: injectedHistory?.map { $0.id }.joined(separator: "|")) { await loadHistory() }
+        .task(id: injectedHistory?.map { $0.id }.joined(separator: "|")) {
+            await loadHistory()
+            #if DEBUG
+            if UIHarness.requested == "indices" { proxy.scrollTo("score-indices", anchor: .top) }
+            #endif
+        }
         .sheet(isPresented: $explaining) {
             ScoreMethodSheet(score: score, sleep: sleep)
         }
+      }
     }
 
     private func loadHistory() async {
@@ -257,7 +264,7 @@ struct DashboardResultView: View {
             ForEach(ScoreGroup.allCases) { group in
                 IndexCard(
                     label: "\(group.label) Index",
-                    value: score?.groups.first { $0.group == group }?.index,
+                    value: CheckInHistoryMath.index(checkIn, group: group),
                     history: slots.map { slot in
                         slot.checkIn.flatMap { CheckInHistoryMath.index($0, group: group) }
                     }
@@ -552,7 +559,7 @@ private struct MeasurementCard: View {
 
     private var background: Color {
         guard let score = measurement.score else { return SerasonaColor.surfaceRaised }
-        return AssessmentRung.of(score).color.opacity(emphasis)
+        return AssessmentRung.of(score).surface
     }
 }
 
@@ -606,7 +613,7 @@ private struct IndexCard: View {
 
     private var tint: Color {
         guard let value else { return SerasonaColor.surfaceRaised }
-        return AssessmentRung.of(value).color.opacity(0.18)
+        return AssessmentRung.of(value).surface
     }
 }
 
@@ -697,7 +704,7 @@ private struct RungScale: View {
                     .padding(.vertical, SerasonaSpace.s2)
                     .background(
                         RoundedRectangle(cornerRadius: SerasonaRadius.sm)
-                            .fill(rung == current ? rung.color : rung.color.opacity(0.16))
+                            .fill(rung == current ? rung.color : rung.surface)
                     )
             }
         }
@@ -745,7 +752,7 @@ private struct MatrixCell: View {
             .padding(.vertical, SerasonaSpace.s2)
             .background(
                 RoundedRectangle(cornerRadius: SerasonaRadius.sm)
-                    .fill(value.map { AssessmentRung.of($0).color.opacity(0.22) } ?? SerasonaColor.surfaceSunken)
+                    .fill(value.map { AssessmentRung.of($0).surface } ?? SerasonaColor.surfaceSunken)
             )
     }
 }
@@ -821,6 +828,11 @@ private struct ScoreMethodSheet: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                     Text("Score = sum of each readable sign's index × weight, divided by the total readable weight. Normal = 100, Low = 68, Moderate = 38, Elevated = 8. Repeated signs count once.")
+                        .serasonaStyle(SerasonaType.bodySM)
+                        .foregroundStyle(SerasonaColor.inkMuted)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text("Clarity is a separate mental-readiness index, matching the website. It combines readable fatigue or cognitive signs with available stress and mood context. Stress or mood alone cannot produce Clarity. Missing or inconclusive inputs stay unscored; this product index is not a diagnosis.")
                         .serasonaStyle(SerasonaType.bodySM)
                         .foregroundStyle(SerasonaColor.inkMuted)
                         .fixedSize(horizontal: false, vertical: true)

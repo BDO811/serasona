@@ -7,12 +7,8 @@ import SwiftUI
 /// needs-attention to best, the same direction as every band scale in the
 /// product.
 ///
-/// One deliberate difference from the web. The web colors `good` green and
-/// `clean` gold. This app's palette carries no green at all — its own
-/// `bandNormal` already resolves to tide rather than the web's `#7CC49A` —
-/// so the two upper rungs are tide and hydration-blue here. Four distinct
-/// hues, none of them green, and the rung is always named rather than
-/// signalled by color alone.
+/// Uses Bone and Signal, matching the website: red for low, blue for medium,
+/// Bone for strong, and black for optimal. Each rung is always named.
 enum AssessmentRung: String, CaseIterable, Identifiable {
     case low
     case medium
@@ -46,8 +42,17 @@ enum AssessmentRung: String, CaseIterable, Identifiable {
         switch self {
         case .low: return SerasonaColor.stateStrained
         case .medium: return SerasonaColor.stateWatch
-        case .strong: return SerasonaColor.tide
-        case .optimal: return SerasonaColor.metricHydration
+        case .strong: return SerasonaColor.inkBody
+        case .optimal: return SerasonaColor.inkStrong
+        }
+    }
+
+    var surface: Color {
+        switch self {
+        case .low: return SerasonaColor.stateStrainedSoft
+        case .medium: return SerasonaColor.stateWatchSoft
+        case .strong: return SerasonaColor.surfaceSunken
+        case .optimal: return SerasonaColor.surfaceCanvas
         }
     }
 

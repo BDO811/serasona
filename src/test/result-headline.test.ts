@@ -131,8 +131,8 @@ describe("RUNG_SCALE", () => {
 
   it("runs alert on the left to positive on the right", () => {
     const colors = RUNG_SCALE.map((r) => r.colorLight);
-    expect(colors[0]).toBe("#7F1D1D");
-    expect(colors[colors.length - 1]).toBe("#7A5B12");
+    expect(colors[0]).toBe("#A8201C");
+    expect(colors[colors.length - 1]).toBe("#111111");
   });
 
   it("uses no risk or diagnostic wording in any label", () => {

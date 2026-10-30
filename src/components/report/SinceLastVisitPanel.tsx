@@ -4,7 +4,7 @@ import { formatSigned } from "@/lib/longitudinal";
 
 const TAN = "#B9B3A6";
 const AMBER = "#EE8E8A";
-const GREEN = "#7CC49A";
+const GREEN = "#B9B3A6";
 
 /** A move smaller than this reads as unchanged rather than as a direction. */
 const FLAT_THRESHOLD = 0.02;

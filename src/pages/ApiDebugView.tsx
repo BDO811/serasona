@@ -32,7 +32,7 @@ const ApiDebugView = () => {
           <h2 className="text-xl font-semibold mb-4 text-cyan-400">1. Raw API Result (from getJobDetail)</h2>
           <div className="bg-gray-900 rounded-lg p-4 overflow-auto">
             {apiResult ? (
-              <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap break-words">
+              <pre className="text-xs text-[#F2EFE9] font-mono whitespace-pre-wrap break-words">
                 {JSON.stringify(apiResult, null, 2)}
               </pre>
             ) : (
@@ -135,8 +135,8 @@ const ApiDebugView = () => {
           <div className="bg-gray-900 rounded-lg p-4">
             <div className="space-y-2">
               <p><strong>Pathway:</strong> <span className="text-cyan-400">{pathway || "None"}</span></p>
-              <p><strong>Has Raw API Result:</strong> <span className={apiResult ? "text-green-400" : "text-red-400"}>{apiResult ? "Yes" : "No"}</span></p>
-              <p><strong>Has Visualized Result:</strong> <span className={visualizedResult ? "text-green-400" : "text-red-400"}>{visualizedResult ? "Yes" : "No"}</span></p>
+              <p><strong>Has Raw API Result:</strong> <span className={apiResult ? "text-[#F2EFE9]" : "text-red-400"}>{apiResult ? "Yes" : "No"}</span></p>
+              <p><strong>Has Visualized Result:</strong> <span className={visualizedResult ? "text-[#F2EFE9]" : "text-red-400"}>{visualizedResult ? "Yes" : "No"}</span></p>
             </div>
           </div>
         </section>

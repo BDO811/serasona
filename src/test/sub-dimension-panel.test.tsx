@@ -69,8 +69,8 @@ describe("SubDimensionPanel", () => {
   it("keeps each word's colour tied to its meaning, not its position", () => {
     panel([APEX_RUN[1]]);
     const rgb = (el: HTMLElement) => getComputedStyle(el).color;
-    // Green at the favourable anchor, blue in the middle, red at the far end.
-    expect(rgb(screen.getByText("ENERGETIC"))).toBe("rgb(124, 196, 154)");
+    // Bone replaces retired green at the favourable anchor.
+    expect(rgb(screen.getByText("ENERGETIC"))).toBe("rgb(185, 179, 166)");
     expect(rgb(screen.getByText("NORMAL"))).toBe("rgb(143, 169, 245)");
     expect(rgb(screen.getByText("TIRED"))).toBe("rgb(238, 142, 138)");
   });

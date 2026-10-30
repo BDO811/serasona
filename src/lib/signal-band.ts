@@ -184,11 +184,11 @@ export function bandRank(band: DisplayBand): number {
  * light value measured above 4.5:1 against the beige page.
  */
 const BAND_COLOR: Record<DisplayBand, { dark: string; light: string }> = {
-  NORMAL: { dark: "#7CC49A", light: "#0F5132" },
-  LOW: { dark: "#8FA9F5", light: "#1E3A8A" },
-  MODERATE: { dark: "#EE8E8A", light: "#D12B26" },
-  ELEVATED: { dark: "#D12B26", light: "#7F1D1D" },
-  INCONCLUSIVE: { dark: "#B9B3A6", light: "#4A4741" },
+  NORMAL: { dark: "#F2EFE9", light: "#111111" },
+  LOW: { dark: "#8FA9F5", light: "#2347C2" },
+  MODERATE: { dark: "#F8D8D6", light: "#A8201C" },
+  ELEVATED: { dark: "#EE8E8A", light: "#7F1D1D" },
+  INCONCLUSIVE: { dark: "#B9B3A6", light: "#6B675F" },
 };
 
 /**

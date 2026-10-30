@@ -28,7 +28,7 @@ interface SubDimensionPanelProps {
  * position, so it stays correct however the scale is ordered.
  */
 const DIRECTION_COLORS: Array<{ dark: string; light: string }> = [
-  { dark: "#7CC49A", light: "#0F5132" },
+  { dark: "#B9B3A6", light: "#111111" },
   { dark: "#8FA9F5", light: "#1E3A8A" },
   { dark: "#EE8E8A", light: "#7F1D1D" },
 ];

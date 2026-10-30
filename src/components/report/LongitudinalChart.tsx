@@ -20,7 +20,7 @@ import { MIN_SESSIONS_FOR_BASELINE, fitLine, formatSigned } from "@/lib/longitud
  * this system), and a neutral bone tint for the no-baseline region.
  */
 
-const GREEN = "#7CC49A";
+const GREEN = "#B9B3A6";
 const AMBER = "#8FA9F5";
 const TAN = "#B9B3A6";
 

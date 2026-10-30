@@ -121,13 +121,13 @@ export const AnalysisFailed = ({ onRestart }: AnalysisFailedProps) => {
                     <span className="flex items-center gap-2">
                       <span
                         className="font-mono text-[11px] tabular-nums"
-                        style={{ color: ok ? "#177A4B" : "#D12B26" }}
+                        style={{ color: ok ? "#F2EFE9" : "#EE8E8A" }}
                       >
                         {pct.toFixed(1)}%
                       </span>
                       <span className="font-mono text-[9px] text-white">(needs 30%)</span>
                       {ok ? (
-                        <CheckCircle className="w-3 h-3" style={{ color: "#177A4B" }} />
+                        <CheckCircle className="w-3 h-3" style={{ color: "#F2EFE9" }} />
                       ) : (
                         <XCircle className="w-3 h-3" style={{ color: "#D12B26" }} />
                       )}
@@ -145,13 +145,13 @@ export const AnalysisFailed = ({ onRestart }: AnalysisFailedProps) => {
                     <span className="flex items-center gap-2">
                       <span
                         className="font-mono text-[11px] tabular-nums"
-                        style={{ color: ok ? "#177A4B" : "#D12B26" }}
+                        style={{ color: ok ? "#F2EFE9" : "#EE8E8A" }}
                       >
                         {signalQuality.audioClarity.toFixed(1)} / 100
                       </span>
                       <span className="font-mono text-[9px] text-white">(needs 50)</span>
                       {ok ? (
-                        <CheckCircle className="w-3 h-3" style={{ color: "#177A4B" }} />
+                        <CheckCircle className="w-3 h-3" style={{ color: "#F2EFE9" }} />
                       ) : (
                         <XCircle className="w-3 h-3" style={{ color: "#D12B26" }} />
                       )}

@@ -15,8 +15,7 @@ export function getProtocolId(pathway: AssessmentPathway): string {
  * Colour for `summary.overall_level`, taken from the same documented UI
  * treatment the per-signal levels use, so the headline and the rows agree.
  *
- * The old ramp was off-brand and off-spec: emerald #10B981, amber #F59E0B, red
- * #EF4444, plus #84CC16 for the LOW tier, a lime green the design canon bans.
+ * The old ramp mixed emerald, amber, red and lime outside the approved palette.
  * It also assumed a dark ground while both report screens sit on beige, where
  * #F59E0B measures 1.9:1.
  */

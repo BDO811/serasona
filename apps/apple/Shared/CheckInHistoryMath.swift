@@ -62,7 +62,9 @@ enum CheckInHistoryMath {
     /// starts a separate comparison rather than extending this one.
     static func cohortKey(_ checkIn: CheckIn) -> String {
         let result = SerasonaScore.compute(signals: checkIn.signals)
-        return [checkIn.model, result?.coverageKey ?? "", result?.version ?? ""].joined(separator: "|")
+        let clarity = ClarityScore.compute(signals: checkIn.signals)
+        return [checkIn.model, result?.coverageKey ?? "", result?.version ?? "",
+                clarity?.coverageKey ?? "", clarity?.version ?? ""].joined(separator: "|")
     }
 
     static func comparable(_ checkIns: [CheckIn], to reference: CheckIn?) -> [CheckIn] {
@@ -78,6 +80,7 @@ enum CheckInHistoryMath {
 
     /// One group's index for one check-in.
     static func index(_ checkIn: CheckIn, group: ScoreGroup) -> Int? {
-        SerasonaScore.compute(signals: checkIn.signals)?.groups.first { $0.group == group }?.index
+        if group == .clarity { return ClarityScore.compute(signals: checkIn.signals)?.score }
+        return SerasonaScore.compute(signals: checkIn.signals)?.groups.first { $0.group == group }?.index
     }
 }

@@ -29,8 +29,9 @@ import type { StoredSession } from "@/lib/voice-history-client";
 
 import { lastThreeMeasurements } from "@/lib/daily-scores";
 import { scoreMatrixForPlan } from "@/lib/score-matrix";
+import { serasonaColor as color } from "@/lib/serasona-colors";
 
-const SIGNAL_COLORS = { NORMAL: "#145C6B", LOW: "#8FA9F5", MODERATE: "#EE8E8A", ELEVATED: "#D12B26", INCONCLUSIVE: "#B9B3A6" };
+const SIGNAL_COLORS = { NORMAL: color("bandNormal", "dark"), LOW: color("bandLow", "dark"), MODERATE: color("bandModerate", "dark"), ELEVATED: color("bandElevated", "dark"), INCONCLUSIVE: color("bandInconclusive", "dark") };
 /**
  * Grades a single 0-100 index on the same four rungs as the LOW / MEDIUM /
  * STRONG / OPTIMAL assessment scale (RUNG_SCALE), so every colored box on

@@ -16,7 +16,7 @@
   --white: #FFFFFF;
 
   /* Signal ramps */
-  --green-50: #EAF6EF; --green-100: #D5EBDD; --green-300: #7CC49A; --green-500: #177A4B; --green-600: #11623B; --green-700: #0F5132; --green-900: #0A3622;
+  --green-50: #FAF8F4; --green-100: #E8E4DA; --green-300: #B9B3A6; --green-500: #111111; --green-600: #2B2926; --green-700: #111111; --green-900: #111111;
   --blue-50: #EEF2FE;  --blue-100: #DCE5FB;  --blue-300: #8FA9F5;  --blue-500: #2F5BEA;  --blue-600: #2347C2;  --blue-700: #1E3A8A;  --blue-900: #14245A;
   --red-50: #FDEEED;   --red-100: #F8D8D6;   --red-300: #EE8E8A;   --red-500: #D12B26;   --red-600: #A8201C;   --red-700: #7F1D1D;   --red-900: #4A1010;
 

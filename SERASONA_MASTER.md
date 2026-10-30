@@ -174,3 +174,11 @@ The signed iPhone build 2 archive at `.build/Serasona-build2.xcarchive` passed d
 `apple-verifier-reference`: https://apple.github.io/app-store-server-library-node/classes/SignedDataVerifier.html
 
 `apple-account-token-reference`: https://developer.apple.com/documentation/appstoreserverapi/appaccounttoken
+
+## Build 3 Clarity and palette correction, October 30
+
+The native Clarity card previously depended on cognitive specialist signals absent from normal Pulse readings. It now uses the website's dedicated Clarity calculation with fatigue or a cognitive signal as the required anchor. Stress or mood alone cannot fabricate Clarity. The calculation is shared by the current result, history matrix, and trends. Eleven native checks cover Pulse parity, missing and invalid inputs, deduplication, and cohort versioning. The iPhone Duo simulator visibly renders Clarity using a six-signal Pulse fixture. The fixture score is demonstration data, not Amit's reading.
+
+Colors now follow the saved Bone and Signal design kit. Green is replaced by neutral Bone and black. A single JSON palette supplies website semantic colors and generated assets for iPhone, Watch, widget, and complication. Blue indicates links and watch states; red indicates strained states. Legacy orange and teal actions were removed. Three palette checks enforce exact agreement across Apple targets. All 325 website tests and TypeScript passed.
+
+Signed version 1.0 build 3 archived and uploaded successfully. Apple processing and tester-group assignment remain to be checked. Build 3 supersedes the prepared build 2 group assignment; do not distribute build 2. Tester notification email remains subject to Amit's message-specific approval rule. Website changes are prepared for main deployment; live status will be recorded after verification.

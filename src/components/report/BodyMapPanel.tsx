@@ -93,7 +93,7 @@ function hexToRgba(hex: string, alpha: number): string {
 const SUBDIM_SCALE_COLOR: Array<{ dark: string; light: string }> = [
   { dark: "#EE8E8A", light: "#7F1D1D" }, // unfavourable - alert
   { dark: "#8FA9F5", light: "#1E3A8A" }, // middle - info
-  { dark: "#7CC49A", light: "#0F5132" }, // favourable - steady
+  { dark: "#B9B3A6", light: "#111111" }, // favourable - steady
 ];
 
 interface SignalRow {
@@ -340,7 +340,7 @@ export const BodyMapPanel = ({
                         <span className={`font-mono uppercase tracking-wider ${labelSize}`}>{row.label}</span>
                         <span
                           className="font-mono text-[11px] font-semibold"
-                          style={{ color: row.isAbnormal ? "#D12B26" : "#177A4B" }}
+                          style={{ color: row.isAbnormal ? "#EE8E8A" : "#F2EFE9" }}
                         >
                           {row.value}
                         </span>

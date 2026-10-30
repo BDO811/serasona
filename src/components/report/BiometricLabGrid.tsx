@@ -21,7 +21,7 @@ const getStatusIndicator = (status: "normal" | "elevated" | "low"): { color: str
     case "low":
       return { color: "#2F5BEA", symbol: "▼" };
     default:
-      return { color: "#177A4B", symbol: "●" };
+      return { color: "#F2EFE9", symbol: "●" };
   }
 };
 

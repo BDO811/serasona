@@ -32,10 +32,8 @@ enum UIHarness {
             signal("anxiety", "Anxiety", "low", 0.31),
             signal("mood-disruption", "Mood Disruption", "none", 0.12),
             signal("fatigue", "Fatigue", elevated ? "elevated" : "consider", 0.78),
-            signal("cardiovascular-strain", "Cardiovascular Strain", "none", 0.19),
+            signal("elevated-blood-pressure", "Blood Pressure", "none", 0.19),
             signal("dehydration", "Dehydration", "consider", 0.44),
-            signal("cognitive-load", "Cognitive Load", "low", 0.28),
-            signal("attention-dysregulation", "Attention Dysregulation", "none", 0.15),
         ]
 
         let bands = signals.map { SignalBand.band(name: $0.name, level: $0.level) }
@@ -64,7 +62,7 @@ struct UIHarnessView: View {
 
     var body: some View {
         switch screen {
-        case "result":
+        case "result", "indices":
             DashboardResultView(
                 checkIn: UIHarness.sampleCheckIn(),
                 onRecordAgain: {},

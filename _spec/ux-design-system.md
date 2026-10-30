@@ -1,5 +1,7 @@
 # UX & Design System
 
+Historical specification. The cyan and dark-glass palette below is superseded by the Bone and Signal kit in `design-system/tokens/`. Active shared colors are in `design-system/tokens/native-colors.json`; green is retired. Do not use this historical palette for new work.
+
 ## Brand
 
 - **Primary (electric cyan):** `#00F0FF` / HSL `183 100% 50%` — primary actions, links, focus ring, accent.

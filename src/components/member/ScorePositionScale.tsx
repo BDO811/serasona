@@ -1,11 +1,7 @@
 import { RUNG_SCALE } from "@/lib/result-headline";
 
 // Shared by the dashboard's main score and every index. No green accents.
-export const DASHBOARD_SCORE_SCALE = RUNG_SCALE.map((rung) => ({
-  ...rung,
-  ...(rung.key === "good" ? { color: "#BBD9E0", colorLight: "#145C6B" } : {}),
-  ...(rung.key === "clean" ? { color: "#B7C9EE", colorLight: "#244878" } : {}),
-}));
+export const DASHBOARD_SCORE_SCALE = RUNG_SCALE;
 const WEIGHTS: Record<string, number> = { clean: 10, good: 23, steady: 33, focus: 34 };
 
 export function ScorePositionScale({ value, label }: { value: number | null; label: string }) {
@@ -13,7 +9,7 @@ export function ScorePositionScale({ value, label }: { value: number | null; lab
   return <div className="score-position" role="img" aria-label={`${label}: ${position == null ? "no reading" : `${position} out of 100`}. Scale 0 to 100`}>
     <div className="score-position-labels" aria-hidden="true"><span>100</span><span>50</span><span>0</span></div>
     <div className="member-metric-scale" aria-hidden="true">
-      {[...DASHBOARD_SCORE_SCALE].reverse().map((segment) => <span key={segment.key} className="member-metric-scale-seg" style={{ background: segment.color, flexGrow: WEIGHTS[segment.key] }} />)}
+      {[...DASHBOARD_SCORE_SCALE].reverse().map((segment) => <span key={segment.key} className="member-metric-scale-seg" style={{ background: segment.colorLight, flexGrow: WEIGHTS[segment.key] }} />)}
       {position != null && <span className="member-metric-scale-dot" style={{ bottom: `${position}%` }} />}
     </div>
   </div>;

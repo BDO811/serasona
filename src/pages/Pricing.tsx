@@ -40,7 +40,7 @@ const TIERS: Tier[] = [
     monthlyPrice: 0,
     description: "Three check-ins a day. No card required.",
     upgradeReason: "A real daily habit, not a one-off demo.",
-    accent: "#177A4B",
+    accent: "#111111",
     features: [
       "3 check-ins a day, the Pulse model",
       "A real 7-day trend of your own voice",

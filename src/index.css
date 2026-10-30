@@ -44,9 +44,9 @@
     --radius: 1.25rem;          /* 20px, "lg" / cards */
 
     /* status tokens */
-    --status-steady: 152 68% 28%;        /* green-500 */
-    --status-steady-bg: 142 35% 88%;     /* green-100 */
-    --status-steady-text: 152 69% 19%;   /* green-700 */
+    --status-steady: 0 0% 7%;           /* black replaces retired green */
+    --status-steady-bg: 43 23% 88%;      /* bone-200 */
+    --status-steady-text: 0 0% 7%;
     --status-info: 226 82% 55%;          /* blue-500 */
     --status-info-bg: 223 79% 92%;       /* blue-100 */
     --status-info-text: 224 64% 33%;     /* blue-700 */
@@ -91,9 +91,9 @@
     --border: 40 6% 27%;        /* bone-700 */
     --input: 36 6% 16%;
     --ring: 225 84% 76%;
-    --status-steady: 145 38% 63%;        /* green-300 */
+    --status-steady: 40 26% 93%;        /* bone-100 */
     --status-steady-bg: 36 6% 16%;
-    --status-steady-text: 145 38% 63%;
+    --status-steady-text: 40 26% 93%;
     --status-info: 225 84% 76%;          /* blue-300 */
     --status-info-bg: 36 6% 16%;
     --status-info-text: 225 84% 76%;
@@ -214,7 +214,7 @@
 
   /* Orb glow layers */
   .orb-glow-cyan {
-    background: #1E5631;
+    background: #111111;
     opacity: 1;
     animation: fade-cyan 40s ease-in-out infinite;
   }
@@ -232,7 +232,7 @@
   }
   
   .orb-glow-teal {
-    background: #00FF94;
+    background: #F2EFE9;
     opacity: 0;
     animation: fade-teal 40s ease-in-out infinite;
   }
@@ -267,20 +267,20 @@
 
   /* Particles inherit blended color - synced with orb fade timing */
   .orb-particle {
-    background: #1E5631;
+    background: #111111;
     animation: particle-color 40s linear infinite;
   }
   
   @keyframes particle-color {
-    0%, 6.25% { background: #1E5631; }
+    0%, 6.25% { background: #111111; }
     12.5% { background: #4F78FF; }
     18.75%, 31.25% { background: #9D00FF; }
     37.5% { background: #CE5C80; }
     43.75%, 56.25% { background: #FFB800; }
-    62.5% { background: #80DC4A; }
-    68.75%, 81.25% { background: #00FF94; }
-    87.5% { background: #00F8C5; }
-    93.75%, 100% { background: #1E5631; }
+    62.5% { background: #F2EFE9; }
+    68.75%, 81.25% { background: #F2EFE9; }
+    87.5% { background: #DCE5FB; }
+    93.75%, 100% { background: #111111; }
   }
 
   /* Ring glow follows color - synced timing */
