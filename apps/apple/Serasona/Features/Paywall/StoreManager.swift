@@ -53,7 +53,7 @@ final class StoreManager: ObservableObject {
         isPurchasing = true
         purchaseError = nil
         do {
-            let result = try await product.purchase()
+            let result = try await product.purchase(options: [.appAccountToken(try ApplePurchaseIdentity.token())])
             switch result {
             case .success(let verification):
                 await handle(verification)
@@ -74,11 +74,15 @@ final class StoreManager: ObservableObject {
         purchaseError = nil
         do {
             try await AppStore.sync()
-            for await entitlement in StoreKit.Transaction.currentEntitlements {
-                await handle(entitlement)
-            }
+            await syncEntitlements()
         } catch {
             purchaseError = "Couldn't restore purchases: \(error.localizedDescription)"
+        }
+    }
+
+    func syncEntitlements() async {
+        for await entitlement in StoreKit.Transaction.currentEntitlements {
+            await handle(entitlement)
         }
     }
 

@@ -88,6 +88,7 @@
 		8B2E743FDF34AD31C6B83CD4 /* Bricolage-700.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1A18545B91CEEFA92B5DC39 /* Bricolage-700.ttf */; };
 		8BD490E5B35507736D897C97 /* Bricolage-650.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A3926A32F7325EABC372A05A /* Bricolage-650.ttf */; };
 		8C38CEC2AC74F9F8D83EE663 /* Bricolage-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A158D0A59E471713507F489 /* Bricolage-400.ttf */; };
+		907E61226F8300D0A1E846A6 /* ApplePurchaseIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8904AA637A40BA4929C350E3 /* ApplePurchaseIdentity.swift */; };
 		9096402849B2AFCF4818ADE2 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582DECDE081E1318446353CE /* Fonts.swift */; };
 		94D7B9931FB57A7A98179B84 /* DashboardResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522C5CB6D39412EA3A3EDABB /* DashboardResultView.swift */; };
 		94D9B747F83E9B64A1FCE314 /* WatchUploadQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094F3025754E9D2B57877A5F /* WatchUploadQueue.swift */; };
@@ -252,6 +253,7 @@
 		7F26A8274B5781DEBB1EAEB7 /* CheckInQuestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInQuestions.swift; sourceTree = "<group>"; };
 		807CF3D2A328CD12B0612E3B /* HistoryTrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTrendView.swift; sourceTree = "<group>"; };
 		85170AC24F7EB6A4BB78BCA8 /* ProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingView.swift; sourceTree = "<group>"; };
+		8904AA637A40BA4929C350E3 /* ApplePurchaseIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplePurchaseIdentity.swift; sourceTree = "<group>"; };
 		8B1BC147BCF1429863AFC4D9 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		90E9B81194503395BAD394D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		91CAA34D32F009444A9F63C2 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
@@ -340,6 +342,7 @@
 		1CF0F7F6CB411953D2F6DB2C /* Paywall */ = {
 			isa = PBXGroup;
 			children = (
+				8904AA637A40BA4929C350E3 /* ApplePurchaseIdentity.swift */,
 				12407B9A6846CEB863FAE2FB /* PaywallView.swift */,
 				7CA44FCFF53D7D260D1DA529 /* StoreManager.swift */,
 			);
@@ -865,6 +868,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				907E61226F8300D0A1E846A6 /* ApplePurchaseIdentity.swift in Sources */,
 				47BF5DB93534821F29285A8B /* AssessmentScale.swift in Sources */,
 				D2F655640BCA1B8F556EDE51 /* AudioRecorder.swift in Sources */,
 				4B76801D1D37C94A515AEE76 /* AuthTokenCache.swift in Sources */,

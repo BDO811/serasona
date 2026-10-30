@@ -73,6 +73,8 @@ async function hasUnlimitedCheckins(uid) {
   const subscription = snap.exists ? snap.data().subscription : null;
   if (!subscription) return false;
   if (!ACTIVE_STATUSES.has(subscription.status)) return false;
+  if (subscription.provider === "apple" &&
+      (!Number.isFinite(subscription.currentPeriodEnd) || subscription.currentPeriodEnd * 1000 <= Date.now())) return false;
   return (PLAN_RANK[subscription.planId] ?? 0) >= PLAN_RANK.core;
 }
 
@@ -142,7 +144,7 @@ async function resolveIdentity(req, emailValue) {
 
   if (idToken) {
     try {
-      const decoded = await admin.auth().verifyIdToken(idToken);
+      const decoded = await admin.auth().verifyIdToken(idToken, true);
       return { userKey: `uid:${decoded.uid}`, mode: "account" };
     } catch (error) {
       console.warn("[voice-history] ID token verification failed:", error.message);

@@ -6,7 +6,7 @@ Updated October 30, 2026. This is the single entry point for the iPhone and Appl
 
 Continue all Serasona app work in the pinned Codex chat **Serasona · Master iPhone and Watch Build**, ID `01a18dda-6710-7952-8e54-cd2abb2bbd19`. Amit clarified that consolidation means one master chat and one folder containing the project, rather than merging source code into a single file.
 
-Historical chats remain separate records. Their relevant decisions and files are consolidated here as they are recovered. Three Claude chats have not yet been identified by title or link; do not claim their complete histories have been imported.
+Historical chats remain separate records. Amit explicitly instructed this chat to ignore the three Claude chats and proceed from the GitHub repositories and the decisions made here. Retrieving those chats is not required and is not a blocker. Previously recovered code and the supplied handoff remain background source material.
 
 Two prior Codex chats were recovered:
 
@@ -78,6 +78,8 @@ Apple subscription management: https://apps.apple.com/account/subscriptions
 5. Added direct server-history refresh on Watch activation and explicit WidgetKit timeline reloads after local result changes.
 6. Added an authenticated backend DELETE handler. Ownership comes only from a verified Firebase token. It removes account-owned voice history and phone request rows in bounded batches. Native account deletion now fails if the server deletion endpoint fails rather than silently leaving readings behind.
 7. Aligned the local monthly StoreKit prices and plan descriptions with the website, added privacy and terms links, improved restore handling, and retained unfinished transactions when server redemption fails.
+8. Hardened Apple purchase verification: Xcode transactions are refused on hosted deployments, the signed account token must match the signed-in Serasona account, expiration and original transaction identity are required, and delayed restores cannot shorten a newer Apple period. The iPhone purchase request now supplies the corresponding opaque account token.
+9. Added Apple expiration checks to backend entitlements and expiration-aware iPhone subscription state. Current Apple entitlements are checked after sign-in without prompting a manual restore.
 
 These are source changes. They are not evidence of a successful TestFlight upload or deployed backend update.
 
@@ -87,9 +89,9 @@ Regenerate from `apps/apple` using `./regenerate.sh`. It runs XcodeGen and then 
 
 Build the `Serasona` scheme for an iPhone simulator and `SerasonaWatch` for a Watch simulator. The full iPhone build embeds the Watch app and iPhone widget; the Watch app embeds its complication.
 
-The Mac has Xcode 27.0 and iPhone and Watch simulator runtimes. Both final simulator builds returned exit zero and `BUILD SUCCEEDED`: `Serasona` for iPhone with embedded extensions, and `SerasonaWatch` with its complication. All four built bundles contain `PrivacyInfo.xcprivacy`.
+The Mac has Xcode 27.0 and iPhone and Watch simulator runtimes. Both simulator builds returned exit zero and `BUILD SUCCEEDED` before the subsequent purchase-account binding and entitlement changes: `Serasona` for iPhone with embedded extensions, and `SerasonaWatch` with its complication. All four built bundles contain `PrivacyInfo.xcprivacy`. The Watch sources have not changed since their successful build.
 
-The 24 existing SerasonaKit tests passed. Five new mocked backend deletion tests passed. These do not test the new Watch authentication or outbox at runtime. Attempts to install and launch the apps in isolated simulators timed out; successful launch and visual checks remain unverified. No TestFlight archive has been uploaded.
+The 24 existing SerasonaKit tests passed. The backend regression suite now has 13 passing tests: five deletion tests and eight Apple purchase verification tests. These do not test the new Watch authentication or outbox at runtime. Attempts to install and launch the apps in isolated simulators timed out; successful launch and visual checks remain unverified. Rebuilding the latest iPhone purchase changes timed out after 110 seconds without compiler diagnostics, so compilation of those latest iPhone changes is not yet verified. No TestFlight archive has been uploaded.
 
 For the successful builds, use the destination to select the platform, rather than forcing `-sdk iphonesimulator` on the entire embedded Watch build. On this Apple Silicon Mac the verified architecture was arm64. The verification reused the pre-existing Swift package cache at `/Users/amitmehta/Claude-Outputs/Serasona_iOS/build/spm`; normal Xcode opening can resolve the same dependencies itself.
 
@@ -100,6 +102,7 @@ For the successful builds, use the destination to select the platform, rather th
 3. Finish builds, test sign-in and token renewal, offline recording and retry, duplicate-save handling, deletion, StoreKit redemption and restore, widgets, and Watch layouts on real devices.
 4. Verify and deploy the history deletion backend change. It has not been deployed during this chat.
 5. Audit Apple transaction verification, production environment configuration, subscription lifecycle updates, and App Store Connect products before enabling real billing.
+   The account binding and expiry protections described above are implemented locally and covered by mocked backend tests. App Store Server Notifications and real Sandbox/TestFlight purchase validation remain open. Local Xcode StoreKit purchases must use an isolated Functions emulator; they cannot grant a plan through the hosted verifier.
 6. Confirm the privacy manifest matches actual data processing, including independent Watch authentication and temporary local offline recordings. Reconcile website retention wording with the new offline queue.
 7. Prepare an archive signed by the verified team, upload it to App Store Connect, wait for processing, and configure TestFlight testing. No archive has been uploaded yet.
 
@@ -120,3 +123,7 @@ For the successful builds, use the destination to select the platform, rather th
 `codex-audio-history`: Fix Serasona audio intake, chat `01a1831f-fc3d-7522-8ecf-0d478dc31c01`.
 
 `codex-dashboard-history`: Fix phantom voice pattern history, chat `01a18359-a318-7753-9cb6-69e8a194bf94`.
+
+`apple-verifier-reference`: https://apple.github.io/app-store-server-library-node/classes/SignedDataVerifier.html
+
+`apple-account-token-reference`: https://developer.apple.com/documentation/appstoreserverapi/appaccounttoken

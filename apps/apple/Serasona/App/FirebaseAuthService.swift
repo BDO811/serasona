@@ -18,7 +18,9 @@ struct SubscriptionState: Equatable {
     private static let planRank: [PlanId: Int] = [.free: 0, .core: 1, .plus: 2, .executive: 3]
     private static let activeStatuses: Set<String> = ["active", "trialing"]
 
-    var isActive: Bool { Self.activeStatuses.contains(status) }
+    var isActive: Bool {
+        Self.activeStatuses.contains(status) && (currentPeriodEnd.map { $0 > Date() } ?? true)
+    }
 
     /// Mirrors `AuthContext.isEntitled` — active on this plan or higher.
     func isEntitled(to plan: PlanId) -> Bool {
@@ -74,6 +76,7 @@ final class FirebaseAuthService: ObservableObject {
                 if let user {
                     await self.cacheToken(for: user)
                     self.listenForSubscription(uid: user.uid)
+                    await StoreManager.shared.syncEntitlements()
                 } else {
                     AuthTokenCache.clear()
                     self.subscriptionListener?.remove()

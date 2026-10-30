@@ -156,7 +156,11 @@ async function authenticateCaller(req) {
   let planId = "free";
   try {
     const snap = await admin.firestore().collection("users").doc(decoded.uid).get();
-    planId = snap.exists ? snap.data()?.subscription?.planId || "free" : "free";
+    const subscription = snap.exists ? snap.data()?.subscription : null;
+    const appleExpired = subscription?.provider === "apple" &&
+      (!Number.isFinite(subscription.currentPeriodEnd) || subscription.currentPeriodEnd * 1000 <= Date.now());
+    planId = subscription && ["active", "trialing"].includes(subscription.status) && !appleExpired
+      ? subscription.planId || "free" : "free";
   } catch (err) {
     console.error("[analyze-audio] could not read plan, defaulting to free:", err.message);
   }

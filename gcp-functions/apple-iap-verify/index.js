@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const admin = require("firebase-admin");
 const { SignedDataVerifier, Environment } = require("@apple/app-store-server-library");
 
@@ -51,11 +52,22 @@ function loadRootCAs() {
 
 function resolveEnvironment(value) {
   switch ((value || "").toLowerCase()) {
-    case "xcode": return Environment.XCODE;
+    case "xcode": return process.env.FUNCTIONS_EMULATOR === "true" ? Environment.XCODE : null;
     case "sandbox": return Environment.SANDBOX;
     case "production": return Environment.PRODUCTION;
     default: return null;
   }
+}
+
+// Stable opaque UUID shared with the native purchase client. The signed
+// transaction must identify this caller rather than whichever account first
+// presents a copied transaction to this endpoint.
+function accountToken(uid) {
+  const bytes = crypto.createHash("sha256").update(`com.serasona.app.account:${uid}`).digest().subarray(0, 16);
+  bytes[6] = (bytes[6] & 0x0f) | 0x80;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = bytes.toString("hex");
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
 }
 
 const httpError = (status, message, clientMessage) =>
@@ -100,7 +112,7 @@ exports.appleIapVerify = async (req, res) => {
   }
 
   const { signedTransactionInfo, environment: environmentValue } = req.body || {};
-  if (typeof signedTransactionInfo !== "string" || !signedTransactionInfo) {
+  if (typeof signedTransactionInfo !== "string" || !signedTransactionInfo || signedTransactionInfo.length > 256 * 1024) {
     res.status(400).json({ error: "Missing signedTransactionInfo." });
     return;
   }
@@ -126,6 +138,12 @@ exports.appleIapVerify = async (req, res) => {
     );
 
     const transaction = await verifier.verifyAndDecodeTransaction(signedTransactionInfo);
+    if (typeof transaction.appAccountToken !== "string" || transaction.appAccountToken.toLowerCase() !== accountToken(uid)) {
+      return res.status(403).json({ error: "This purchase belongs to a different Serasona account." });
+    }
+    if (!Number.isFinite(transaction.expiresDate) || transaction.expiresDate <= 0 || !transaction.originalTransactionId) {
+      return res.status(400).json({ error: "Missing subscription expiration or transaction identity." });
+    }
 
     const planId = PRODUCT_ID_TO_PLAN[transaction.productId];
     if (!planId) {
@@ -146,7 +164,16 @@ exports.appleIapVerify = async (req, res) => {
       appleEnvironment: environmentValue,
     };
 
-    await admin.firestore().collection("users").doc(uid).set({ subscription }, { merge: true });
+    const userRef = admin.firestore().collection("users").doc(uid);
+    await admin.firestore().runTransaction(async (tx) => {
+      const existing = await tx.get(userRef);
+      const previous = existing.exists ? existing.data().subscription : null;
+      // Delayed restores and older renewals must not shorten a newer period.
+      if (previous?.provider === "apple" && Number(previous.currentPeriodEnd) > subscription.currentPeriodEnd) return;
+      // An expired Apple transaction must not cancel an active web plan.
+      if (previous?.provider !== "apple" && previous?.status === "active" && subscription.status !== "active") return;
+      tx.set(userRef, { subscription }, { merge: true });
+    });
 
     console.log(`[apple-iap-verify] ${uid} -> ${planId} (${subscription.status}, ${environmentValue})`);
     res.status(200).json({ subscription });
