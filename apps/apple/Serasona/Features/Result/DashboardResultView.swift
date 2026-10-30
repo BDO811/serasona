@@ -99,11 +99,12 @@ struct DashboardResultView: View {
 
                 Spacer(minLength: SerasonaSpace.s10)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, SerasonaSpace.s5)
             .padding(.top, SerasonaSpace.s6)
         }
         .background(SerasonaColor.surfaceCanvas.ignoresSafeArea())
-        .task { await loadHistory() }
+        .task(id: injectedHistory?.map { $0.id }.joined(separator: "|")) { await loadHistory() }
         .sheet(isPresented: $explaining) {
             ScoreMethodSheet(score: score, sleep: sleep)
         }
@@ -135,7 +136,7 @@ struct DashboardResultView: View {
                         .serasonaStyle(SerasonaType.eyebrow)
                         .foregroundStyle(SerasonaColor.inkMuted)
 
-                    Text("Your last three measurements. The latest scored check-ins, whenever they were recorded.")
+                    Text("Your latest saved check-ins")
                         .serasonaStyle(SerasonaType.body)
                         .foregroundStyle(SerasonaColor.inkMuted)
                         .fixedSize(horizontal: false, vertical: true)
@@ -154,13 +155,21 @@ struct DashboardResultView: View {
                 .accessibilityLabel("Refresh results")
             }
 
-            HStack {
+            HStack(spacing: SerasonaSpace.s6) {
                 Spacer()
+                ScorePositionScale(value: score?.score)
+                    .frame(height: 176)
                 ScoreDial(score: score?.score, state: compositeState)
                 Spacer()
             }
 
-            VStack(spacing: SerasonaSpace.s3) {
+            HStack {
+                Spacer()
+                WebsiteButton()
+                Spacer()
+            }
+
+            HStack(alignment: .top, spacing: SerasonaSpace.s2) {
                 ForEach(Array(measurements.enumerated()), id: \.element.id) { index, measurement in
                     MeasurementCard(
                         measurement: measurement,
@@ -242,10 +251,7 @@ struct DashboardResultView: View {
         let slots = Array(measurements.reversed())
 
         return LazyVGrid(
-            columns: [
-                GridItem(.flexible(), spacing: SerasonaSpace.s3),
-                GridItem(.flexible(), spacing: SerasonaSpace.s3),
-            ],
+            columns: [GridItem(.adaptive(minimum: 160), spacing: SerasonaSpace.s3)],
             spacing: SerasonaSpace.s3
         ) {
             ForEach(ScoreGroup.allCases) { group in
@@ -504,19 +510,17 @@ private struct MeasurementCard: View {
     let isLatest: Bool
 
     var body: some View {
-        HStack(alignment: .center, spacing: SerasonaSpace.s4) {
+        VStack(alignment: .leading, spacing: SerasonaSpace.s2) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(measurement.label.uppercased())
                     .serasonaStyle(SerasonaType.eyebrow)
                     .foregroundStyle(SerasonaColor.inkBody)
-                Text(measurement.capturedAt.map(DateText.short) ?? "—")
+                Text(measurement.capturedAt.map(DateText.short) ?? "")
                     .serasonaStyle(SerasonaType.readoutSM)
                     .foregroundStyle(SerasonaColor.inkMuted)
             }
 
-            Spacer()
-
-            VStack(alignment: .trailing, spacing: 2) {
+            VStack(alignment: .leading, spacing: 2) {
                 if let score = measurement.score {
                     HStack(alignment: .firstTextBaseline, spacing: 3) {
                         Text("\(score)")
@@ -532,14 +536,11 @@ private struct MeasurementCard: View {
                         .joined(separator: " · "))
                         .serasonaStyle(SerasonaType.caption)
                         .foregroundStyle(SerasonaColor.inkMuted)
-                } else {
-                    Text("No saved check-in yet")
-                        .serasonaStyle(SerasonaType.bodySM)
-                        .foregroundStyle(SerasonaColor.inkMuted)
                 }
             }
         }
-        .padding(SerasonaSpace.s5)
+        .frame(maxWidth: .infinity, minHeight: 100, alignment: .topLeading)
+        .padding(SerasonaSpace.s3)
         .background(background)
         .clipShape(RoundedRectangle(cornerRadius: SerasonaRadius.lg))
         .overlay(
@@ -564,12 +565,14 @@ private struct IndexCard: View {
     let history: [Int?]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: SerasonaSpace.s2) {
+        HStack(alignment: .top, spacing: SerasonaSpace.s3) {
+          ScorePositionScale(value: value)
+            .frame(height: 144)
+          VStack(alignment: .leading, spacing: SerasonaSpace.s2) {
             Text(label.uppercased())
                 .serasonaStyle(SerasonaType.eyebrow)
                 .foregroundStyle(SerasonaColor.inkBody)
-                .lineLimit(1)
-                .minimumScaleFactor(0.75)
+                .fixedSize(horizontal: false, vertical: true)
 
             Text(value.map(String.init) ?? "Not read")
                 .serasonaStyle(SerasonaType.scoreMD)
@@ -585,6 +588,8 @@ private struct IndexCard: View {
             // the saved-readings matrix below dates every one of them.
             Sparkline(values: history)
                 .frame(height: 44)
+          }
+          .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(SerasonaSpace.s4)

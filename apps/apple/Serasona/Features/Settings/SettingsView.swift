@@ -15,7 +15,8 @@ struct SettingsView: View {
             ZStack {
                 SerasonaColor.surfaceCanvas.ignoresSafeArea()
 
-                VStack(alignment: .leading, spacing: SerasonaSpace.s6) {
+                ScrollView {
+                  VStack(alignment: .leading, spacing: SerasonaSpace.s6) {
                     VStack(alignment: .leading, spacing: SerasonaSpace.s2) {
                         Text("SIGNED IN AS")
                             .serasonaStyle(SerasonaType.eyebrow)
@@ -110,11 +111,14 @@ struct SettingsView: View {
                         Link("Manage Apple subscription", destination: SerasonaLegal.subscriptions)
                     }
 
-                    Spacer()
+                  }
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                  .padding(SerasonaSpace.s6)
+                  .padding(.bottom, SerasonaSpace.s6)
                 }
-                .padding(SerasonaSpace.s6)
             }
             .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showPaywall) {
                 PaywallView(onDismiss: { showPaywall = false })
             }

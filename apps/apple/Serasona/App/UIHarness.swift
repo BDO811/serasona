@@ -71,7 +71,15 @@ struct UIHarnessView: View {
                 injectedHistory: UIHarness.sampleHistory
             )
         case "settings":
-            SettingsView()
+            MainTabView(initialSelection: .settings, injectedDashboardHistory: [])
+        case "processing":
+            ProcessingView()
+        case "single-result":
+            MainTabView(injectedDashboardHistory: [UIHarness.sampleCheckIn()])
+        case "empty-dashboard":
+            MainTabView(injectedDashboardHistory: [])
+        case "tabs":
+            MainTabView()
         case "delete":
             DeleteAccountView(onDismiss: {})
         default:

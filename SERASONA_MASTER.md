@@ -105,7 +105,7 @@ App Store Connect record: https://appstoreconnect.apple.com/apps/6829005022/dist
 
 TestFlight: https://appstoreconnect.apple.com/teams/589b0edd-eb54-4794-8bc8-1a19c31d26ab/apps/6829005022/testflight
 
-Internal group **Serasona Internal** was created with automatic distribution off and zero testers. No invitation emails were sent. Upload is confirmed by Xcode's successful export result; the TestFlight browser list had not yet exposed the processing build at the latest check, so tester installation is not yet verified. Do not upload the same build again merely because Apple's list is delayed.
+Internal group **Serasona Internal** has automatic distribution off. Apple has finished processing build 1.0 (1), marked it **Ready to Test**, and the build was added to this group. Amit explicitly authorized the TestFlight invitation to `mehta@helix.harvard7.net`. On reopening the prepared page, Apple already showed **1 Tester**, **1 Build**, a successful tester-added notice, and status **Invited** for that address. No duplicate invitation was sent. Tester installation remains unverified.
 
 Apple app ID: `6829005022`. SKU: `SERASONA-IOS-001`. Language: English (U.S.).
 
@@ -132,7 +132,17 @@ For the successful builds, use the destination to select the platform, rather th
 
 ## Release requirements still open
 
-1. Verify Apple finishes processing version 1.0, build 1, and configure internal TestFlight access. Team membership, app record, bundle IDs, App Group assignments, signed archive, and upload are complete.
+### Build 2 interface update, October 30
+
+Amit reported overlapping Settings text and requested independent Dashboard navigation, a processing countdown, blank missing prior readings, a left-hand 0–100 score-position bar for every index and the main score, and a full-website button below the circular score. These changes are implemented in the iPhone app and corresponding website dashboard/analysis screens.
+
+Settings now uses a scrolling layout and inline system title. The four-tab app starts on Dashboard and loads real saved history without recording first. Recording from Dashboard starts a fresh capture. Empty accounts remain empty. Prior-reading cards retain their labels but leave missing dates, scores, and context blank. Main score and Stress, Wellness, Clarity, and Sleep use proportional scales with thresholds 34, 67, and 90. The countdown is explicitly an estimate; after 60 seconds it shows elapsed time and a finishing message rather than claiming the analysis is complete.
+
+Native simulator screenshots verified Settings and Dashboard on an iPhone SE (375 points wide) and the existing larger iPhone simulator. Processing countdown was also visually verified. Browser preview was checked at desktop and iPhone width; an existing mobile capture-panel overflow was fixed, and the final mobile DOM check found no overflow outside intentionally scrollable tables. All 325 website regression tests, TypeScript, production build, and the production authentication/consent artifact check passed. Development-only example readings are excluded from the production build.
+
+Website changes are commit `e2e9c091`, pushed to main. Deployment run: https://github.com/BDO811/serasona/actions/runs/41121230125 . Deployment is not complete until that run succeeds. The iPhone signed build 2 archive and upload are in progress; do not describe build 2 as installable until Apple processing and group availability are verified. XcodeGen now explicitly binds all four generated Info.plist version fields to the build settings, preventing old hardcoded build 1 values from surviving regeneration.
+
+1. Accept the invitation on Amit's iPhone and verify installation. Apple shows the tester as Invited, and build 1.0 (1) is Ready to Test in the internal group. Registration, signing, and upload are complete.
 2. Finish subscription review screenshots, app metadata, and privacy disclosures. Monthly product creation, pricing, English localization, initial U.S. availability, and the backend Apple app ID are configured.
 3. Finish builds, test sign-in and token renewal, offline recording and retry, duplicate-save handling, deletion, StoreKit redemption and restore, widgets, and Watch layouts on real devices.
 4. Test account deletion with populated native check-in history. Deployment and a signed-in empty-history deletion check are complete.

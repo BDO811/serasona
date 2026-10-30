@@ -21,11 +21,13 @@ struct ScoreDial: View {
             Circle()
                 .stroke(SerasonaColor.surfaceSunken, lineWidth: 12)
 
-            Circle()
-                .trim(from: 0, to: max(0.03, progress))
+            if score != nil {
+              Circle()
+                .trim(from: 0, to: max(0, min(1, progress)))
                 .stroke(state.color, style: StrokeStyle(lineWidth: 12, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(.easeOut(duration: 0.6), value: progress)
+            }
 
             VStack(spacing: SerasonaSpace.s1) {
                 if let score {
@@ -38,7 +40,7 @@ struct ScoreDial: View {
                         .foregroundStyle(SerasonaColor.inkMuted)
                 }
 
-                Text(state.rawValue)
+                Text(score == nil ? "No reading" : state.rawValue)
                     .serasonaStyle(SerasonaType.caption)
                     .foregroundStyle(state.color)
             }

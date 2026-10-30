@@ -10,7 +10,7 @@ settings:
   base:
     SWIFT_VERSION: "5.10"
     MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    CURRENT_PROJECT_VERSION: "2"
     DEVELOPMENT_TEAM: "JC874B66JG" # the only signing team on this machine; replace if Serasona enrolled under another
     CODE_SIGN_STYLE: Automatic
     ENABLE_PREVIEWS: YES
@@ -30,6 +30,8 @@ targets:
     info:
       path: Generated/Serasona-Info.plist
       properties:
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleDisplayName: Serasona
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
@@ -77,6 +79,8 @@ targets:
     info:
       path: Generated/SerasonaWatch-Info.plist
       properties:
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleDisplayName: Serasona
         WKApplication: true
         WKSupportsRunningWithoutiOSApp: true
@@ -115,6 +119,8 @@ targets:
     info:
       path: Generated/SerasonaComplication-Info.plist
       properties:
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleDisplayName: Serasona
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
@@ -138,6 +144,8 @@ targets:
     info:
       path: Generated/SerasonaWidget-Info.plist
       properties:
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleDisplayName: Serasona
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
