@@ -156,13 +156,16 @@ const TrendPreview = () => {
       initial={reduce ? false : { opacity: 0, scale: 1.08, x: 22, filter: "blur(10px)" }}
       animate={play ? { opacity: 1, scale: 1, x: 0, filter: "blur(0px)" } : undefined}
       transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-      className="rounded-2xl border border-border bg-card p-3 overflow-hidden"
     >
       <p className="sr-only">
         Your stress trend: this is what seven days of check-ins looks like, today at 60. On the free plan,
         the oldest 3 days fade out. Core keeps all of it.
       </p>
-      <div className="w-full aspect-[32/15] rounded-xl overflow-hidden bg-card" aria-hidden="true">
+      {/* The clip's own "paper" ground is rendered at the exact hex of the page
+          background, and nothing here adds a card border or a second fill
+          color behind it, so the settled frame reads as the page itself
+          rather than a lighter box sitting on a cream page. */}
+      <div className="w-full aspect-[32/15] rounded-2xl overflow-hidden" aria-hidden="true">
         {playable ? (
           <video
             ref={videoRef}
@@ -180,7 +183,7 @@ const TrendPreview = () => {
           <img src={asset("video/trend-loop-poster.jpg")} alt="" className="h-full w-full object-cover" />
         )}
       </div>
-      <div className="flex items-center gap-2 mt-3 px-3 pb-1 text-xs text-muted-foreground">
+      <div className="flex items-center gap-2 mt-3 px-1 text-xs text-muted-foreground">
         <Lock className="w-3 h-3" />
         <span>On the free plan, the oldest 3 days fade out. Core keeps all of it.</span>
       </div>
@@ -217,14 +220,21 @@ const MeasurementComparison = () => (
         Every plan reads the same twenty-second recording. The difference is how much of it gets reported back to you.
       </p>
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+    {/* Same subgrid technique as the tier cards above: Plus and Executive carry
+        more model pills than Free/Core, and without a shared row grid that
+        extra height pushes only their own signal count, bar and caption down,
+        leaving the four cards out of step with each other. */}
+    <div className="grid grid-cols-1 md:grid-cols-4 md:[grid-template-rows:repeat(4,auto)] gap-5">
       {TIERS.map((tier) => {
         const models = modelsForPlan(tier.id);
         const signals = Array.from(new Set(models.flatMap((m) => m.signs)));
         const pct = Math.round((signals.length / ALL_UNIQUE_SIGNALS.length) * 100);
         return (
-          <div key={tier.id} className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
-            <div className="flex flex-wrap gap-1.5">
+          <div
+            key={tier.id}
+            className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3 md:grid md:[grid-template-rows:subgrid] md:row-span-4 md:gap-3"
+          >
+            <div className="flex flex-wrap gap-1.5 content-start">
               {models.map((m) => (
                 <span
                   key={m.id}
