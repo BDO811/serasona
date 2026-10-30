@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { PlanId } from "@/context/AuthContext";
 import { MODELS, ADDON_MODELS, type VoiceModel } from "@/lib/models";
+import { asset } from "@/lib/asset";
 
 type Interval = "monthly" | "annual";
 
@@ -108,92 +109,40 @@ const annualSavingsPct = (tier: Tier) => {
 
 /**
  * An illustrative month of stress check-ins: not a counter climbing from
- * zero, a day-by-day line across thirty days that rises into the high range
- * and eases back down, same as a real stretch of a demanding month would
- * read. Static and representative, not wired to any account's actual data —
- * the same "show the goods" role as a product screenshot.
+ * zero, a real day-by-day line across thirty days that rises into the high
+ * range and eases back down, same as a real stretch of a demanding month
+ * would read. Static and representative, not wired to any account's actual
+ * data — the same "show the goods" role as a product screenshot.
  *
- * Hand-drawn SVG, animated imperatively (direct attribute writes on every
- * frame rather than React state) so a 30-point reveal stays smooth at 60fps.
- * The line reads calm in the app's ink color until the value crosses 50,
- * then it and the live number switch to the destructive red and pulse —
- * the same stress-flag semantics as DashboardTrends, just driven by a
- * fixed illustrative curve instead of real sessions.
+ * A genuine kinetic-film render (Anthropic's scenario-kinetic-film skill): a
+ * quick kinetic-type cold open ("KNOW YOUR / STRESS, / SLEEP, / AND
+ * CLARITY. / DAILY.") hard-cuts into a custom Graph block that comets a real
+ * 30-day series instead of a fixed curve — calm in ink, hot red past 50,
+ * a ring wherever it crosses, keyframes popping as the line passes them —
+ * then folds and lands on the month's peak with a portal zoom. Real motion
+ * blur, bloom and film grain from the render pipeline, not CSS approximation.
  *
- * Styled after the comet-drawn, glowing curve and popping keyframes of
- * Anthropic's scenario-kinetic-film skill (the Graph block this page used
- * to render to video): a soft bloom filter on the line and head, a fading
- * comet tail trailing the head, five keyframe diamonds that pop open as
- * the line passes them, and a one-shot expanding ring exactly where the
- * curve crosses the 50 line in either direction.
+ * Muted, looping, autoplaying background footage: same accessibility
+ * contract as AmbientVideo.tsx (poster for prefers-reduced-motion and a
+ * metered connection, aria-hidden on the video itself, a screen-reader-only
+ * paragraph carries the same information as text).
  */
-const STRESS_DAYS = [
-  30, 31, 33, 34, 37, 39, 42, 44, 47, 49, 52, 55, 58, 61, 63, 65, 67, 68, 67, 65, 62, 59, 55, 51, 48, 45, 42, 39, 36, 34,
-];
-const STRESS_THRESHOLD = 50;
-const STRESS_VIEW_W = 960;
-const STRESS_VIEW_H = 450;
-const STRESS_PAD = { l: 44, r: 20, t: 20, b: 46 };
-const STRESS_PLOT_W = STRESS_VIEW_W - STRESS_PAD.l - STRESS_PAD.r;
-const STRESS_PLOT_H = STRESS_VIEW_H - STRESS_PAD.t - STRESS_PAD.b;
-const STRESS_POINTS: Array<readonly [number, number]> = STRESS_DAYS.map((value, i) => [
-  STRESS_PAD.l + (i / (STRESS_DAYS.length - 1)) * STRESS_PLOT_W,
-  STRESS_PAD.t + STRESS_PLOT_H - (value / 100) * STRESS_PLOT_H,
-]);
-const STRESS_FULL_PATH = STRESS_POINTS.map((p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" ");
-const STRESS_THRESHOLD_Y = STRESS_PAD.t + STRESS_PLOT_H - (STRESS_THRESHOLD / 100) * STRESS_PLOT_H;
-const STRESS_BASELINE_Y = STRESS_PAD.t + STRESS_PLOT_H;
-/** Twice the pace of the first cut: a brisk, lively draw rather than a slow crawl. */
-const STRESS_DRAW_MS = 9000;
-const STRESS_HOLD_MS = 1300;
-const STRESS_RESET_MS = 350;
-const STRESS_CYCLE_MS = STRESS_DRAW_MS + STRESS_HOLD_MS + STRESS_RESET_MS;
-/** Five pop points along the month, the same spread as the kinetic-film Graph block's keyframes. */
-const STRESS_KEYFRAME_DAYS = [0, 7, 14, 21, 29];
-const STRESS_KEYFRAME_HIGH = STRESS_KEYFRAME_DAYS.map((d) => STRESS_DAYS[d] > STRESS_THRESHOLD);
-
-function stressPathUpTo(progressDays: number) {
-  const lastIndex = STRESS_POINTS.length - 2;
-  const i = Math.max(0, Math.min(Math.floor(progressDays), lastIndex));
-  const frac = progressDays - i;
-  const [x0, y0] = STRESS_POINTS[i];
-  const [x1, y1] = STRESS_POINTS[i + 1];
-  const hx = x0 + (x1 - x0) * frac;
-  const hy = y0 + (y1 - y0) * frac;
-  let d = `M${STRESS_POINTS[0][0].toFixed(1)} ${STRESS_POINTS[0][1].toFixed(1)}`;
-  for (let k = 1; k <= i; k++) d += ` L${STRESS_POINTS[k][0].toFixed(1)} ${STRESS_POINTS[k][1].toFixed(1)}`;
-  d += ` L${hx.toFixed(1)} ${hy.toFixed(1)}`;
-  const area = `${d} L${hx.toFixed(1)} ${STRESS_BASELINE_Y} L${STRESS_POINTS[0][0].toFixed(1)} ${STRESS_BASELINE_Y} Z`;
-  return { d, area, head: [hx, hy] as const };
-}
-
-function stressValueAt(progressDays: number) {
-  const lastIndex = STRESS_DAYS.length - 2;
-  const i = Math.max(0, Math.min(Math.floor(progressDays), lastIndex));
-  const frac = progressDays - i;
-  return STRESS_DAYS[i] + (STRESS_DAYS[i + 1] - STRESS_DAYS[i]) * frac;
-}
-
-/** A point on the curve at an arbitrary (possibly negative, clamped) day — used for the comet's trailing ghosts. */
-function stressPointAt(progressDays: number) {
-  const lastIndex = STRESS_POINTS.length - 2;
-  const p = Math.max(0, Math.min(progressDays, lastIndex + 1));
-  const i = Math.max(0, Math.min(Math.floor(p), lastIndex));
-  const frac = p - i;
-  const [x0, y0] = STRESS_POINTS[i];
-  const [x1, y1] = STRESS_POINTS[i + 1];
-  return [x0 + (x1 - x0) * frac, y0 + (y1 - y0) * frac] as const;
-}
-
-interface StressBurst {
-  key: number;
-  x: number;
-  y: number;
-  color: string;
-}
-
 const TrendPreview = () => {
   const reduce = useReducedMotion();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playable, setPlayable] = useState(false);
+
+  useEffect(() => {
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const metered = conn?.saveData === true || /^(slow-)?2g$/.test(conn?.effectiveType || "");
+    setPlayable(!reduce && !metered);
+  }, [reduce]);
+
+  useEffect(() => {
+    if (!playable) return;
+    void videoRef.current?.play().catch(() => {});
+  }, [playable]);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(containerRef, { once: true, margin: "-10% 0px -10% 0px" });
   const [escaped, setEscaped] = useState(false);
@@ -203,129 +152,6 @@ const TrendPreview = () => {
   }, []);
   const play = Boolean(reduce || inView || escaped);
 
-  const revealRef = useRef<SVGPathElement>(null);
-  const areaRef = useRef<SVGPathElement>(null);
-  const headRef = useRef<SVGCircleElement>(null);
-  const haloRef = useRef<SVGCircleElement>(null);
-  const trail1Ref = useRef<SVGCircleElement>(null);
-  const trail2Ref = useRef<SVGCircleElement>(null);
-  const trail3Ref = useRef<SVGCircleElement>(null);
-  const groupRef = useRef<SVGGElement>(null);
-  const valueRef = useRef<HTMLSpanElement>(null);
-  const dayRef = useRef<HTMLSpanElement>(null);
-  const [isHigh, setIsHigh] = useState(false);
-  const [keyframePopped, setKeyframePopped] = useState<boolean[]>(() => STRESS_KEYFRAME_DAYS.map(() => false));
-  const [burst, setBurst] = useState<StressBurst | null>(null);
-  const burstKeyRef = useRef(0);
-  const rafRef = useRef<number>();
-  const startRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!play) return;
-
-    const setTrail = (ref: typeof trail1Ref, progressDays: number) => {
-      const [x, y] = stressPointAt(progressDays);
-      ref.current?.setAttribute("cx", x.toFixed(1));
-      ref.current?.setAttribute("cy", y.toFixed(1));
-    };
-
-    if (reduce) {
-      const lastDay = STRESS_DAYS.length - 1;
-      const { d, area } = stressPathUpTo(lastDay);
-      revealRef.current?.setAttribute("d", d);
-      areaRef.current?.setAttribute("d", area);
-      const [hx, hy] = STRESS_POINTS[lastDay];
-      headRef.current?.setAttribute("cx", String(hx));
-      headRef.current?.setAttribute("cy", String(hy));
-      haloRef.current?.setAttribute("cx", String(hx));
-      haloRef.current?.setAttribute("cy", String(hy));
-      setTrail(trail1Ref, lastDay);
-      setTrail(trail2Ref, lastDay);
-      setTrail(trail3Ref, lastDay);
-      const v = STRESS_DAYS[lastDay];
-      setIsHigh(v > STRESS_THRESHOLD);
-      setKeyframePopped(STRESS_KEYFRAME_DAYS.map(() => true));
-      if (valueRef.current) valueRef.current.textContent = String(Math.round(v));
-      if (dayRef.current) dayRef.current.textContent = String(STRESS_DAYS.length);
-      return;
-    }
-
-    let lastHigh = false;
-    let prevElapsed = -1;
-    let revealed = STRESS_KEYFRAME_DAYS.map(() => false);
-    const tick = (now: number) => {
-      if (startRef.current === null) startRef.current = now;
-      const elapsed = (now - startRef.current) % STRESS_CYCLE_MS;
-      if (elapsed < prevElapsed) {
-        // wrapped into a new loop: clear the keyframe pops and arm the threshold burst again
-        revealed = STRESS_KEYFRAME_DAYS.map(() => false);
-        setKeyframePopped(revealed);
-        lastHigh = false;
-      }
-      prevElapsed = elapsed;
-
-      const holdEnd = STRESS_DRAW_MS + STRESS_HOLD_MS;
-      let progressDays: number;
-      let groupOpacity = 1;
-      if (elapsed < STRESS_DRAW_MS) {
-        progressDays = (elapsed / STRESS_DRAW_MS) * (STRESS_DAYS.length - 1);
-      } else if (elapsed < holdEnd) {
-        progressDays = STRESS_DAYS.length - 1;
-      } else {
-        const resetT = elapsed - holdEnd;
-        const half = STRESS_RESET_MS / 2;
-        progressDays = 0;
-        groupOpacity = resetT < half ? 1 - resetT / half : (resetT - half) / half;
-      }
-      const { d, area, head } = stressPathUpTo(progressDays);
-      const v = stressValueAt(progressDays);
-      const high = v > STRESS_THRESHOLD;
-      revealRef.current?.setAttribute("d", d);
-      areaRef.current?.setAttribute("d", area);
-      headRef.current?.setAttribute("cx", head[0].toFixed(1));
-      headRef.current?.setAttribute("cy", head[1].toFixed(1));
-      haloRef.current?.setAttribute("cx", head[0].toFixed(1));
-      haloRef.current?.setAttribute("cy", head[1].toFixed(1));
-      setTrail(trail1Ref, progressDays - 0.5);
-      setTrail(trail2Ref, progressDays - 1.0);
-      setTrail(trail3Ref, progressDays - 1.6);
-      if (groupRef.current) groupRef.current.style.opacity = groupOpacity.toFixed(3);
-      if (valueRef.current) valueRef.current.textContent = String(Math.round(v));
-      if (dayRef.current) dayRef.current.textContent = String(Math.min(STRESS_DAYS.length, Math.floor(progressDays) + 1));
-      if (high !== lastHigh) {
-        lastHigh = high;
-        setIsHigh(high);
-        if (elapsed < STRESS_DRAW_MS) {
-          burstKeyRef.current += 1;
-          setBurst({
-            key: burstKeyRef.current,
-            x: head[0],
-            y: head[1],
-            color: high ? "hsl(var(--destructive))" : "hsl(var(--foreground))",
-          });
-        }
-      }
-      let changed = false;
-      STRESS_KEYFRAME_DAYS.forEach((kd, j) => {
-        if (!revealed[j] && progressDays >= kd) {
-          revealed[j] = true;
-          changed = true;
-        }
-      });
-      if (changed) setKeyframePopped(revealed.slice());
-      rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      startRef.current = null;
-    };
-  }, [play, reduce]);
-
-  const lineColor = isHigh ? "hsl(var(--destructive))" : "hsl(var(--foreground) / 0.82)";
-  const fillColor = isHigh ? "hsl(var(--destructive) / 0.12)" : "hsl(var(--foreground) / 0.05)";
-  const glow = `drop-shadow(0 0 4px ${lineColor}) drop-shadow(0 0 12px ${lineColor})`;
-
   return (
     <motion.div
       ref={containerRef}
@@ -333,120 +159,36 @@ const TrendPreview = () => {
       animate={play ? { opacity: 1, scale: 1, x: 0, filter: "blur(0px)" } : undefined}
       transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
     >
-      <style>{`
-        @keyframes stress-flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        @keyframes stress-ring-burst { from { transform: scale(0.4); opacity: 0.95; } to { transform: scale(3.4); opacity: 0; } }
-      `}</style>
       <p className="sr-only">
         Know your stress, sleep and clarity every day: this is what a month of check-ins can look like,
         starting around 30, climbing into the high range past day ten, then easing back down by day
-        thirty. On the free plan, the oldest 3 days fade out. Core keeps all of it.
+        thirty, peaking at 68. On the free plan, the oldest 3 days fade out. Core keeps all of it.
       </p>
-      <div className="flex items-end justify-between px-1 mb-2" aria-hidden="true">
-        <span className="text-xs font-mono tracking-wider uppercase text-muted-foreground max-w-[60%]">
+      <div className="px-1 mb-2" aria-hidden="true">
+        <span className="text-xs font-mono tracking-wider uppercase text-muted-foreground">
           Know your stress, sleep and clarity every day.
         </span>
-        <span className="text-right">
-          <span
-            ref={valueRef}
-            className="block text-2xl font-mono font-semibold tabular-nums leading-none"
-            style={{ color: lineColor, animation: isHigh ? "stress-flash 0.6s ease-in-out infinite" : "none" }}
-          >
-            30
-          </span>
-          <span className="block text-[10px] font-mono tracking-wider uppercase text-muted-foreground mt-0.5">
-            Day <span ref={dayRef}>1</span> of {STRESS_DAYS.length}
-          </span>
-        </span>
       </div>
-      <div className="w-full aspect-[32/15]" aria-hidden="true">
-        <svg viewBox={`0 0 ${STRESS_VIEW_W} ${STRESS_VIEW_H}`} className="w-full h-full overflow-visible">
-          <line
-            x1={STRESS_PAD.l}
-            x2={STRESS_VIEW_W - STRESS_PAD.r}
-            y1={STRESS_THRESHOLD_Y}
-            y2={STRESS_THRESHOLD_Y}
-            stroke="hsl(var(--border))"
-            strokeWidth={1.5}
-            strokeDasharray="5 6"
-          />
-          <text x={STRESS_PAD.l} y={STRESS_THRESHOLD_Y - 8} className="font-mono" fontSize={13} fill="hsl(var(--muted-foreground))">
-            50
-          </text>
-          <path d={STRESS_FULL_PATH} fill="none" stroke="hsl(var(--foreground) / 0.14)" strokeWidth={2} />
-          {[0, 9, 19, 29].map((i) => (
-            <text
-              key={i}
-              x={STRESS_POINTS[i][0]}
-              y={STRESS_VIEW_H - 14}
-              textAnchor={i === 0 ? "start" : i === 29 ? "end" : "middle"}
-              className="font-mono"
-              fontSize={12}
-              fill="hsl(var(--muted-foreground))"
-            >
-              Day {i + 1}
-            </text>
-          ))}
-          <g ref={groupRef}>
-            <path ref={areaRef} d="" fill={fillColor} />
-            <path
-              ref={revealRef}
-              d=""
-              fill="none"
-              stroke={lineColor}
-              strokeWidth={3.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ filter: glow }}
-            />
-            {STRESS_KEYFRAME_DAYS.map((kd, j) => {
-              const [x, y] = STRESS_POINTS[kd];
-              const kColor = STRESS_KEYFRAME_HIGH[j] ? "hsl(var(--destructive))" : "hsl(var(--foreground) / 0.82)";
-              const popped = keyframePopped[j];
-              return (
-                <rect
-                  key={kd}
-                  x={x - 6}
-                  y={y - 6}
-                  width={12}
-                  height={12}
-                  fill="hsl(var(--background))"
-                  stroke={kColor}
-                  strokeWidth={2.5}
-                  style={{
-                    transformBox: "fill-box",
-                    transformOrigin: "center",
-                    transform: popped ? "rotate(45deg) scale(1)" : "rotate(45deg) scale(0)",
-                    opacity: popped ? 1 : 0,
-                    transition: "transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s",
-                  }}
-                />
-              );
-            })}
-            {burst && (
-              <circle
-                key={burst.key}
-                cx={burst.x}
-                cy={burst.y}
-                r={9}
-                fill="none"
-                stroke={burst.color}
-                strokeWidth={2.5}
-                style={{ transformBox: "fill-box", transformOrigin: "center", animation: "stress-ring-burst 0.55s ease-out forwards" }}
-              />
-            )}
-            <circle ref={trail3Ref} r={2.2} fill={lineColor} opacity={0.08} />
-            <circle ref={trail2Ref} r={3.2} fill={lineColor} opacity={0.18} />
-            <circle ref={trail1Ref} r={4.2} fill={lineColor} opacity={0.35} />
-            <circle
-              ref={haloRef}
-              r={14}
-              fill={isHigh ? "hsl(var(--destructive) / 0.22)" : "hsl(var(--foreground) / 0.12)"}
-              style={{ animation: isHigh ? "stress-flash 0.6s ease-in-out infinite" : "none" }}
-            />
-            <circle ref={headRef} r={5.5} fill={lineColor} style={{ filter: glow }} />
-          </g>
-        </svg>
+      {/* The clip's own "paper" ground is rendered at the exact hex of the page
+          background, so the settled frame reads as the page itself rather
+          than a lighter box sitting on a cream page. */}
+      <div className="w-full aspect-[32/15] rounded-2xl overflow-hidden" aria-hidden="true">
+        {playable ? (
+          <video
+            ref={videoRef}
+            className="h-full w-full object-cover"
+            poster={asset("video/trend-loop-poster.jpg")}
+            muted
+            loop
+            playsInline
+            preload="auto"
+          >
+            <source src={asset("video/trend-loop.webm")} type="video/webm" />
+            <source src={asset("video/trend-loop.mp4")} type="video/mp4" />
+          </video>
+        ) : (
+          <img src={asset("video/trend-loop-poster.jpg")} alt="" className="h-full w-full object-cover" />
+        )}
       </div>
       <div className="flex items-center gap-2 mt-3 px-1 text-xs text-muted-foreground">
         <Lock className="w-3 h-3" />
