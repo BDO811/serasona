@@ -931,8 +931,13 @@ export const AnalysisAnimation = ({ onComplete, onFailed }: AnalysisAnimationPro
           color: stageColor,
         }}
       >
-        <span>{stage + 1}</span><span className="opacity-50">/</span><span className="opacity-50">6</span>
+        <span role="timer" aria-label="Estimated analysis time remaining">{Math.max(0, 60 - Math.floor(elapsedTime / 1000)) > 0
+          ? `0:${String(Math.max(0, 60 - Math.floor(elapsedTime / 1000))).padStart(2, "0")}`
+          : "Finishing…"}</span>
       </div>
+      <p className="text-xs md:text-sm text-center" style={{ color: stageColor }}>
+        {elapsedTime < 60000 ? "Estimated time remaining" : "Taking longer than estimated. Your recording is still being processed."}
+      </p>
 
       {/* Central particle system */}
       <motion.div 

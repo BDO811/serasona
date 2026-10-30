@@ -61,6 +61,14 @@ describe("selected live dashboard", () => {
     expect(screen.queryByRole("img", { name: /Saved trend/ })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "What does your serasona score mean" })).toHaveAttribute("href", "/docs/serasona-score");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    const previous = screen.getByText("Previous").closest(".dv-score-day");
+    const earlier = screen.getByText("Earlier").closest(".dv-score-day");
+    expect(previous).toHaveTextContent(/^Previous$/);
+    expect(earlier).toHaveTextContent(/^Earlier$/);
+    expect(previous.querySelector(".dv-day-value")).toBeNull();
+    expect(screen.getByRole("img", { name: /Serasona score: 45 out of 100. Scale 0 to 100/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open full website" })).toHaveAttribute("href", "https://www.serasona.com/");
+    expect(document.querySelectorAll(".score-position")).toHaveLength(5);
   });
   it("plots only actual comparable readings once another measurement exists", () => {
     mocks.sessions = [saved, { ...saved, sessionId: "earlier-real", capturedAt: saved.capturedAt - 86400000 }];

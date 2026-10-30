@@ -11,6 +11,7 @@ import { useGlobalNoWrap } from "@/hooks/useGlobalNoWrap";
 import Index from "./pages/Index";
 import DetailedAnalysisView from "./pages/DetailedAnalysisView";
 import Dashboard from "./pages/Dashboard";
+import DashboardPreview from "./pages/DashboardPreview";
 import ApiDebugView from "./pages/ApiDebugView";
 import PanelPreview from "./pages/PanelPreview";
 import AnalysisFailed from "./pages/AnalysisFailed";
@@ -139,6 +140,7 @@ const App = () => {
                 <>
                   <Route path="/api-debug" element={<ApiDebugView />} />
                   <Route path="/panel-preview" element={<PanelPreview />} />
+                  <Route path="/dashboard-preview" element={<DashboardPreview />} />
                   <Route path="/smooth-hero-demo" element={<SmoothHeroDemo />} />
                 </>
               )}

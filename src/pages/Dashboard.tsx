@@ -17,7 +17,9 @@ import { dashboardSessions, comparableSessions, metricValue, sourceLabel, isUsab
 import { SignalPanel } from "@/components/report/SignalPanel";
 import { DashboardBodyMap } from "@/components/member/DashboardBodyMap";
 import { assessmentForSession } from "@/lib/dashboard-assessment";
-import { RUNG_SCALE, RUNG_RECOMMENDATION } from "@/lib/result-headline";
+import { RUNG_RECOMMENDATION } from "@/lib/result-headline";
+import { DASHBOARD_SCORE_SCALE as RUNG_SCALE, ScorePositionScale } from "@/components/member/ScorePositionScale";
+import { ScoreDial } from "@/components/report/ScoreDial";
 import { bandForSignal, bandLabelForSignal, signLabel, actionOf, actionLabel } from "@/lib/signal-band";
 import { dashboardZoneForSignal, DASHBOARD_ZONE_LABEL, type DashboardZone } from "@/lib/dashboard-body-zones";
 import { getProtocolId } from "@/lib/assessment-display-utils";
@@ -28,7 +30,7 @@ import type { StoredSession } from "@/lib/voice-history-client";
 import { lastThreeMeasurements } from "@/lib/daily-scores";
 import { scoreMatrixForPlan } from "@/lib/score-matrix";
 
-const SIGNAL_COLORS = { NORMAL: "#7CC49A", LOW: "#8FA9F5", MODERATE: "#EE8E8A", ELEVATED: "#D12B26", INCONCLUSIVE: "#B9B3A6" };
+const SIGNAL_COLORS = { NORMAL: "#145C6B", LOW: "#8FA9F5", MODERATE: "#EE8E8A", ELEVATED: "#D12B26", INCONCLUSIVE: "#B9B3A6" };
 /**
  * Grades a single 0-100 index on the same four rungs as the LOW / MEDIUM /
  * STRONG / OPTIMAL assessment scale (RUNG_SCALE), so every colored box on
@@ -63,7 +65,6 @@ function sparkline(values: Array<number | null>, width = 220, height = 104) {
  * vertical scale segments beside each metric card so a dot at `{score}%`
  * from the bottom always falls inside the segment that score is actually
  * graded into (see levelForScore). */
-const SCALE_WEIGHT: Record<string, number> = { clean: 10, good: 23, steady: 33, focus: 34 };
 function hexToRgba(hex: string, alpha: number): string {
   const n = parseInt(hex.slice(1), 16);
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
@@ -74,9 +75,12 @@ const dateTime = (ms: number) => new Date(ms).toLocaleString(undefined, { dateSt
 const dateAndTime = (ms: number) => new Date(ms).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 const stateLabel = (session: StoredSession) => session.status && session.status !== "complete" ? session.status.replace(/_/g, " ") : session.quality?.usable === false ? "Unusable audio" : session.signals.length ? "Results available" : "No readable results";
 
-export default function Dashboard() {
+export default function Dashboard({ previewHistory }: { previewHistory?: StoredSession[] } = {}) {
   const { user, subscription, subscriptionError, isEntitled } = useAuth();
-  const { sessions, loading, error, refresh } = useVoiceHistory({ save: true, refreshInterval: 30000 });
+  const liveHistory = useVoiceHistory({ save: true, refreshInterval: 30000 });
+  const { sessions, loading, error, refresh } = import.meta.env.DEV && previewHistory
+    ? { sessions: previewHistory, loading: false, error: null, refresh: () => {} }
+    : liveHistory;
   const [days, setDays] = useState(30);
   const [source, setSource] = useState("all");
   const [metric, setMetric] = useState<TrendMetric>("all");
@@ -127,12 +131,22 @@ export default function Dashboard() {
 
 
   return <MemberShell motionControl>
-    <main className="dashboard-v2 dv-priority">
+    <main className="dashboard-v2 dv-priority" data-allow-wrap>
       <section className="dv-score-banner" aria-labelledby="serasona-score-title">
         <ScoreBannerVideo />
         <div className="dv-score-copy"><h1 id="serasona-score-title">YOUR SERASONA SCORE</h1><p>{firstName ? `${firstName}, your` : "Your"} latest saved measurements, up to three. {measurements.filter((measurement) => measurement.session).length === 1 ? "One reading saved. No prior measurements yet." : "Each score comes from a completed check-in."}</p><Link className="dv-score-method" to="/docs/serasona-score">What does your serasona score mean</Link></div>
+        <div className="dv-score-overview">
+          <ScorePositionScale value={score?.score ?? null} label="Serasona score" />
+          <div className="dv-score-dial">
+            <ScoreDial value={score?.score ?? 0} color={score ? levelForScore(score.score).colorLight : "transparent"} size={176} label={score ? `Serasona score ${score.score} out of 100` : "Serasona score: no reading"}>
+              <strong>{score?.score ?? "—"}</strong><span>{score ? "/ 100" : "No reading"}</span>
+            </ScoreDial>
+            <a className="member-button dv-full-website" href="https://www.serasona.com/">Open full website <ArrowUpRight size={16} /></a>
+          </div>
+        </div>
         <div className="dv-score-days" aria-label="Last three measurements of Serasona scores" aria-live="polite">{measurements.map((measurement, index) => {
-          const content = <><span className="dv-day-heading">{measurement.label}<small>{measurement.capturedAt ? date(measurement.capturedAt) : "—"}</small></span><span className="dv-day-value">{loading && !sessions.length ? "…" : error ? "Unavailable" : measurement.score ?? "No reading"}{measurement.score != null && <small>/ 100</small>}</span><span className="dv-day-context">{measurement.session ? <>{measurement.band} · {sourceLabel(measurement.session)}<small>{new Date(measurement.session.capturedAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}</small></> : loading ? "Loading readings" : "No saved check-in yet"}</span></>;
+          const emptyPrevious = index > 0 && !measurement.session && !loading && !error;
+          const content = <><span className="dv-day-heading">{measurement.label}<small>{measurement.capturedAt ? date(measurement.capturedAt) : ""}</small></span>{!emptyPrevious && <><span className="dv-day-value">{loading && !sessions.length ? "…" : error ? "Unavailable" : measurement.score ?? "No reading"}{measurement.score != null && <small>/ 100</small>}</span><span className="dv-day-context">{measurement.session ? <>{measurement.band} · {sourceLabel(measurement.session)}<small>{new Date(measurement.session.capturedAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}</small></> : loading ? "Loading readings" : "No saved check-in yet"}</span></>}</>;
           // Closer to today = a stronger wash of that reading's own rung color; older cards fade toward the plain glass card.
           const level = measurement.score != null ? levelForScore(measurement.score) : null;
           const strength = [0.4, 0.24, 0.12][index] ?? 0.12;
@@ -159,16 +173,13 @@ export default function Dashboard() {
             const hist = [...card.history].reverse();
             const spark = sparkline(hist.map((h) => h.value));
             return <Link key={card.key} to={card.path} style={style} className={`member-metric ${card.key} ${abnormal ? "is-abnormal" : ""}`}>
-              <div className="member-metric-scale" aria-label="Scale: Low below 34, Medium 34 to 66, Strong 67 to 89, Optimal 90 and above">
-                {[...RUNG_SCALE].reverse().map((seg) => <span key={seg.key} className="member-metric-scale-seg" style={{ background: seg.color, flexGrow: SCALE_WEIGHT[seg.key] }} />)}
-                {card.value != null && <span className="member-metric-scale-dot" style={{ bottom: `${card.value}%` }} />}
-              </div>
+              <ScorePositionScale value={card.value} label={card.label} />
               <div className="member-metric-content">
                 <small>{card.label.toUpperCase()}</small>
                 <strong>{card.value ?? "Not read"}</strong>
                 <small>{card.bandLabel ?? (latest ? "No reading" : "Not read")}</small>
                 <div className="member-metric-history" aria-hidden="true">
-                  <div className="member-metric-history-dates">{hist.map((h, i) => <small key={i}>{h.date ?? "—"}</small>)}</div>
+                  <div className="member-metric-history-dates">{hist.map((h, i) => <small key={i}>{h.date ?? ""}</small>)}</div>
                   <div className="member-metric-history-chart">
                     <div className="member-metric-history-yaxis"><span>100</span><span>50</span><span>0</span></div>
                     <svg className="member-metric-history-svg" viewBox={`0 0 ${spark.width} ${spark.height}`} preserveAspectRatio="none">
