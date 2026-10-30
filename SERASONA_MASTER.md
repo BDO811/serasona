@@ -103,6 +103,10 @@ The updated `voiceHistory`, `appleIapVerify`, and `analyzeAudio` functions were 
 
 App Store Connect record: https://appstoreconnect.apple.com/apps/6829005022/distribution
 
+TestFlight: https://appstoreconnect.apple.com/teams/589b0edd-eb54-4794-8bc8-1a19c31d26ab/apps/6829005022/testflight
+
+Internal group **Serasona Internal** was created with automatic distribution off and zero testers. No invitation emails were sent. Upload is confirmed by Xcode's successful export result; the TestFlight browser list had not yet exposed the processing build at the latest check, so tester installation is not yet verified. Do not upload the same build again merely because Apple's list is delayed.
+
 Apple app ID: `6829005022`. SKU: `SERASONA-IOS-001`. Language: English (U.S.).
 
 All four bundle IDs are registered and assigned to App Group `group.com.serasona.app`:
