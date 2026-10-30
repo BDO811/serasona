@@ -86,6 +86,9 @@ final class WatchUploadQueue: ObservableObject {
                 try persist()
                 try? FileManager.default.removeItem(at: directory.appendingPathComponent(entry.filename))
             } catch {
+                if let apiError = error as? SerasonaAPIError, case .notSignedIn = apiError {
+                    WatchAuthService.shared.logOut()
+                }
                 self.error = error.localizedDescription
                 return
             }

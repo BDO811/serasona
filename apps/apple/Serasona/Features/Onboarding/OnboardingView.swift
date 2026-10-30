@@ -16,7 +16,9 @@ struct OnboardingView: View {
         ZStack {
             SerasonaColor.surfaceCanvas.ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: SerasonaSpace.s8) {
+            GeometryReader { geometry in
+              ScrollView {
+                VStack(alignment: .leading, spacing: SerasonaSpace.s8) {
                 Spacer()
 
                 Image("serasonaLogoBands")
@@ -29,7 +31,7 @@ struct OnboardingView: View {
                     .serasonaStyle(SerasonaType.displayLG)
                     .foregroundStyle(SerasonaColor.inkStrong)
 
-                Text("A short voice check-in, a few times a week, becomes your own 30-day baseline — energy, stress, mood and more, read from how you sound rather than how you say you feel.")
+                Text("A short voice check-in builds your own 30-day baseline. See energy, stress, mood and more, read from how you sound rather than how you say you feel.")
                     .serasonaStyle(SerasonaType.bodyLG)
                     .foregroundStyle(SerasonaColor.inkBody)
 
@@ -76,8 +78,19 @@ struct OnboardingView: View {
                         .foregroundStyle(SerasonaColor.tide)
                         .frame(maxWidth: .infinity)
                 }
+                HStack {
+                    Link("Privacy policy", destination: SerasonaLegal.privacy)
+                    Spacer()
+                    Link("Terms of service", destination: SerasonaLegal.terms)
+                }
+                .serasonaStyle(SerasonaType.caption)
+                .foregroundStyle(SerasonaColor.tide)
             }
             .padding(SerasonaSpace.s6)
+            .frame(minHeight: geometry.size.height)
+              }
+              .scrollDismissesKeyboard(.interactively)
+            }
         }
     }
 

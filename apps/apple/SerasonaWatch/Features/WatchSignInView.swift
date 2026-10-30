@@ -12,9 +12,15 @@ struct WatchSignInView: View {
                 Text("Serasona").serasonaStyle(SerasonaType.titleMD)
                 Text("Sign in to your Serasona account. Your Watch works over Wi-Fi or cellular without your iPhone nearby.")
                     .font(.footnote).fixedSize(horizontal: false, vertical: true)
-                TextField("Email", text: $email).textContentType(.emailAddress)
+                TextField("Email", text: $email,
+                    prompt: Text("Email").foregroundColor(SerasonaColor.inkMuted))
+                    .foregroundColor(SerasonaColor.inkStrong)
+                    .textContentType(.emailAddress)
                     .textInputAutocapitalization(.never).autocorrectionDisabled()
-                SecureField("Password", text: $password).textContentType(.password)
+                SecureField("Password", text: $password,
+                    prompt: Text("Password").foregroundColor(SerasonaColor.inkMuted))
+                    .foregroundColor(SerasonaColor.inkStrong)
+                    .textContentType(.password)
                 if let error { Text(error).font(.footnote).foregroundStyle(SerasonaColor.stateStrained) }
                 Button {
                     working = true

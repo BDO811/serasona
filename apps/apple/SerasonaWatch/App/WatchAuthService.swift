@@ -90,6 +90,7 @@ final class WatchAuthService: ObservableObject, SerasonaAuthTokenProviding {
     var uid: String? { session?.uid }
 
     func logOut() {
+        WatchUploadQueue.shared.discardAll()
         refreshTask?.cancel()
         refreshTask = nil
         SecItemDelete([kSecClass as String: kSecClassGenericPassword,

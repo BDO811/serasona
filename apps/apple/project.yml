@@ -100,7 +100,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.serasona.app.watchkitapp
-        SKIP_INSTALL: NO
+        SKIP_INSTALL: YES
         TARGETED_DEVICE_FAMILY: "4"
     dependencies:
       - target: SerasonaComplication
@@ -125,9 +125,9 @@ targets:
           - group.com.serasona.app
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.serasona.app.watchkitapp.complication
+        PRODUCT_BUNDLE_IDENTIFIER: com.serasona.app.watchkitapp.widgets
         TARGETED_DEVICE_FAMILY: "4"
-        SKIP_INSTALL: NO
+        SKIP_INSTALL: YES
 
   SerasonaWidget:
     type: app-extension

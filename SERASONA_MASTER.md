@@ -17,7 +17,7 @@ Two prior Codex chats were recovered:
 
 The product name is Serasona. Build toward TestFlight. Keep the existing voice check-ins, results, recommendations, history and baseline trends, reminders, subscriptions, iPhone widgets, and Watch complications. Keep the existing Serasona design and remove green. The Watch must record and authenticate independently of the iPhone, with saved uploads when it lacks connectivity.
 
-Use the prices and existing legal pages published on serasona.com. Amit has an Apple account; developer membership and the correct signing team are not yet verified. Email sends require Amit's approval of the exact recipients, subject, full body, and attachments.
+Use the prices and existing legal pages published on serasona.com. Apple sign-in and developer membership are verified. The team is Tima Athem, `JC874B66JG`; Amit is an administrator. Email sends require Amit's approval of the exact recipients, subject, full body, and attachments.
 
 ## One working checkout
 
@@ -81,7 +81,7 @@ Apple subscription management: https://apps.apple.com/account/subscriptions
 8. Hardened Apple purchase verification: Xcode transactions are refused on hosted deployments, the signed account token must match the signed-in Serasona account, expiration and original transaction identity are required, and delayed restores cannot shorten a newer Apple period. The iPhone purchase request now supplies the corresponding opaque account token.
 9. Added Apple expiration checks to backend entitlements and expiration-aware iPhone subscription state. Current Apple entitlements are checked after sign-in without prompting a manual restore.
 
-These are source changes. They are not evidence of a successful TestFlight upload or deployed backend update.
+The native Release build was uploaded successfully to App Store Connect on October 30. Backend updates were deployed and checked as described below. Apple processing and native purchase/audio runtime checks are separate from these completed steps.
 
 ## Build and verification
 
@@ -89,22 +89,53 @@ Regenerate from `apps/apple` using `./regenerate.sh`. It runs XcodeGen and then 
 
 Build the `Serasona` scheme for an iPhone simulator and `SerasonaWatch` for a Watch simulator. The full iPhone build embeds the Watch app and iPhone widget; the Watch app embeds its complication.
 
-The Mac has Xcode 27.0 and iPhone and Watch simulator runtimes. Both simulator builds returned exit zero and `BUILD SUCCEEDED` before the subsequent purchase-account binding and entitlement changes: `Serasona` for iPhone with embedded extensions, and `SerasonaWatch` with its complication. All four built bundles contain `PrivacyInfo.xcprivacy`. The Watch sources have not changed since their successful build.
+The Mac has Xcode 27.0 and iPhone and Watch simulator runtimes. The current iPhone simulator build passed, including the embedded Watch, widgets, and purchase account binding. All four built bundles contain `PrivacyInfo.xcprivacy`.
 
-The 24 existing SerasonaKit tests passed. The backend regression suite now has 13 passing tests: five deletion tests and eight Apple purchase verification tests. These do not test the new Watch authentication or outbox at runtime. Attempts to install and launch the apps in isolated simulators timed out; successful launch and visual checks remain unverified. Rebuilding the latest iPhone purchase changes timed out after 110 seconds without compiler diagnostics, so compilation of those latest iPhone changes is not yet verified. No TestFlight archive has been uploaded.
+The 24 existing SerasonaKit tests passed. The backend regression suite has 13 passing tests: five deletion tests and eight Apple purchase verification tests. A live disposable Firebase account passed sign-in, token refresh, and authenticated empty history retrieval; the disposable account was removed. No audio analysis was performed in that smoke test.
+
+Both current apps installed and launched in isolated simulators, and their login screens were visually checked. Screenshots are saved at `.build/Serasona_iPhone.png` and `.build/Serasona_Watch.png`, with review copies in the master chat outputs folder. Native sign-in, audio capture, offline retry, and StoreKit purchases still require full runtime testing.
+
+A signed Release archive completed successfully at `.build/Serasona-signed.xcarchive`, version 1.0, build 1, team `JC874B66JG`. Its top-level app correctly embeds the Watch app and both extensions. App Store distribution export and upload returned `EXPORT SUCCEEDED` at 14:05:59 local time on October 30. Apple reported that the uploaded package is processing. `apps/apple/ExportOptions.plist` configures the reproducible upload. Apple issued nonfatal missing dSYM warnings for FirebaseFirestoreInternal, absl, grpc, grpcpp, and openssl_grpc; application symbols were included, but symbolication inside those dependencies may be limited.
+
+The updated `voiceHistory`, `appleIapVerify`, and `analyzeAudio` functions were deployed successfully to `amits-playground-po`, us-central1. The two functions previously on retiring Node.js 20 were also redeployed successfully on Node.js 22. Active revisions are `voicehistory-00010-lis`, `appleiapverify-00003-nuw`, and `analyzeaudio-00016-xet`. `APPLE_APP_APPLE_ID=6829005022` is set on the verifier. All three live endpoints reject unsigned calls with HTTP 401. A disposable signed-in account successfully called DELETE history (HTTP 200, zero rows), and the hosted verifier rejected a fake Xcode purchase with HTTP 400. The disposable account was then removed. These checks did not record or analyze audio or redeem a real Apple purchase.
+
+## Verified Apple configuration
+
+App Store Connect record: https://appstoreconnect.apple.com/apps/6829005022/distribution
+
+Apple app ID: `6829005022`. SKU: `SERASONA-IOS-001`. Language: English (U.S.).
+
+All four bundle IDs are registered and assigned to App Group `group.com.serasona.app`:
+
+1. iPhone: `com.serasona.app`
+2. Watch: `com.serasona.app.watchkitapp`
+3. iPhone widget: `com.serasona.app.widget`
+4. Watch complication: `com.serasona.app.watchkitapp.widgets`
+
+The originally proposed complication suffix was unavailable. The active project and archive use the registered `.widgets` identifier. Watch and complication targets use `SKIP_INSTALL=YES`, preventing a second top-level app from breaking archive packaging.
+
+Subscription group **Serasona Plans**, ID `22529915`, and its English (U.S.) display name were saved. All three monthly products were created in descending service order, with English display names, descriptions, and United States availability for initial testing:
+
+| Product | Apple product ID | Monthly USD price | Group level |
+| --- | --- | --- | --- |
+| Executive | `6829006046` | $19.99 | 1 |
+| Plus | `6829006762` | $14.99 | 2 |
+| Core | `6829007030` | $7.99 | 3 |
+
+The exact product identifiers match the source pricing table above. Prices were confirmed in Apple's availability confirmation dialogs. The products remain Prepare for Submission; review screenshots and App Review submission are still open. No subscriptions have been published for sale. Annual, trial, and add-on products remain unimplemented in native billing.
 
 For the successful builds, use the destination to select the platform, rather than forcing `-sdk iphonesimulator` on the entire embedded Watch build. On this Apple Silicon Mac the verified architecture was arm64. The verification reused the pre-existing Swift package cache at `/Users/amitmehta/Claude-Outputs/Serasona_iOS/build/spm`; normal Xcode opening can resolve the same dependencies itself.
 
 ## Release requirements still open
 
-1. Complete Apple sign-in in the Serasona Chrome tab. Identify the correct developer team and verify paid program membership. The only local development certificate belongs to a different name; do not assume it is Amit's release team.
-2. Verify bundle identifiers and App Group registration. The active native app currently uses `com.serasona.app`, its Watch and widget suffixes, and `group.com.serasona.app`. The earlier starter used different identifiers; do not register both sets unintentionally.
+1. Verify Apple finishes processing version 1.0, build 1, and configure internal TestFlight access. Team membership, app record, bundle IDs, App Group assignments, signed archive, and upload are complete.
+2. Finish subscription review screenshots, app metadata, and privacy disclosures. Monthly product creation, pricing, English localization, initial U.S. availability, and the backend Apple app ID are configured.
 3. Finish builds, test sign-in and token renewal, offline recording and retry, duplicate-save handling, deletion, StoreKit redemption and restore, widgets, and Watch layouts on real devices.
-4. Verify and deploy the history deletion backend change. It has not been deployed during this chat.
+4. Test account deletion with populated native check-in history. Deployment and a signed-in empty-history deletion check are complete.
 5. Audit Apple transaction verification, production environment configuration, subscription lifecycle updates, and App Store Connect products before enabling real billing.
    The account binding and expiry protections described above are implemented locally and covered by mocked backend tests. App Store Server Notifications and real Sandbox/TestFlight purchase validation remain open. Local Xcode StoreKit purchases must use an isolated Functions emulator; they cannot grant a plan through the hosted verifier.
 6. Confirm the privacy manifest matches actual data processing, including independent Watch authentication and temporary local offline recordings. Reconcile website retention wording with the new offline queue.
-7. Prepare an archive signed by the verified team, upload it to App Store Connect, wait for processing, and configure TestFlight testing. No archive has been uploaded yet.
+7. Configure TestFlight testing after a successful upload and processing. Do not email tester invitations without Amit's approval of the exact message.
 
 ## Source labels
 

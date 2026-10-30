@@ -74,11 +74,14 @@ final class FirebaseAuthService: ObservableObject {
                 self.email = user?.email
                 SerasonaIdentity.email = user?.email
                 if let user {
+                    if AuthTokenCache.uid != user.uid { SharedStore.clear() }
                     await self.cacheToken(for: user)
                     self.listenForSubscription(uid: user.uid)
                     await StoreManager.shared.syncEntitlements()
                 } else {
                     AuthTokenCache.clear()
+                    SharedStore.clear()
+                    CheckInReminders.disable()
                     self.subscriptionListener?.remove()
                     self.subscriptionListener = nil
                     self.subscription = nil

@@ -117,6 +117,8 @@ struct WatchRootView: View {
             if let latest = try await SerasonaAPI.fetchHistory().max(by: { $0.capturedAt < $1.capturedAt }) {
                 SharedStore.recordLatest(state: latest.overallState, date: latest.capturedAt)
             }
+        } catch SerasonaAPIError.notSignedIn {
+            WatchAuthService.shared.logOut()
         } catch { /* Preserve the last local reading when offline. */ }
     }
 }

@@ -146,14 +146,14 @@ enum SerasonaModel: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .pulse: return "Pulse — Daily Wellness"
-        case .clarity: return "Clarity — Cognitive"
-        case .haven: return "Haven — Mental & Behavioral Health"
-        case .tide: return "Tide — Cardiometabolic"
-        case .aria: return "Aria — Women's Health"
-        case .breath: return "Breath — Respiratory"
-        case .harbor: return "Harbor — Recovery"
-        case .apex: return "Apex — Full Panel"
+        case .pulse: return "Pulse · Daily Wellness"
+        case .clarity: return "Clarity · Cognitive"
+        case .haven: return "Haven · Mental & Behavioral Health"
+        case .tide: return "Tide · Cardiometabolic"
+        case .aria: return "Aria · Women's Health"
+        case .breath: return "Breath · Respiratory"
+        case .harbor: return "Harbor · Recovery"
+        case .apex: return "Apex · Full Panel"
         }
     }
 }

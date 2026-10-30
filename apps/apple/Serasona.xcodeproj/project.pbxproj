@@ -1032,7 +1032,7 @@
 				INFOPLIST_FILE = "Generated/SerasonaWatch-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp;
 				SDKROOT = watchos;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Release;
@@ -1106,7 +1106,7 @@
 				INFOPLIST_FILE = "Generated/SerasonaWatch-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp;
 				SDKROOT = watchos;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Debug;
@@ -1121,9 +1121,9 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp.complication;
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp.widgets;
 				SDKROOT = watchos;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Release;
@@ -1189,9 +1189,9 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp.complication;
+				PRODUCT_BUNDLE_IDENTIFIER = com.serasona.app.watchkitapp.widgets;
 				SDKROOT = watchos;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Debug;
