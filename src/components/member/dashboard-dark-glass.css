@@ -1,0 +1,292 @@
+/* Dark glassmorphism skin for the logged-in dashboard screens only (scoped under
+   .member). Marketing site keeps the warm-paper look; this is a themed
+   override layer on top of member.css / dashboard-v2.css, so most rules here
+   are deliberately !important to win over the denser base rules, including
+   the "flatten to solid white" override at the end of dashboard-v2.css.
+   Accent colors reuse Serasona's own dark-mode tokens (design-system/tokens/
+   native-colors.json: ember -> bone-white, tide -> #8FA9F5) rather than the
+   retired orange/teal app palette. */
+
+.member {
+  --mg-bg-0: #0a0906;
+  --mg-bg-1: #131110;
+  --mg-glass: rgba(242, 239, 233, 0.055);
+  --mg-glass-strong: rgba(242, 239, 233, 0.1);
+  --mg-glass-border: rgba(242, 239, 233, 0.14);
+  --mg-glass-border-strong: rgba(242, 239, 233, 0.28);
+  --mg-ink: #F5F2EC;
+  --mg-ink-body: #D8D2C6;
+  --mg-ink-muted: #9C958A;
+  --mg-ember: #F2EFE9;
+  --mg-ember-ink: #14120D;
+  --mg-tide: #8FA9F5;
+  --mg-tide-soft: rgba(143, 169, 245, 0.16);
+  --mg-stress: #EE8E8A;
+  --mg-stress-soft: rgba(238, 142, 138, 0.16);
+  --m-ink: var(--mg-ink);
+  --m-muted: var(--mg-ink-muted);
+  --m-purple: var(--mg-tide);
+  --m-line: var(--mg-glass-border);
+}
+
+/* Page + window shell: dark base with soft ambient glows, no literal photo. */
+.member {
+  background:
+    radial-gradient(900px 560px at 14% -8%, rgba(143, 169, 245, 0.16), transparent 60%),
+    radial-gradient(760px 520px at 100% 10%, rgba(242, 239, 233, 0.08), transparent 55%),
+    radial-gradient(1000px 700px at 50% 120%, rgba(238, 142, 138, 0.07), transparent 60%),
+    var(--mg-bg-0) !important;
+  color: var(--mg-ink) !important;
+}
+.member ::selection { background: var(--mg-ember) !important; color: var(--mg-ember-ink) !important; }
+.member-window { background: transparent !important; box-shadow: none !important; }
+
+.member-header { border-bottom-color: var(--mg-glass-border) !important; }
+.member-header img { filter: none !important; }
+.member-header nav > a { color: var(--mg-ink-muted) !important; }
+.member-header nav > a.active { color: var(--mg-ink) !important; box-shadow: 0 2px var(--mg-tide) !important; }
+
+.member button, .member .member-button {
+  border-color: var(--mg-glass-border) !important;
+  color: var(--mg-ink-body) !important;
+  background: var(--mg-glass) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+.member button:hover, .member .member-button:hover { background: var(--mg-glass-strong) !important; }
+.member .member-primary {
+  background: var(--mg-ember) !important;
+  border-color: var(--mg-ember) !important;
+  color: var(--mg-ember-ink) !important;
+  box-shadow: 0 8px 22px rgba(242, 239, 233, 0.18) !important;
+}
+.member .member-primary:hover { background: #FFFFFF !important; }
+.member .motion-control { color: var(--mg-ink-muted) !important; border-color: var(--mg-glass-border) !important; }
+
+.member h1, .member h2, .member h3 { color: var(--mg-ink) !important; }
+.member p { color: var(--mg-ink-body) !important; }
+.member small { color: var(--mg-ink-muted) !important; }
+
+.member-title p { color: var(--mg-ink-muted) !important; }
+.member-hero {
+  background: linear-gradient(135deg, rgba(242,239,233,.06), rgba(143,169,245,.08)) !important;
+  border: 1px solid var(--mg-glass-border) !important;
+  backdrop-filter: blur(20px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+  box-shadow: var(--mg-shadow-glass, 0 1px 0 rgba(255,255,255,.06) inset, 0 20px 50px -20px rgba(0,0,0,.65)) !important;
+}
+.member-hero h2 { color: var(--mg-ink) !important; }
+.member-hero p, .member-hero small { color: var(--mg-ink-muted) !important; }
+.member-hero-stats strong { color: var(--mg-ink-body) !important; }
+.member-art-caption { color: var(--mg-ink-muted) !important; }
+.member-latest small, .member-latest h2 { color: var(--mg-ink-muted) !important; }
+
+/* Metric / stat glass cards */
+.member .member-metric {
+  background: var(--mg-glass) !important;
+  border: 1px solid var(--mg-glass-border) !important;
+  backdrop-filter: blur(18px) saturate(1.15) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.15) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 14px 30px -18px rgba(0,0,0,.6) !important;
+  color: var(--mg-ink-body) !important;
+}
+.member .member-metric strong { color: var(--mg-ink) !important; }
+.member .member-metric.wellness, .member .member-metric.clarity, .member .member-metric.sleep { color: var(--mg-ink-body) !important; }
+.member .member-metric[aria-pressed=true] { box-shadow: inset 0 0 0 2px var(--mg-tide) !important; }
+.member .member-metric:hover { filter: brightness(1.08) !important; }
+.member .member-metric.is-abnormal { box-shadow: 0 0 0 1px var(--mg-stress), 0 0 24px rgba(238,142,138,.35) !important; }
+
+.member-section { border-top-color: var(--mg-glass-border) !important; }
+.member-section p { color: var(--mg-ink-muted) !important; }
+.member select, .member input {
+  border-color: var(--mg-glass-border) !important;
+  background: var(--mg-glass) !important;
+  color: var(--mg-ink-body) !important;
+}
+.member .member-ranges { background: var(--mg-glass) !important; }
+.member .member-ranges button[aria-pressed=true] { background: var(--mg-tide) !important; color: #0B1430 !important; }
+.member-source-controls label { color: var(--mg-ink-muted) !important; }
+.member-chart {
+  background: var(--mg-glass) !important;
+  border: 1px solid var(--mg-glass-border) !important;
+  border-radius: 16px !important;
+}
+.member .member-note { color: var(--mg-ink-muted) !important; }
+.member-message {
+  background: var(--mg-glass) !important;
+  border: 1px solid var(--mg-glass-border) !important;
+  color: var(--mg-ink-body) !important;
+}
+.member-error { background: var(--mg-stress-soft) !important; border-color: rgba(238,142,138,.35) !important; }
+
+.member-matrix caption { color: var(--mg-ink-muted) !important; }
+.member-matrix td { background: var(--mg-glass) !important; color: var(--mg-ink-body) !important; border-color: var(--mg-bg-0) !important; }
+.member-sessions th { color: var(--mg-ink-muted) !important; }
+.member-sessions td, .member-sessions th { border-bottom-color: var(--mg-glass-border) !important; }
+.member-sessions td { color: var(--mg-ink-body) !important; }
+
+.member-aside { background: transparent !important; border-left-color: var(--mg-glass-border) !important; }
+.member-pill { background: var(--mg-tide-soft) !important; color: var(--mg-tide) !important; }
+.member-capture {
+  background: var(--mg-glass) !important;
+  border: 1px solid var(--mg-glass-border) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+.member-capture h2, .member-capture p { color: var(--mg-ink-body) !important; }
+.member-wave i { background: var(--mg-tide) !important; }
+.member-wave i:nth-child(3n), .member-wave i:nth-child(4n) { background: var(--mg-ink-muted) !important; }
+.member-footer { border-top-color: var(--mg-glass-border) !important; color: var(--mg-ink-muted) !important; }
+.member .member-text-button { color: var(--mg-tide) !important; }
+
+.member-result-dialog { background: var(--mg-bg-1) !important; color: var(--mg-ink) !important; border: 1px solid var(--mg-glass-border) !important; }
+.member-result-status { background: var(--mg-glass) !important; }
+.member-result-signals > div { border-bottom-color: var(--mg-glass-border) !important; }
+.member-result-signals strong { color: var(--mg-ink-body) !important; }
+.member-result-dialog .member-button { background: var(--mg-ember) !important; color: var(--mg-ember-ink) !important; }
+
+.member-profile-panel, .member-subscription-panel, .member-plan-card {
+  background: var(--mg-glass) !important;
+  border: 1px solid var(--mg-glass-border) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+.member-profile-panel h2 { color: var(--mg-ink-muted) !important; }
+.member-subscription-panel .member-plan-name { color: var(--mg-ink) !important; }
+.member-plan-includes { border-top-color: var(--mg-glass-border) !important; }
+.member-plan-includes p { color: var(--mg-ink-body) !important; }
+.member-fields label, .member-field-label { color: var(--mg-ink-muted) !important; }
+.member-fields input, .member-field-label input { background: var(--mg-glass) !important; }
+.member-fields input[readonly] { background: var(--mg-glass) !important; color: var(--mg-ink-muted) !important; }
+.member-optional { color: var(--mg-ink-muted) !important; }
+.member-save-message { color: var(--mg-ink-muted) !important; }
+.member-plan-card h3 { color: var(--mg-ink) !important; }
+.member-plan-card .member-plan-price { color: var(--mg-ink) !important; }
+.member-plan-card .member-plan-price span, .member-plan-card small { color: var(--mg-ink-muted) !important; }
+.member-plan-current { box-shadow: inset 0 0 0 2px var(--mg-tide) !important; }
+.member-phone-page .member-wave { background: var(--mg-glass) !important; }
+.member-check { color: var(--mg-ink-body) !important; }
+.member-check input { accent-color: var(--mg-tide) !important; }
+
+/* ---------- dashboard-v2.css surfaces ---------- */
+.dashboard-v2 { background-color: transparent !important; }
+.dv-intro p { color: var(--mg-ink-muted) !important; }
+.dv-tabs { border-bottom-color: var(--mg-glass-border) !important; }
+.member .dv-tabs button { color: var(--mg-ink-muted) !important; }
+.member .dv-tabs button[aria-pressed=true] { color: var(--mg-ink) !important; box-shadow: 0 2px var(--mg-tide) !important; }
+
+.member .dv-hero {
+  background: linear-gradient(135deg, rgba(242,239,233,.06), rgba(143,169,245,.08)) !important;
+  border: 1px solid var(--mg-glass-border) !important;
+}
+.member .dv-hero h2 { color: var(--mg-ink) !important; }
+.member .dv-hero p { color: var(--mg-ink-muted) !important; }
+.dv-hero .member-pill { background: var(--mg-tide-soft) !important; color: var(--mg-tide) !important; }
+.member .dv-hero .member-art-caption { color: var(--mg-ink-muted) !important; }
+.dv-scale span { border-color: var(--mg-glass-border) !important; color: var(--mg-ink-muted) !important; }
+.dv-scale .is-current { background: var(--mg-tide) !important; color: #0B1430 !important; border-color: var(--mg-tide) !important; }
+.dv-summary { border-bottom-color: var(--mg-glass-border) !important; }
+
+/* Glass panels / body card / score banner / capture: this is the signature
+   "glassy dashboard" treatment, re-enabled over the base stylesheet's
+   flatten-to-white rule at the end of dashboard-v2.css. */
+.member .dv-panel,
+.member .dv-capture-top,
+.member .dv-body-card,
+.member .dv-score-banner,
+.dv-panel,
+.dv-body-card {
+  background: var(--mg-glass) !important;
+  border: 1px solid var(--mg-glass-border) !important;
+  backdrop-filter: blur(24px) saturate(1.3) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.3) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 20px 50px -20px rgba(0,0,0,.7) !important;
+  color: var(--mg-ink-body) !important;
+}
+.member .dv-panel.member-section { border-top-color: var(--mg-glass-border) !important; }
+.member .dv-panel .member-chart, .member .dv-priority .dv-panel .member-chart { background: rgba(0,0,0,.25) !important; }
+
+.dv-body-heading p { color: var(--mg-ink-muted) !important; }
+.dv-body-canvas { background: #000000 !important; }
+.dv-body-canvas > p { color: var(--mg-ink-muted) !important; }
+.dv-body-info p { color: var(--mg-ink-muted) !important; }
+.dv-flagged, .dv-unflagged { background: var(--mg-glass-strong) !important; color: var(--mg-ink-body) !important; }
+.dv-signal-filter p { color: var(--mg-ink-muted) !important; }
+.member .dv-signal { border-bottom-color: var(--mg-glass-border) !important; }
+.dv-signal small { color: var(--mg-ink-muted) !important; }
+.member .dv-capture { background: var(--mg-glass) !important; border: 1px solid var(--mg-glass-border) !important; }
+.member .dv-capture h2, .member .dv-capture p { color: var(--mg-ink-body) !important; }
+
+.dv-score { background: var(--mg-glass) !important; color: var(--mg-ink) !important; border-top-color: var(--mg-tide) !important; }
+.dv-score > div > small { color: var(--mg-ink-muted) !important; }
+
+.member .dv-capture-top { background: var(--mg-glass) !important; border: 1px solid var(--mg-glass-border) !important; }
+.dv-voice-settings { color: var(--mg-tide) !important; }
+
+.dv-score-banner {
+  background:
+    linear-gradient(135deg, rgba(242,239,233,.08), rgba(143,169,245,.1)),
+    var(--mg-glass) !important;
+  color: var(--mg-ink) !important;
+}
+.dv-score-backdrop::after { background: linear-gradient(90deg, var(--mg-bg-0) 0%, rgba(10,9,6,.5) 40%, rgba(10,9,6,.05) 75%) !important; }
+.member .dv-score-banner h1 { color: var(--mg-ink) !important; }
+.member .dv-score-banner p { color: var(--mg-ink-muted) !important; }
+.dv-score-meta { color: var(--mg-ink-muted) !important; }
+.dv-score-meta > span:first-child { background: var(--mg-tide-soft) !important; color: var(--mg-tide) !important; }
+.dv-score-readout > span { color: var(--mg-ink-muted) !important; }
+.member .dv-score-refresh { color: var(--mg-ink) !important; border-color: var(--mg-glass-border) !important; }
+.member .dv-score-refresh:hover { background: var(--mg-glass-strong) !important; }
+.member .dv-score-method { color: var(--mg-ink-muted) !important; }
+.member .dv-score-method:hover { color: var(--mg-ink) !important; }
+
+.dv-trend-label { background: var(--mg-glass-strong) !important; color: var(--mg-ink-muted) !important; }
+.dv-trend-label.is-sample { background: var(--mg-glass-strong) !important; color: var(--mg-ink-muted) !important; }
+
+.member .dv-score-day {
+  background: var(--mg-glass) !important;
+  border: 1px solid var(--mg-glass-border) !important;
+  color: var(--mg-ink) !important;
+}
+.member button.dv-score-day:hover { background: var(--mg-glass-strong) !important; }
+.member .dv-score-day.is-latest { background: var(--mg-glass-strong) !important; border-color: var(--mg-tide) !important; box-shadow: 0 0 0 1px rgba(143,169,245,.4), 0 0 28px rgba(143,169,245,.22) !important; }
+.member .dv-score-day.is-empty { background: rgba(242,239,233,.025) !important; border-color: var(--mg-glass-border) !important; }
+.member .dv-day-heading small { color: var(--mg-ink-muted) !important; }
+.member .dv-day-value small { color: var(--mg-ink-muted) !important; }
+.dv-day-context { color: var(--mg-ink-muted) !important; }
+.member .dv-day-context small { color: var(--mg-ink-muted) !important; }
+
+.member .member-metric.sleep { background: var(--mg-glass) !important; color: var(--mg-ink-body) !important; }
+.dv-sleep-readout strong { color: var(--mg-ink) !important; }
+.dv-sleep-readout small { color: var(--mg-ink-muted) !important; }
+.dv-sleep-readout span { background: var(--mg-glass-strong) !important; color: var(--mg-ink-muted) !important; }
+.dv-sleep-score p { color: var(--mg-ink-muted) !important; }
+
+.dv-legend-dot small { color: var(--mg-ink-muted) !important; }
+.dv-legend-dot[aria-pressed=true] small { color: var(--mg-ink) !important; }
+.member .dv-legend-dot[aria-pressed=true] .dv-legend-swatch { outline-color: var(--mg-ink) !important; }
+
+.member-metric-history-dates small { color: var(--mg-ink-muted) !important; }
+.member-metric-history-yaxis { color: var(--mg-ink-muted) !important; }
+.member-metric-history-axis { stroke: rgba(242,239,233,.35) !important; }
+.member-metric-history-grid { stroke: rgba(242,239,233,.14) !important; }
+.member-metric-scale { box-shadow: inset 0 0 0 1px rgba(242,239,233,.18) !important; }
+.member-metric-scale-seg { box-shadow: inset 0 0 0 1px rgba(10,9,6,.5) !important; }
+.member-metric-scale-dot { background: var(--mg-ink) !important; border-color: var(--mg-bg-0) !important; }
+.member-matrix-legend { color: var(--mg-ink-muted) !important; }
+.score-position-labels { color: var(--mg-ink-muted) !important; }
+.dv-score-dial strong { color: var(--mg-ink) !important; }
+.dv-score-dial span { color: var(--mg-ink-muted) !important; }
+.member .dv-full-website { background: var(--mg-glass) !important; color: var(--mg-tide) !important; }
+
+/* Recharts trend graph: swap inline-attribute chart chrome for dark-friendly values. */
+.member .recharts-cartesian-grid-horizontal line,
+.member .recharts-cartesian-grid-vertical line { stroke: rgba(242,239,233,.12) !important; }
+.member .recharts-cartesian-axis-tick text { fill: var(--mg-ink-muted) !important; }
+.member .recharts-default-tooltip {
+  background: var(--mg-bg-1) !important;
+  border-color: var(--mg-glass-border) !important;
+  color: var(--mg-ink) !important;
+}
+.member .recharts-tooltip-label { color: var(--mg-ink) !important; }
+.member .recharts-tooltip-item { color: var(--mg-ink-body) !important; }
