@@ -103,7 +103,8 @@
 .dv-score-dial{display:flex;flex-direction:column;align-items:center;gap:18px;min-width:0}
 .dv-score-dial strong{font:700 56px/1 'Inter',sans-serif;color:#111111;font-variant-numeric:tabular-nums}
 .dv-score-dial span{font:500 13px/1.4 'Inter',sans-serif;color:#4A4741}
-.member .dv-full-website{min-height:44px;font-size:13px;background:#F2EFE9;color:#2347C2}
+.member .dv-full-website{min-height:44px;font-size:13px;background:#F2EFE9;color:#2347C2;display:none}
+@media(max-width:720px){.member .dv-full-website{display:inline-flex}}
 .member .dv-score-day.is-empty{min-height:112px}
 .member .dv-priority .member-metric{min-width:0}
 .member .member-metric-content>small{overflow-wrap:anywhere}

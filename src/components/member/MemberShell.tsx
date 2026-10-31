@@ -1,26 +1,44 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { NavLink, Link } from "react-router-dom";
-import { Pause, Play, UserRound } from "lucide-react";
+import { Pause, Play, UserRound, Moon, Sun } from "lucide-react";
 import { asset } from "@/lib/asset";
 import "./member.css";
 import "./dashboard-dark-glass.css";
 
 const MotionContext = createContext(true);
 export const useMemberMotion = () => useContext(MotionContext);
+
+type MemberTheme = "light" | "dark";
+const THEME_KEY = "serasona-dashboard-theme";
+
+function readStoredTheme(): MemberTheme {
+  try {
+    return localStorage.getItem(THEME_KEY) === "dark" ? "dark" : "light";
+  } catch {
+    return "light";
+  }
+}
+
 export function MemberShell({ children, motionControl = false }: { children: ReactNode; motionControl?: boolean }) {
   const [moving, setMoving] = useState(() => !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [theme, setTheme] = useState<MemberTheme>(readStoredTheme);
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const onChange = () => setMoving(!query.matches);
     query.addEventListener("change", onChange);
     return () => query.removeEventListener("change", onChange);
   }, []);
+  useEffect(() => {
+    try { localStorage.setItem(THEME_KEY, theme); } catch {}
+  }, [theme]);
+  const dark = theme === "dark";
   return <MotionContext.Provider value={moving}>
-    <div className={`member ${moving ? "" : "member-still"}`}>
+    <div className={`member ${moving ? "" : "member-still"} ${dark ? "member-dark" : ""}`}>
       <div className="member-window">
         <header className="member-header">
-          <Link to="/dashboard" aria-label="Serasona dashboard"><img src={asset("brand/serasona-logo-full-on-ink.svg")} alt="Serasona" width="170" height="40" /></Link>
+          <Link to="/dashboard" aria-label="Serasona dashboard"><img src={asset(dark ? "brand/serasona-logo-full-on-ink.svg" : "brand/serasona-logo-member.svg")} alt="Serasona" width="170" height="40" /></Link>
           <nav aria-label="Your account navigation">
+            <button type="button" className="motion-control member-theme-toggle" onClick={() => setTheme(dark ? "light" : "dark")} aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}>{dark ? <Sun size={14} /> : <Moon size={14} />}<span>{dark ? "Light" : "Dark"}</span></button>
             {motionControl && <button className="motion-control" onClick={() => setMoving(!moving)} aria-label={moving ? "Pause animations" : "Play animations"}>{moving ? <Pause size={14} /> : <Play size={14} />}<span>Motion</span></button>}
             <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/account" className="account-link"><UserRound size={16} /><span>Account</span></NavLink>
