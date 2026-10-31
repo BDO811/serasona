@@ -109,18 +109,22 @@ const annualSavingsPct = (tier: Tier) => {
 
 /**
  * An illustrative month of stress check-ins: not a counter climbing from
- * zero, a real day-by-day line across thirty days that rises into the high
- * range and eases back down, same as a real stretch of a demanding month
- * would read. Static and representative, not wired to any account's actual
- * data — the same "show the goods" role as a product screenshot.
+ * zero, a real day-by-day line across thirty days that climbs into the high
+ * range, holds, and eases back down — the same shape a demanding month
+ * actually reads as. Static and representative, not wired to any account's
+ * actual data — the same "show the goods" role as a product screenshot.
  *
- * A genuine kinetic-film render (Anthropic's scenario-kinetic-film skill): a
- * quick kinetic-type cold open ("KNOW YOUR / STRESS, / SLEEP, / AND
- * CLARITY. / DAILY.") hard-cuts into a custom Graph block that comets a real
- * 30-day series instead of a fixed curve — calm in ink, hot red past 50,
- * a ring wherever it crosses, keyframes popping as the line passes them —
- * then folds and lands on the month's peak with a portal zoom. Real motion
- * blur, bloom and film grain from the render pipeline, not CSS approximation.
+ * A genuine kinetic-film render (Anthropic's scenario-kinetic-film skill):
+ * StressGraph, a data-driven fork of the shipped Graph block (source and
+ * render pipeline in ~/.claude/skills/scenario-kinetic-film). A comet draws
+ * the 30-day series instead of the block's fixed curve — blue below 50,
+ * a second copy of the same path clipped to the band above 50 and blinked
+ * so that stretch reads as a flashing alarm, not a tint — then the line
+ * folds and lands on the month's closing score with echo rings and a light
+ * burst. Real motion blur, bloom and film grain from the render pipeline,
+ * at half the shipped block's default pace. "STRESS" plus two lines of mono
+ * copy land beside the number; the message lives only in the clip now, so
+ * there is no separate on-page label repeating it.
  *
  * Muted, looping, autoplaying background footage: same accessibility
  * contract as AmbientVideo.tsx (poster for prefers-reduced-motion and a
@@ -161,14 +165,10 @@ const TrendPreview = () => {
     >
       <p className="sr-only">
         Know your stress, sleep and clarity every day: this is what a month of check-ins can look like,
-        starting around 30, climbing into the high range past day ten, then easing back down by day
-        thirty, peaking at 68. On the free plan, the oldest 3 days fade out. Core keeps all of it.
+        starting at 30, climbing past 50 by day eight, peaking near day fifteen at 77, then easing back
+        under 50 by day twenty-three and settling at 38. On the free plan, the oldest 3 days fade out.
+        Core keeps all of it.
       </p>
-      <div className="px-1 mb-2" aria-hidden="true">
-        <span className="text-xs font-mono tracking-wider uppercase text-muted-foreground">
-          Know your stress, sleep and clarity every day.
-        </span>
-      </div>
       {/* The clip's own "paper" ground is rendered at the exact hex of the page
           background, so the settled frame reads as the page itself rather
           than a lighter box sitting on a cream page. */}
