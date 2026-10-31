@@ -133,6 +133,16 @@
     border: 1px solid hsla(var(--glass-border));
     backdrop-filter: blur(20px);
   }
+
+  /* Smoked-glass navbar: the same frosted treatment as .glass-card, scoped to
+     a full-width sticky header (bottom edge only, no rounding, since it spans
+     the viewport rather than sitting as an inset card). */
+  .nav-glass {
+    background: hsla(var(--glass-bg));
+    border-bottom: 1px solid hsla(var(--glass-border));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
   
   /* Cyan Glow Effect */
   .cyan-glow {

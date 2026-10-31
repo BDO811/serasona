@@ -76,7 +76,7 @@ export const SiteHeader = ({ overlay = false, masthead = false }: SiteHeaderProp
       className={
         overlay
           ? "absolute inset-x-0 top-0 z-30 px-5 pt-4 md:px-10"
-          : "sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur px-5 md:px-10"
+          : "sticky top-0 z-30 nav-glass px-5 md:px-10"
       }
     >
       <nav className="mx-auto flex max-w-[1100px] items-center justify-between gap-4 px-2 py-3 md:px-4">
