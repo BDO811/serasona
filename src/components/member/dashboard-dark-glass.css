@@ -59,7 +59,24 @@
    Only add glass depth here; never override background, border or color. */
 .member-dark .member-metric { backdrop-filter: blur(18px) saturate(1.15); -webkit-backdrop-filter: blur(18px) saturate(1.15); box-shadow: 0 14px 30px -18px rgba(0,0,0,.75); }
 .member-dark .member-metric[aria-pressed=true] { box-shadow: inset 0 0 0 2px var(--mg-tide) !important; }
-.member-dark .member-metric:hover { filter: brightness(1.06) !important; }.member-dark .member-section { border-top-color: var(--mg-glass-border) !important; }.member-dark .member-section p { color: var(--mg-ink-muted) !important; }.member-dark select, .member-dark input {
+.member-dark .member-metric:hover { filter: brightness(1.06) !important; }
+
+/* Bold, clearly distinct rung colors for dark mode. LOW/MEDIUM/STRONG/OPTIMAL
+   each get their own saturated hue instead of the light theme's pale pastel
+   tokens, which read as near-identical gray smudges on a dark glass panel.
+   --level-ink is the full-strength color (text, border, glow); --level-bg is
+   that same color mixed to 30% so every consumer of these two custom
+   properties — the dv-scale legend chips, the matrix legend + table cells,
+   and the four metric cards (Stress/Wellness/Clarity/Sleep) via their own
+   dv-level-* class — recolors together from one definition. */
+.member-dark .dv-level-focus { --level-ink: #FF6E5A !important; --level-bg: color-mix(in srgb, #FF6E5A 30%, transparent) !important; --glow-color: #FF6E5A !important; }
+.member-dark .dv-level-steady { --level-ink: #6C93FF !important; --level-bg: color-mix(in srgb, #6C93FF 30%, transparent) !important; --glow-color: #6C93FF !important; }
+.member-dark .dv-level-good { --level-ink: #C77DFF !important; --level-bg: color-mix(in srgb, #C77DFF 30%, transparent) !important; --glow-color: #C77DFF !important; }
+.member-dark .dv-level-clean { --level-ink: #FFC857 !important; --level-bg: color-mix(in srgb, #FFC857 30%, transparent) !important; --glow-color: #FFC857 !important; }
+.member-dark .dv-priority .dv-scale span { opacity: .94 !important; }
+.member-dark .member-matrix-legend i { box-shadow: none !important; }
+.member-dark .member-matrix td.dv-level-focus, .member-dark .member-matrix td.dv-level-steady, .member-dark .member-matrix td.dv-level-good, .member-dark .member-matrix td.dv-level-clean { background: var(--level-bg) !important; color: var(--level-ink) !important; }
+.member-dark .member-section { border-top-color: var(--mg-glass-border) !important; }.member-dark .member-section p { color: var(--mg-ink-muted) !important; }.member-dark select, .member-dark input {
   border-color: var(--mg-glass-border) !important;
   background: var(--mg-glass) !important;
   color: var(--mg-ink-body) !important;
@@ -108,14 +125,13 @@
   color: var(--mg-ink) !important;
 }.member-dark button.dv-score-day:hover { background: var(--mg-glass-strong) !important; }.member-dark .dv-score-day.is-latest { background: var(--mg-glass-strong) !important; border-color: var(--mg-tide) !important; box-shadow: 0 0 0 1px rgba(143,169,245,.4), 0 0 28px rgba(143,169,245,.22) !important; }.member-dark .dv-score-day.is-empty { background: rgba(242,239,233,.025) !important; border-color: var(--mg-glass-border) !important; }.member-dark .dv-day-heading small { color: var(--mg-ink-muted) !important; }.member-dark .dv-day-value small { color: var(--mg-ink-muted) !important; }.member-dark .dv-day-context { color: var(--mg-ink-muted) !important; }.member-dark .dv-day-context small { color: var(--mg-ink-muted) !important; }.member-dark .dv-sleep-readout strong { color: var(--mg-ink) !important; }.member-dark .dv-sleep-readout small { color: var(--mg-ink-muted) !important; }.member-dark .dv-sleep-readout span { background: var(--mg-glass-strong) !important; color: var(--mg-ink-muted) !important; }.member-dark .dv-sleep-score p { color: var(--mg-ink-muted) !important; }.member-dark .dv-legend-dot small { color: var(--mg-ink-muted) !important; }.member-dark .dv-legend-dot[aria-pressed=true] small { color: var(--mg-ink) !important; }.member-dark .dv-legend-dot[aria-pressed=true] .dv-legend-swatch { outline-color: var(--mg-ink) !important; }
 /* Body-map zone dots share the exact same --dot-color as the legend swatches
-   above them (DashboardBodyMap.tsx ZONE_COLOR), but on the dark figure a
-   plain fill reads as a dull smudge next to the bright video. A colored
-   glow halo in the dot's own hue makes it pop and read as the same color
-   as its legend swatch instead of looking muted. */
-.member-dark .dv-zone { box-shadow: 0 0 0 2px rgba(255,255,255,.55), 0 0 18px 5px var(--dot-color) !important; filter: saturate(1.4) brightness(1.3) !important; }
-.member-dark .dv-zone:hover { filter: saturate(1.5) brightness(1.4) !important; }
-.member-dark .dv-dot.is-abnormal { filter: saturate(1.4) brightness(1.3) !important; }
-.member-dark .dv-legend-swatch { box-shadow: 0 0 10px 2px var(--dot-color) !important; }.member-dark .member-metric-history-dates small { color: var(--mg-ink-muted) !important; }.member-dark .member-metric-history-yaxis { color: var(--mg-ink-muted) !important; }.member-dark .member-metric-history-axis { stroke: rgba(242,239,233,.35) !important; }.member-dark .member-metric-history-grid { stroke: rgba(242,239,233,.14) !important; }.member-dark .member-metric-scale { box-shadow: inset 0 0 0 1px rgba(242,239,233,.18) !important; }.member-dark .member-metric-scale-seg { box-shadow: inset 0 0 0 1px rgba(10,9,6,.5) !important; }.member-dark .member-metric-scale-dot { background: var(--mg-ink) !important; border-color: var(--mg-bg-0) !important; }.member-dark .member-matrix-legend { color: var(--mg-ink-muted) !important; }.member-dark .score-position-labels { color: var(--mg-ink-muted) !important; }.member-dark .dv-score-dial strong { color: var(--mg-ink) !important; }.member-dark .dv-score-dial span { color: var(--mg-ink-muted) !important; }.member-dark .dv-full-website { background: var(--mg-glass) !important; color: var(--mg-tide) !important; }
+   above them (DashboardBodyMap.tsx ZONE_COLOR). Color stays crisply inside
+   the circle, not a blurred glow bleeding onto the figure or neighboring
+   dots — just a solid fill in the dot's own hue plus a thin white ring for
+   contrast against the bright video background. */
+.member-dark .dv-dot { background: var(--dot-color) !important; box-shadow: 0 0 0 3px rgba(255,255,255,.7) !important; filter: saturate(1.2) brightness(1.08) !important; }
+.member-dark .dv-zone:hover { filter: saturate(1.35) brightness(1.2) !important; }
+.member-dark .dv-dot.is-abnormal { animation: none !important; box-shadow: 0 0 0 3px rgba(255,255,255,.7) !important; }.member-dark .member-metric-history-dates small { color: var(--mg-ink-muted) !important; }.member-dark .member-metric-history-yaxis { color: var(--mg-ink-muted) !important; }.member-dark .member-metric-history-axis { stroke: rgba(242,239,233,.35) !important; }.member-dark .member-metric-history-grid { stroke: rgba(242,239,233,.14) !important; }.member-dark .member-metric-scale { box-shadow: inset 0 0 0 1px rgba(242,239,233,.18) !important; }.member-dark .member-metric-scale-seg { box-shadow: inset 0 0 0 1px rgba(10,9,6,.5) !important; }.member-dark .member-metric-scale-dot { background: var(--mg-ink) !important; border-color: var(--mg-bg-0) !important; }.member-dark .member-matrix-legend { color: var(--mg-ink-muted) !important; }.member-dark .score-position-labels { color: var(--mg-ink-muted) !important; }.member-dark .dv-score-dial strong { color: var(--mg-ink) !important; }.member-dark .dv-score-dial span { color: var(--mg-ink-muted) !important; }.member-dark .dv-full-website { background: var(--mg-glass) !important; color: var(--mg-tide) !important; }
 
 /* Recharts trend graph: swap inline-attribute chart chrome for dark-friendly values. */.member-dark .recharts-cartesian-grid-horizontal line, .member-dark .recharts-cartesian-grid-vertical line { stroke: rgba(242,239,233,.12) !important; }.member-dark .recharts-cartesian-axis-tick text { fill: var(--mg-ink-muted) !important; }.member-dark .recharts-default-tooltip {
   background: var(--mg-bg-1) !important;
