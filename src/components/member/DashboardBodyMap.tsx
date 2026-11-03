@@ -105,6 +105,8 @@ export function DashboardBodyMap({ session, zone, onZoneChange, loading, bodySex
         el.style.left = `${left}%`;
         el.style.opacity = canOrbit ? String(opacity) : "1";
         el.style.setProperty("--zone-scale-x", canOrbit ? String(scaleX) : "1");
+        // Depth cue: orbs read slightly larger and brighter on the near side of the turn, smaller and dimmer as they swing toward the back.
+        el.style.setProperty("--zone-depth", canOrbit ? String(0.88 + 0.12 * Math.max(0, depth)) : "1");
       }
       raf = requestAnimationFrame(tick);
     };
