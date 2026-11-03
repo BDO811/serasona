@@ -129,12 +129,42 @@
    the circle, not a blurred glow bleeding onto the figure or neighboring
    dots — just a solid fill in the dot's own hue plus a thin white ring for
    contrast against the bright video background. */
-.member-dark .dv-dot { background: radial-gradient(circle at 34% 26%, color-mix(in srgb, var(--dot-color) 55%, #FFFFFF) 0%, var(--dot-color) 46%, color-mix(in srgb, var(--dot-color) 74%, #000000) 100%) !important; box-shadow: inset -2px -3px 3px rgba(0,0,0,.4), inset 1.5px 2px 2px rgba(255,255,255,.55), 0 0 0 3px rgba(255,255,255,.7) !important; filter: saturate(1.2) brightness(1.08) !important; }
 .member-dark .dv-zone:hover { filter: saturate(1.35) brightness(1.2) !important; }
-.member-dark .dv-dot.is-abnormal { animation: none !important; box-shadow: 0 0 0 3px rgba(255,255,255,.7) !important; }.member-dark .member-metric-history-dates small { color: var(--mg-ink-muted) !important; }.member-dark .member-metric-history-yaxis { color: var(--mg-ink-muted) !important; }.member-dark .member-metric-history-axis { stroke: rgba(242,239,233,.35) !important; }.member-dark .member-metric-history-grid { stroke: rgba(242,239,233,.14) !important; }.member-dark .member-metric-scale { box-shadow: inset 0 0 0 1px rgba(242,239,233,.18) !important; }.member-dark .member-metric-scale-seg { box-shadow: inset 0 0 0 1px rgba(10,9,6,.5) !important; }.member-dark .member-metric-scale-dot { background: var(--mg-ink) !important; border-color: var(--mg-bg-0) !important; }.member-dark .member-matrix-legend { color: var(--mg-ink-muted) !important; }.member-dark .score-position-labels { color: var(--mg-ink-muted) !important; }.member-dark .dv-score-dial strong { color: var(--mg-ink) !important; }.member-dark .dv-score-dial span { color: var(--mg-ink-muted) !important; }.member-dark .dv-full-website { background: var(--mg-glass) !important; color: var(--mg-tide) !important; }
+.member-dark .member-metric-history-dates small { color: var(--mg-ink-muted) !important; }.member-dark .member-metric-history-yaxis { color: var(--mg-ink-muted) !important; }.member-dark .member-metric-history-axis { stroke: rgba(242,239,233,.35) !important; }.member-dark .member-metric-history-grid { stroke: rgba(242,239,233,.14) !important; }.member-dark .member-metric-scale { box-shadow: inset 0 0 0 1px rgba(242,239,233,.18) !important; }.member-dark .member-metric-scale-seg { box-shadow: inset 0 0 0 1px rgba(10,9,6,.5) !important; }.member-dark .member-metric-scale-dot { background: var(--mg-ink) !important; border-color: var(--mg-bg-0) !important; }.member-dark .member-matrix-legend { color: var(--mg-ink-muted) !important; }.member-dark .score-position-labels { color: var(--mg-ink-muted) !important; }.member-dark .dv-score-dial strong { color: var(--mg-ink) !important; }.member-dark .dv-score-dial span { color: var(--mg-ink-muted) !important; }.member-dark .dv-full-website { background: var(--mg-glass) !important; color: var(--mg-tide) !important; }
 
 /* Recharts trend graph: swap inline-attribute chart chrome for dark-friendly values. */.member-dark .recharts-cartesian-grid-horizontal line, .member-dark .recharts-cartesian-grid-vertical line { stroke: rgba(242,239,233,.12) !important; }.member-dark .recharts-cartesian-axis-tick text { fill: var(--mg-ink-muted) !important; }.member-dark .recharts-default-tooltip {
   background: var(--mg-bg-1) !important;
   border-color: var(--mg-glass-border) !important;
   color: var(--mg-ink) !important;
 }.member-dark .recharts-tooltip-label { color: var(--mg-ink) !important; }.member-dark .recharts-tooltip-item { color: var(--mg-ink-body) !important; }
+
+/* ---- Body map orbs: real 3D spheres, no backing plate ---- */
+.member-dark .dv-legend-dot, .member-dark .dv-legend-dot:hover, .member-dark .dv-legend-dot:focus-visible, .member-dark .dv-legend-dot[aria-pressed=true] { background: transparent !important; border: 0 !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.member-dark .dv-dot {
+  position: relative;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255,255,255,.95) 0%, rgba(255,255,255,.55) 7%, rgba(255,255,255,0) 22%),
+    radial-gradient(circle at 36% 30%, color-mix(in srgb, var(--dot-color) 40%, #FFFFFF) 0%, color-mix(in srgb, var(--dot-color) 88%, #FFFFFF) 22%, var(--dot-color) 52%, color-mix(in srgb, var(--dot-color) 55%, #000000) 82%, color-mix(in srgb, var(--dot-color) 30%, #000000) 100%) !important;
+  box-shadow:
+    inset -3px -4px 7px rgba(0,0,0,.55),
+    inset 2px 2px 4px rgba(255,255,255,.28),
+    0 0 14px 2px color-mix(in srgb, var(--dot-color) 55%, transparent),
+    0 0 34px 6px color-mix(in srgb, var(--dot-color) 30%, transparent) !important;
+  border: 0 !important;
+  filter: none !important;
+}
+.member-dark .dv-dot::after { content: ""; position: absolute; left: 50%; bottom: 14%; width: 52%; height: 22%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(ellipse at center, color-mix(in srgb, var(--dot-color) 40%, #FFFFFF) 0%, transparent 70%); opacity: .55; pointer-events: none; }
+/* Zone orbs sit inside the body: larger, glass-like, floating, no ring/outline */
+.member-dark .dv-zone { width: 30px !important; height: 30px !important; outline: 0 !important; animation: dv-orb-float 4.2s ease-in-out infinite; }
+.member-dark .dv-zone-cardiorespiratory { animation-delay: -1.4s; }
+.member-dark .dv-zone-core { animation-delay: -2.8s; }
+.member-dark .dv-zone[aria-pressed=true] { outline: 0 !important; box-shadow: inset -3px -4px 7px rgba(0,0,0,.5), inset 2px 2px 4px rgba(255,255,255,.3), 0 0 22px 5px color-mix(in srgb, var(--dot-color) 75%, transparent), 0 0 52px 12px color-mix(in srgb, var(--dot-color) 40%, transparent) !important; }
+.member-dark .dv-zone:hover { filter: brightness(1.2) !important; }
+.member-dark .dv-dot.is-abnormal { animation: dv-orb-alert 2.2s ease-in-out infinite !important; box-shadow: inset -3px -4px 7px rgba(0,0,0,.55), inset 2px 2px 4px rgba(255,255,255,.28), 0 0 18px 4px color-mix(in srgb, var(--dot-color) 80%, transparent), 0 0 44px 10px color-mix(in srgb, var(--dot-color) 45%, transparent) !important; }
+.member-dark .dv-legend-swatch { width: 18px; height: 18px; outline-offset: 5px; }
+@keyframes dv-orb-float { 0%,100% { margin-top: -2px; } 50% { margin-top: 3px; } }
+@keyframes dv-orb-alert { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.35); } }
+@media (prefers-reduced-motion: reduce) { .member-dark .dv-zone, .member-dark .dv-dot.is-abnormal { animation: none !important; } }
+
+.member-dark .dv-zone { transform: translate(-50%,-50%) scaleX(var(--zone-scale-x,1)) scale(var(--zone-depth,1)) !important; }
+.member-dark .dv-zone:hover { transform: translate(-50%,-50%) scaleX(var(--zone-scale-x,1)) scale(calc(var(--zone-depth,1) * 1.12)) !important; }
