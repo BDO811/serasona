@@ -90,7 +90,8 @@ export function DashboardBodyMap({ session, zone, onZoneChange, loading, bodySex
       const canOrbit = moving && !document.hidden && Number.isFinite(duration) && duration > 0;
       // theta=0 is front-facing (the resting position below); it sweeps
       // through the body's own full turn as the video plays.
-      const theta = canOrbit ? (video.currentTime / duration) * Math.PI * 2 * direction : 0;
+      // Orbs live on the body's own vertical axis (its center), not on the front surface, so they stay centered, full size and fully visible through the whole 360 turn.
+      const theta = 0;
       const depth = Math.cos(theta); // >0 faces the camera, <0 is around the back
       const scaleX = Math.max(0.28, Math.abs(depth)); // foreshortens toward profile, never collapses flat
       // Fades out over a short band straddling edge-on (depth 0) rather than
